@@ -4,7 +4,11 @@
 export const CONFIG = {
   // Supabase - Credenciales PÚBLICAS
   supabase: {
-    url: "https://cflpmluvhfldewiitymh.supabase.co",
+    url: "https://cflpmluvhfldewiitymh.supabase.co/rest/v1/iac?select=",
+    
+-H "apikey: SUPABASE_CLIENT_ANON_KEY" \
+-H "Authorization: Bearer SUPABASE_CLIENT_ANON_KEY"
+          
     anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmbHBtbHV2aGZsZGV3aWl0eW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3MDAwODQsImV4cCI6MjAyNTI3NjA4NH0.1z3Y0YQl-13M-HZOr5AMYV3G8mggEON6wJvO_DV5_Mw"
   },
   
