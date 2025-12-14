@@ -33,6 +33,6 @@ export const CONFIG = {
     formatoPrecio: "CLP",
     mostrarStock: true,
     mostrarInstagram: true,
-    defaultImage: "https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w-800&q=80"
+    defaultImage: "https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   }
 };
