@@ -12,10 +12,8 @@ export const supabaseService = {
     console.log('🚗 Iniciando carga de vehículos desde Supabase...');
     
     try {
-      // Nota: asumo que la tabla se llama 'iac' y ahora incluye la columna 'imagenes' (text[])
       const url = `${CONFIG.supabase.url}/rest/v1/iac?select=*`;
       console.log('📡 URL de consulta:', url);
-      console.log('🔑 Usando API Key:', CONFIG.supabase.anonKey.substring(0, 20) + '...');
       
       const response = await fetch(url, {
         method: 'GET',
@@ -54,8 +52,14 @@ export const supabaseService = {
         console.log('ID:', primerVehiculo.id);
         console.log('Nombre:', primerVehiculo.nombre || 'No tiene nombre');
         console.log('Precio:', primerVehiculo.precio || 'No tiene precio');
-        // Nuevo log para el campo de imágenes
         console.log('Imágenes (Array):', Array.isArray(primerVehiculo.imagenes) ? `${primerVehiculo.imagenes.length} URLs` : 'No es un array de URLs');
+        
+        // Mostrar las URLs de las imágenes para debug
+        if (Array.isArray(primerVehiculo.imagenes)) {
+          primerVehiculo.imagenes.forEach((url, index) => {
+            console.log(`  Imagen ${index + 1}:`, url);
+          });
+        }
       }
       
       return data;
@@ -66,7 +70,7 @@ export const supabaseService = {
     }
   },
   
-  // NUEVA FUNCIÓN: Obtener todos los Kits de Mejora (de la tabla kits_upgrade)
+  // Obtener todos los Kits de Mejora (de la tabla kits_upgrade)
   async getKits() {
     console.log('🛠️ Iniciando carga de kits de mejora desde Supabase...');
     try {
@@ -80,10 +84,16 @@ export const supabaseService = {
           'Content-Type': 'application/json'
         }
       });
-      if (!response.ok) throw new Error(await response.text());
+      
+      if (!response.ok) {
+        console.warn('⚠️ No se pudo cargar kits_upgrade, usando kits por defecto');
+        return this.getDefaultKits();
+      }
+      
       const data = await response.json();
-      console.log(`📦 Kits cargados: ${data.length}`);
+      console.log(`📦 Kits cargados desde Supabase: ${data.length}`);
       return data;
+      
     } catch (error) {
       console.error('❌ Error al cargar los kits:', error);
       // Devuelve kits por defecto si falla la carga
@@ -91,29 +101,43 @@ export const supabaseService = {
     }
   },
 
-  // NUEVA FUNCIÓN: Obtener la imagen específica de un vehículo con un kit
+  // CORREGIDO: Obtener la imagen específica de un vehículo con un kit
   async getKitImageForVehicle(vehiculoId, kitId) {
     console.log(`🖼️ Buscando imagen para Vehículo ${vehiculoId} con Kit ${kitId}...`);
     try {
       // La tabla debe llamarse 'vehiculo_kits'
       const url = `${CONFIG.supabase.url}/rest/v1/vehiculo_kits?select=imagen_kit_url&vehiculo_id=eq.${vehiculoId}&kit_id=eq.${kitId}`;
-       const response = await fetch(url, {
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'apikey': CONFIG.supabase.anonKey,
           'Authorization': `Bearer ${CONFIG.supabase.anonKey}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
         }
       });
       
-      if (!response.ok) throw new Error(await response.text());
+      if (!response.ok) {
+        const error = await response.json();
+        
+        // Si la tabla no existe (error 404 o PGRST205), no es un error crítico
+        if (response.status === 404 || 
+            (error.message && error.message.includes('Could not find the table'))) {
+          console.log(`ℹ️ Tabla 'vehiculo_kits' no encontrada para vehículo ${vehiculoId}, kit ${kitId}`);
+          return null;
+        }
+        
+        console.warn(`⚠️ Error al buscar imagen de kit:`, error);
+        return null;
+      }
+      
       const data = await response.json();
-
-      // Devolver la primera URL encontrada
+      
+      // Devolver la primera URL encontrada o null
       return data[0]?.imagen_kit_url || null; 
 
     } catch (error) {
-      console.error('❌ Error al buscar imagen de kit:', error);
+      console.warn('⚠️ Error al buscar imagen de kit (no crítico):', error.message || error);
       return null;
     }
   },
@@ -142,9 +166,9 @@ export const supabaseService = {
     }
   },
   
-  // Función helper para obtener el precio del vehículo (se mantiene igual)
+  // Función helper para obtener el precio del vehículo
   findVehiclePrice(vehiculo) {
-    const posiblesColumnas = ['precio', 'price', 'costo'];
+    const posiblesColumnas = ['precio', 'price', 'costo', 'valor'];
     for (const columna of posiblesColumnas) {
       if (vehiculo[columna] !== undefined && vehiculo[columna] !== null) {
         const precio = parseFloat(vehiculo[columna]);
@@ -159,10 +183,11 @@ export const supabaseService = {
   
   // Kits por defecto (Si fallan las tablas, al menos se muestran los que estaban en el UI anterior)
   getDefaultKits() {
+    console.log('📋 Usando kits por defecto');
     return [
       {
         id: "standar",
-        nombre: "Standar",
+        nombre: "Standard",
         precio: 0,
         descripcion: "Preparación básica incluida",
         nivel: "standar"
@@ -186,17 +211,24 @@ export const supabaseService = {
 };
 
 // Probar conexión inmediatamente
-console.log('🔄 Probando conexión con nueva API key...');
+console.log('🔄 Probando conexión con Supabase...');
 supabaseService.getVehiculos()
   .then(data => {
     if (data.length > 0) {
       console.log('🎉 ¡CONEXIÓN EXITOSA!');
       console.log(`📊 ${data.length} vehículos cargados correctamente`);
-      console.log('Nombres de vehículos:', data.map(v => v.nombre || 'Sin nombre').join(', '));
+      
+      // Mostrar nombres de vehículos para verificar
+      const nombres = data.map(v => v.nombre || 'Sin nombre').filter(n => n !== 'Sin nombre');
+      if (nombres.length > 0) {
+        console.log('Nombres de vehículos:', nombres.join(', '));
+      }
     } else {
       console.log('⚠️ CONEXIÓN OK, pero no hay vehículos en la tabla "iac" o fallo la carga inicial.');
+      console.log('ℹ️ Verifica que la tabla "iac" tenga datos en Supabase.');
     }
   })
   .catch(error => {
     console.error('❌ FALLO LA PRUEBA DE CONEXIÓN INICIAL:', error);
+    console.error('⚠️ Verifica tu conexión a internet y las credenciales en config.js');
   });
