@@ -475,45 +475,49 @@ export class UI {
     this.showModal('vehicleModal');
   }
   
-  // Mostrar modal de personalización - CORREGIDO
-  static async customizeVehicle(vehicleId) {
-    const vehiculo = productosManager.getVehiculoById(vehicleId);
-    if (!vehiculo) {
-      this.showNotification("Vehículo no encontrado", "error");
-      return;
-    }
-    
-    const kits = productosManager.getKitsForDisplay();
-    if (kits.length === 0) {
-      this.showNotification("No hay kits de mejora disponibles", "warning");
-      return;
-    }
-    
-    const modalContent = document.getElementById('customizationContent');
-    
-    // Asegurar imagen principal
-    const imagenPrincipal = vehiculo.imagen_principal_card || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
-    
-    modalContent.innerHTML = `
-      <div class="customization-header">
-        <h3>Personaliza tu ${vehiculo.nombre || 'Vehículo'}</h3>
-        <p>Selecciona un paquete de mejora para ver la comparación visual.</p>
-      </div>
+// Mostrar modal de personalización - CORREGIDO
+static async customizeVehicle(vehicleId) {
+  const vehiculo = productosManager.getVehiculoById(vehicleId);
+  if (!vehiculo) {
+    this.showNotification("Vehículo no encontrado", "error");
+    return;
+  }
+  
+  const kits = productosManager.getKitsForDisplay();
+  if (kits.length === 0) {
+    this.showNotification("No hay kits de mejora disponibles", "warning");
+    return;
+  }
+  
+  const modalContent = document.getElementById('customizationContent');
+  
+  // Asegurar imagen principal
+  const imagenPrincipal = vehiculo.imagen_principal_card || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
+  
+  // ⚠️ REEMPLAZA DESDE AQUÍ (línea ~480)
+  modalContent.innerHTML = `
+    <div class="customization-header">
+      <h3>Personaliza tu ${vehiculo.nombre || 'Vehículo'}</h3>
+      <p>Selecciona un paquete de mejora para ver la comparación visual</p>
+    </div>
 
-      <div class="comparison-container">
-        <div class="comparison-panel original-vehicle">
-          <h3>Vehículo Base</h3>
-          <img id="originalVehicleImage" src="${imagenPrincipal}" alt="Vehículo Original"
-               onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
-        </div>
-        <div class="comparison-panel customized-vehicle">
-          <h3>Con Kit <span id="selectedKitName">...</span></h3>
-          <img id="customizedVehicleImage" src="${imagenPrincipal}" alt="Vehículo Personalizado"
-               onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
-        </div>
+    <div class="comparison-container">
+      <div class="comparison-panel original-vehicle">
+        <h3>Vehículo Base</h3>
+        <img id="originalVehicleImage" src="${imagenPrincipal}" alt="Vehículo Original"
+             onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
       </div>
+      <div class="comparison-panel customized-vehicle">
+        <h3>Con Kit <span id="selectedKitName">Standard</span></h3>
+        <img id="customizedVehicleImage" src="${imagenPrincipal}" alt="Vehículo Personalizado"
+             onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
+      </div>
+    </div>
 
-      <h4>Seleccionar Paquete de Mejora:</h4>
+    <div style="margin: var(--space-3xl) 0 var(--space-2xl);">
+      <h4 style="font-size: 17px; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg); text-align: center;">
+        Seleccionar Paquete de Mejora
+      </h4>
       <div id="kitSelectionContainer" class="kit-selection-controls">
         ${kits.map(kit => `
           <button class="button kit-button" 
@@ -527,66 +531,71 @@ export class UI {
           </button>
         `).join('')}
       </div>
-      
-      <div class="customization-summary">
-        <div class="summary-line">
-          <span>Precio Vehículo Base:</span>
-          <span class="price-value">${productosManager.formatPrice(vehiculo.precio)}</span>
-        </div>
-        <div class="summary-line">
-          <span>Costo Kit Seleccionado:</span>
-          <span class="price-value" id="kitPriceValue">...</span>
-        </div>
-        <div class="summary-total">
-          <span>Precio Total Estimado:</span>
-          <span class="price-value" id="totalPriceValue">...</span>
-        </div>
+    </div>
+    
+    <div class="customization-summary">
+      <div class="summary-line">
+        <span>Precio Vehículo Base:</span>
+        <span class="price-value">${productosManager.formatPrice(vehiculo.precio)}</span>
       </div>
+      <div class="summary-line">
+        <span>Costo Kit Seleccionado:</span>
+        <span class="price-value" id="kitPriceValue">INCLUIDO</span>
+      </div>
+      <div class="summary-total">
+        <span>Precio Total Estimado:</span>
+        <span class="price-value" id="totalPriceValue">${productosManager.formatPrice(vehiculo.precio)}</span>
+      </div>
+    </div>
 
-      <button class="button whatsapp-btn" id="requestQuote" style="margin-top: 24px;">
+    <div style="text-align: center; margin-top: var(--space-3xl);">
+      <button class="button whatsapp-btn" id="requestQuote" style="padding: var(--space-lg) var(--space-3xl); font-size: 17px;">
         <i class="fab fa-whatsapp"></i> Solicitar Cotización con este Kit
       </button>
-    `;
-    
-    // 1. Asignar Event Listeners a los botones de kits
-    const kitSelectionContainer = document.getElementById('kitSelectionContainer');
-    if (kitSelectionContainer) {
-      kitSelectionContainer.querySelectorAll('.kit-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-          const kitId = e.currentTarget.dataset.kitId;
-          const kitNombre = e.currentTarget.dataset.kitNombre;
-          const kitPrecio = parseFloat(e.currentTarget.dataset.kitPrecio);
-          
-          // Llama a la lógica de selección y comparación
-          this.selectKit(vehiculo, kitId, kitNombre, kitPrecio);
-          
-          // Actualizar clase active inmediatamente
-          kitSelectionContainer.querySelectorAll('.kit-button').forEach(btn => btn.classList.remove('active'));
-          e.currentTarget.classList.add('active');
-        });
+    </div>
+  `;
+  // ⚠️ HASTA AQUÍ
+  
+  // El resto del código se mantiene igual...
+  // 1. Asignar Event Listeners a los botones de kits
+  const kitSelectionContainer = document.getElementById('kitSelectionContainer');
+  if (kitSelectionContainer) {
+    kitSelectionContainer.querySelectorAll('.kit-button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const kitId = e.currentTarget.dataset.kitId;
+        const kitNombre = e.currentTarget.dataset.kitNombre;
+        const kitPrecio = parseFloat(e.currentTarget.dataset.kitPrecio);
+        
+        // Llama a la lógica de selección y comparación
+        this.selectKit(vehiculo, kitId, kitNombre, kitPrecio);
+        
+        // Actualizar clase active inmediatamente
+        kitSelectionContainer.querySelectorAll('.kit-button').forEach(btn => btn.classList.remove('active'));
+        e.currentTarget.classList.add('active');
       });
-
-      // 2. Inicializar con el kit Standard (o el primero)
-      const defaultKitButton = kitSelectionContainer.querySelector('.kit-button[data-default-kit="true"]') || 
-                              kitSelectionContainer.querySelector('.kit-button');
-      if (defaultKitButton) {
-        defaultKitButton.click();
-      }
-    }
-    
-    // 3. Evento para solicitar cotización
-    document.getElementById('requestQuote')?.addEventListener('click', () => {
-      // Obtener el kit seleccionado
-      const selectedButton = kitSelectionContainer?.querySelector('.kit-button.active');
-      const selectedKit = selectedButton ? 
-        productosManager.getKitsForDisplay().find(k => k.id === selectedButton.dataset.kitId) : 
-        kits[0];
-      
-      this.contactVehicle(vehiculo.id, selectedKit);
     });
-    
-    this.showModal('customizationModal');
+
+    // 2. Inicializar con el kit Standard (o el primero)
+    const defaultKitButton = kitSelectionContainer.querySelector('.kit-button[data-default-kit="true"]') || 
+                            kitSelectionContainer.querySelector('.kit-button');
+    if (defaultKitButton) {
+      defaultKitButton.click();
+    }
   }
+  
+  // 3. Evento para solicitar cotización
+  document.getElementById('requestQuote')?.addEventListener('click', () => {
+    // Obtener el kit seleccionado
+    const selectedButton = kitSelectionContainer?.querySelector('.kit-button.active');
+    const selectedKit = selectedButton ? 
+      productosManager.getKitsForDisplay().find(k => k.id === selectedButton.dataset.kitId) : 
+      kits[0];
+    
+    this.contactVehicle(vehiculo.id, selectedKit);
+  });
+  
+  this.showModal('customizationModal');
+}
 
   // CORREGIDO: Lógica para seleccionar un kit y actualizar la imagen de comparación
   static async selectKit(vehiculo, kitId, kitNombre, kitPrecio) {
