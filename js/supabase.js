@@ -12,6 +12,7 @@ export const supabaseService = {
     console.log('🚗 Iniciando carga de vehículos desde Supabase...');
     
     try {
+      // Nota: asumo que la tabla se llama 'iac' y ahora incluye la columna 'imagenes' (text[])
       const url = `${CONFIG.supabase.url}/rest/v1/iac?select=*`;
       console.log('📡 URL de consulta:', url);
       console.log('🔑 Usando API Key:', CONFIG.supabase.anonKey.substring(0, 20) + '...');
@@ -53,58 +54,50 @@ export const supabaseService = {
         console.log('ID:', primerVehiculo.id);
         console.log('Nombre:', primerVehiculo.nombre || 'No tiene nombre');
         console.log('Precio:', primerVehiculo.precio || 'No tiene precio');
-        console.log('Estado:', primerVehiculo.estado || 'No tiene estado');
-        console.log('Activo:', primerVehiculo.activo || 'No tiene activo');
-        console.log('Todas las columnas:', Object.keys(primerVehiculo));
-        
-        // Verificar columnas de imagen
-        const columnasImagen = Object.keys(primerVehiculo).filter(key => 
-          key.toLowerCase().includes('imagen') || 
-          key.toLowerCase().includes('foto') || 
-          key.toLowerCase().includes('image')
-        );
-        console.log('Columnas de imagen:', columnasImagen);
-        if (columnasImagen.length > 0) {
-          console.log('Primera imagen:', primerVehiculo[columnasImagen[0]]);
-        }
-      } else {
-        console.log('⚠️ La tabla está vacía o no devolvió datos');
+        // Nuevo log para el campo de imágenes
+        console.log('Imágenes (Array):', Array.isArray(primerVehiculo.imagenes) ? `${primerVehiculo.imagenes.length} URLs` : 'No es un array de URLs');
       }
       
-      // Filtrar por activo si la columna existe
-      return this.filtrarVehiculosActivos(data);
+      return data;
       
     } catch (error) {
-      console.error('💥 Error fatal en getVehiculos:', error);
-      console.error('Detalles:', error.message);
+      console.error('❌ Error general en getVehiculos:', error);
       return [];
     }
   },
   
-  // Filtrar vehículos activos
-  filtrarVehiculosActivos(vehiculos) {
-    if (!vehiculos || !Array.isArray(vehiculos)) {
-      return [];
-    }
-    
-    // Si hay columna activo, filtrar por ella
-    if (vehiculos.length > 0 && vehiculos[0].activo !== undefined) {
-      const filtrados = vehiculos.filter(v => v.activo === true);
-      console.log(`📊 Filtrados ${filtrados.length} vehículos activos de ${vehiculos.length} totales`);
-      return filtrados;
-    }
-    
-    // Si no hay columna activo, devolver todos
-    console.log('ℹ️ No se encontró columna "activo", devolviendo todos los vehículos');
-    return vehiculos;
-  },
-  
-  // Obtener vehículo por ID
-  async getVehiculoById(id) {
+  // NUEVA FUNCIÓN: Obtener todos los Kits de Mejora (de la tabla kits_upgrade)
+  async getKits() {
+    console.log('🛠️ Iniciando carga de kits de mejora desde Supabase...');
     try {
-      console.log(`🔍 Buscando vehículo ID: ${id}`);
-      
-      const response = await fetch(`${CONFIG.supabase.url}/rest/v1/iac?id=eq.${id}`, {
+      // La tabla debe llamarse 'kits_upgrade'
+      const url = `${CONFIG.supabase.url}/rest/v1/kits_upgrade?select=*&order=precio.asc`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'apikey': CONFIG.supabase.anonKey,
+          'Authorization': `Bearer ${CONFIG.supabase.anonKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (!response.ok) throw new Error(await response.text());
+      const data = await response.json();
+      console.log(`📦 Kits cargados: ${data.length}`);
+      return data;
+    } catch (error) {
+      console.error('❌ Error al cargar los kits:', error);
+      // Devuelve kits por defecto si falla la carga
+      return this.getDefaultKits(); 
+    }
+  },
+
+  // NUEVA FUNCIÓN: Obtener la imagen específica de un vehículo con un kit
+  async getKitImageForVehicle(vehiculoId, kitId) {
+    console.log(`🖼️ Buscando imagen para Vehículo ${vehiculoId} con Kit ${kitId}...`);
+    try {
+      // La tabla debe llamarse 'vehiculo_kits'
+      const url = `${CONFIG.supabase.url}/rest/v1/vehiculo_kits?select=imagen_kit_url&vehiculo_id=eq.${vehiculoId}&kit_id=eq.${kitId}`;
+       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'apikey': CONFIG.supabase.anonKey,
@@ -113,77 +106,46 @@ export const supabaseService = {
         }
       });
       
+      if (!response.ok) throw new Error(await response.text());
+      const data = await response.json();
+
+      // Devolver la primera URL encontrada
+      return data[0]?.imagen_kit_url || null; 
+
+    } catch (error) {
+      console.error('❌ Error al buscar imagen de kit:', error);
+      return null;
+    }
+  },
+
+  // Obtener vehículo por ID
+  async getVehiculoById(id) {
+    try {
+      console.log(`🔍 Buscando vehículo ID: ${id}`);
+      const response = await fetch(`${CONFIG.supabase.url}/rest/v1/iac?id=eq.${id}&select=*`, {
+        method: 'GET',
+        headers: {
+          'apikey': CONFIG.supabase.anonKey,
+          'Authorization': `Bearer ${CONFIG.supabase.anonKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (!response.ok) {
         console.error(`❌ Error obteniendo vehículo ${id}:`, response.status);
         return null;
       }
-      
       const data = await response.json();
       return data[0] || null;
-      
     } catch (error) {
-      console.error('Error en getVehiculoById:', error);
+      console.error(`❌ Error en getVehiculoById ${id}:`, error);
       return null;
     }
   },
   
-  // Obtener kits de un vehículo específico
-  async getKitsByVehiculo(vehiculoId) {
-    try {
-      console.log(`🔧 Obteniendo kits para vehículo ID: ${vehiculoId}`);
-      
-      const vehiculo = await this.getVehiculoById(vehiculoId);
-      if (!vehiculo) {
-        console.log(`⚠️ Vehículo ${vehiculoId} no encontrado, usando kits por defecto`);
-        return this.getDefaultKits();
-      }
-      
-      const kits = [
-        {
-          id: "standar",
-          nombre: "Standar",
-          precio: 0,
-          descripcion: "Preparación básica incluida",
-          nivel: "standar"
-        }
-      ];
-      
-      // Buscar kit medium
-      const mediumPrecio = this.buscarPrecioKit(vehiculo, ['kit_medium_precio', 'medium_precio', 'kit_medium_price']);
-      if (mediumPrecio > 0) {
-        kits.push({
-          id: "medium",
-          nombre: "Medium",
-          precio: mediumPrecio,
-          descripcion: vehiculo.kit_medium_descripcion || "Mejoras estéticas y funcionales",
-          nivel: "medium"
-        });
-      }
-      
-      // Buscar kit full
-      const fullPrecio = this.buscarPrecioKit(vehiculo, ['kit_full_precio', 'full_precio', 'kit_full_price']);
-      if (fullPrecio > 0) {
-        kits.push({
-          id: "full",
-          nombre: "Full",
-          precio: fullPrecio,
-          descripcion: vehiculo.kit_full_descripcion || "Transformación premium completa",
-          nivel: "full"
-        });
-      }
-      
-      console.log(`✅ ${kits.length} kits generados`);
-      return kits;
-      
-    } catch (error) {
-      console.error('Error obteniendo kits:', error);
-      return this.getDefaultKits();
-    }
-  },
-  
-  // Buscar precio de kit en diferentes columnas
-  buscarPrecioKit(vehiculo, columnas) {
-    for (const columna of columnas) {
+  // Función helper para obtener el precio del vehículo (se mantiene igual)
+  findVehiclePrice(vehiculo) {
+    const posiblesColumnas = ['precio', 'price', 'costo'];
+    for (const columna of posiblesColumnas) {
       if (vehiculo[columna] !== undefined && vehiculo[columna] !== null) {
         const precio = parseFloat(vehiculo[columna]);
         if (!isNaN(precio) && precio > 0) {
@@ -195,7 +157,7 @@ export const supabaseService = {
     return 0;
   },
   
-  // Kits por defecto
+  // Kits por defecto (Si fallan las tablas, al menos se muestran los que estaban en el UI anterior)
   getDefaultKits() {
     return [
       {
@@ -232,50 +194,9 @@ supabaseService.getVehiculos()
       console.log(`📊 ${data.length} vehículos cargados correctamente`);
       console.log('Nombres de vehículos:', data.map(v => v.nombre || 'Sin nombre').join(', '));
     } else {
-      console.log('⚠️ Conexión exitosa pero la tabla está vacía');
-      console.log('   Verifica que tu tabla "iac" tenga datos en Supabase');
+      console.log('⚠️ CONEXIÓN OK, pero no hay vehículos en la tabla "iac" o fallo la carga inicial.');
     }
   })
   .catch(error => {
-    console.error('❌ Error en prueba de conexión:', error);
+    console.error('❌ FALLO LA PRUEBA DE CONEXIÓN INICIAL:', error);
   });
-// En supabase.js
-
-export const supabaseService = {
-  // ... getVehiculos (asumimos que sigue igual) ...
-
-  // 1. Obtener todos los Kits de Mejora
-  async getKits() {
-    console.log('🛠️ Iniciando carga de kits de mejora...');
-    try {
-      const url = `${CONFIG.supabase.url}/rest/v1/kits_upgrade?select=*&order=precio.asc`;
-      const response = await fetch(url, { /* headers, etc. */ });
-      if (!response.ok) throw new Error(await response.text());
-      const data = await response.json();
-      console.log(`📦 Kits cargados: ${data.length}`);
-      return data;
-    } catch (error) {
-      console.error('❌ Error al cargar los kits:', error);
-      return []; // Devolver array vacío en caso de error
-    }
-  },
-
-  // 2. Obtener la imagen específica de un vehículo con un kit
-  async getKitImageForVehicle(vehiculoId, kitId) {
-    console.log(`🖼️ Buscando imagen para Vehículo ${vehiculoId} con Kit ${kitId}...`);
-    try {
-      // Usar 'vehiculo_kits' y filtrar por los dos IDs
-      const url = `${CONFIG.supabase.url}/rest/v1/vehiculo_kits?select=imagen_kit_url&vehiculo_id=eq.${vehiculoId}&kit_id=eq.${kitId}`;
-      const response = await fetch(url, { /* headers, etc. */ });
-      if (!response.ok) throw new Error(await response.text());
-      const data = await response.json();
-
-      // Devolver la primera URL encontrada
-      return data[0]?.imagen_kit_url || null; 
-
-    } catch (error) {
-      console.error('❌ Error al buscar imagen de kit:', error);
-      return null;
-    }
-  }
-};
