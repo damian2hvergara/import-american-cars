@@ -10,8 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <!-- Header -->
+<body class="modal-open">
     <header class="header">
         <div class="header-container">
             <div class="logo">
@@ -45,7 +44,6 @@
         </div>
     </header>
 
-    <!-- Hero -->
     <section class="hero" id="home">
         <div class="hero-content">
             <h1 class="hero-title">Vehículos Americanos Importados</h1>
@@ -81,188 +79,131 @@
                 </div>
             </div>
             
-            <div class="hero-cta">
-                <a href="#vehicles" class="button hero-button">
-                    <i class="fas fa-car"></i> Ver Vehículos Disponibles
-                </a>
-                <a href="https://wa.me/56981458545" target="_blank" class="button whatsapp-btn hero-button">
-                    <i class="fab fa-whatsapp"></i> Consultar por WhatsApp
-                </a>
-            </div>
+            <button class="button reload-data-btn" id="reloadDataButton" style="margin-top: 20px;">
+                <i class="fas fa-sync-alt"></i> Actualizar Datos
+            </button>
+            
         </div>
     </section>
 
-    <!-- Vehículos -->
     <section class="vehicles-section" id="vehicles">
-        <div class="section-container">
-            <h2 class="section-title">Vehículos Disponibles</h2>
-            <p class="section-subtitle">Selecciona un vehículo para ver detalles o personalizarlo con nuestros kits upgrade</p>
-            
-            <div class="filters">
-                <button class="filter-button active" data-filter="all">
-                    <i class="fas fa-th-large"></i> Todos
-                </button>
-                <button class="filter-button" data-filter="stock">
-                    <i class="fas fa-check-circle"></i> En Stock
-                </button>
-                <button class="filter-button" data-filter="transit">
-                    <i class="fas fa-shipping-fast"></i> En Tránsito
-                </button>
-                <button class="filter-button" data-filter="reserve">
-                    <i class="fas fa-calendar-check"></i> Para Reservar
-                </button>
-            </div>
-            
-            <div class="vehicles-grid" id="vehiclesContainer">
-                <div class="loading-message">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                    </div>
-                    <p>Cargando vehículos desde la base de datos...</p>
-                </div>
-            </div>
+        <h2 class="section-title">Nuestros Vehículos</h2>
+        <div class="filter-controls">
+            <button class="filter-button active" data-filter="all">Todos</button>
+            <button class="filter-button" data-filter="stock">Stock Arica</button>
+            <button class="filter-button" data-filter="transit">En Tránsito</button>
+            <button class="filter-button" data-filter="reserve">Para Reservar</button>
         </div>
+        <div class="vehicles-grid" id="vehiclesContainer">
+            </div>
     </section>
 
-    <!-- Kits Upgrade -->
     <section class="kits-section" id="customize">
-        <div class="section-container">
-            <h2 class="section-title">Kits Upgrade Personalizados</h2>
-            <p class="section-subtitle">
-                Cada vehículo tiene kits de upgrade con precios específicos según modelo.
-                Transforma tu vehículo según tus necesidades.
-            </p>
-            
-            <div class="kits-grid">
-                <div class="kit-card bronze">
-                    <div class="kit-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h3 class="kit-title">Standar</h3>
-                    <p class="kit-description">Preparación básica incluida con cada vehículo</p>
-                    <div class="kit-price">INCLUIDO</div>
-                    <ul class="kit-features">
-                        <li><i class="fas fa-check"></i> Limpieza completa</li>
-                        <li><i class="fas fa-check"></i> Revisión mecánica</li>
-                        <li><i class="fas fa-check"></i> Documentación en regla</li>
-                    </ul>
+        <h2 class="section-title">Kits Upgrade y Personalización</h2>
+        <p class="section-subtitle">Añade valor y exclusividad a tu vehículo con nuestros paquetes de mejora.</p>
+        
+        <div class="kits-grid">
+            <div class="kit-card gold">
+                <div class="kit-icon">
+                    <i class="fas fa-medal"></i>
                 </div>
-                
-                <div class="kit-card silver">
-                    <div class="kit-icon">
-                        <i class="fas fa-medal"></i>
-                    </div>
-                    <h3 class="kit-title">Medium</h3>
-                    <p class="kit-description">Mejoras estéticas y funcionales avanzadas</p>
-                    <div class="kit-price">DESDE $1.2M</div>
-                    <ul class="kit-features">
-                        <li><i class="fas fa-check"></i> Todo lo del Kit Standar</li>
-                        <li><i class="fas fa-check"></i> Llantas deportivas</li>
-                        <li><i class="fas fa-check"></i> Sistema de audio premium</li>
-                        <li><i class="fas fa-check"></i> Suspensión mejorada</li>
-                    </ul>
-                </div>
-                
-                <div class="kit-card gold">
-                    <div class="kit-icon">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <h3 class="kit-title">Full</h3>
-                    <p class="kit-description">Transformación premium completa</p>
-                    <div class="kit-price">DESDE $2.5M</div>
-                    <ul class="kit-features">
-                        <li><i class="fas fa-check"></i> Todo lo del Kit Medium</li>
-                        <li><i class="fas fa-check"></i> Sistema de sonido profesional</li>
-                        <li><i class="fas fa-check"></i> Interior premium</li>
-                        <li><i class="fas fa-check"></i> Sistema de iluminación LED</li>
-                        <li><i class="fas fa-check"></i> Performance tune</li>
-                    </ul>
-                </div>
+                <h3 class="kit-title">Standar</h3>
+                <p class="kit-description">Preparación básica incluida con cada vehículo</p>
+                <div class="kit-price">INCLUIDO</div>
+                <ul class="kit-features">
+                    <li><i class="fas fa-check"></i> Limpieza completa</li>
+                    <li><i class="fas fa-check"></i> Revisión mecánica</li>
+                    <li><i class="fas fa-check"></i> Documentación en regla</li>
+                </ul>
             </div>
-            
-            <div class="cta-center">
-                <button class="button" id="showAllKits">
-                    <i class="fas fa-cog"></i> Ver Kits por Vehículo
-                </button>
-                <p class="kit-disclaimer">* Los precios varían según el modelo del vehículo</p>
+            <div class="kit-card silver">
+                <div class="kit-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3 class="kit-title">Medium</h3>
+                <p class="kit-description">Mejoras estéticas y funcionales avanzadas</p>
+                <div class="kit-price">DESDE $1.2M</div>
+                <ul class="kit-features">
+                    <li><i class="fas fa-check"></i> Todo lo del Kit Standar</li>
+                    <li><i class="fas fa-check"></i> Llantas deportivas</li>
+                    <li><i class="fas fa-check"></i> Tratamiento de pintura</li>
+                    <li><i class="fas fa-check"></i> Audio Premium</li>
+                </ul>
             </div>
+            <div class="kit-card bronze">
+                <div class="kit-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3 class="kit-title">Full Power</h3>
+                <p class="kit-description">Transformación premium completa y de alto rendimiento</p>
+                <div class="kit-price">DESDE $2.5M</div>
+                <ul class="kit-features">
+                    <li><i class="fas fa-check"></i> Todo lo del Kit Medium</li>
+                    <li><i class="fas fa-check"></i> Reprogramación de motor</li>
+                    <li><i class="fas fa-check"></i> Suspensión deportiva</li>
+                    <li><i class="fas fa-check"></i> Kit de carrocería exclusivo</li>
+                </ul>
+            </div>
+        </div>
+        <p class="kit-disclaimer">
+            * Los kits varían por modelo. Puedes personalizar y cotizar el kit exacto al seleccionar un vehículo.
+        </p>
+        <div class="instagram-cta">
+            <button class="button button-outline" id="showAllKits">
+                <i class="fas fa-search"></i> Ver Vehículos para Personalizar
+            </button>
         </div>
     </section>
 
-    <!-- Instagram -->
     <section class="instagram-section" id="instagram">
-        <div class="section-container">
-            <h2 class="section-title">En Instagram</h2>
-            <p class="section-subtitle">
-                Sigue nuestro proceso de importación, vehículos en stock y transformaciones con kits upgrade
-            </p>
-            
-            <div class="instagram-feed" id="instagramFeed">
-                <!-- El contenido se carga dinámicamente desde app.js -->
-                <div class="instagram-placeholder">
-                    <div class="instagram-icon">
-                        <i class="fab fa-instagram"></i>
-                    </div>
-                    <h3>Últimas Publicaciones</h3>
-                    <p>Síguenos en Instagram para ver nuestro contenido actualizado</p>
-                </div>
+        <h2 class="section-title">Nuestro Feed en Instagram</h2>
+        <div class="instagram-feed" id="instagramFeedContainer">
             </div>
-            
-            <div class="instagram-cta">
-                <a href="https://www.instagram.com/import_american_cars" target="_blank" class="button-instagram">
-                    <i class="fab fa-instagram"></i>
-                    Seguir @import_american_cars
-                </a>
-                <p class="hashtags">#ImportAmericanCarsArica • #VehículosUSA • #KitsUpgrade • #Arica</p>
-            </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <h2 class="section-title">Contáctanos</h2>
+        <p class="section-subtitle">Estamos listos para ayudarte a encontrar el vehículo americano de tus sueños.</p>
+        
+        <div class="contact-buttons">
+            <a href="https://wa.me/56981458545" target="_blank" class="button whatsapp-btn">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a href="https://www.instagram.com/import_american_cars" target="_blank" class="button button-instagram">
+                <i class="fab fa-instagram"></i> Instagram
+            </a>
+        </div>
+        
+        <div class="contact-info">
+            <p><i class="fas fa-envelope"></i> contacto@importamericancars.cl</p>
+            <p><i class="fas fa-map-marker-alt"></i> Arica, Chile</p>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer" id="contact">
+    <footer class="footer">
         <div class="footer-content">
             <div class="footer-logo">
-                <div class="logo">Import American Cars</div>
-                <p class="footer-tagline">Vehículos americanos importados desde USA</p>
+                <span class="logo-text">Import American Cars</span>
+                <span class="footer-tagline">Tu socio en vehículos americanos.</span>
             </div>
-            
             <div class="footer-info">
-                <div class="contact-info">
-                    <h3>Contacto</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> Arica, Chile</p>
-                    <p><i class="fas fa-clock"></i> Lunes a Viernes 9:00 - 19:00</p>
-                    <p><i class="fas fa-envelope"></i> contacto@importamericancars.cl</p>
-                </div>
-                
-                <div class="social-links">
-                    <h3>Síguenos</h3>
-                    <div class="social-buttons">
-                        <a href="https://wa.me/56981458545" target="_blank" class="social-button whatsapp">
-                            <i class="fab fa-whatsapp"></i> WhatsApp
-                        </a>
-                        <a href="https://www.instagram.com/import_american_cars" target="_blank" class="social-button instagram">
-                            <i class="fab fa-instagram"></i> Instagram
-                        </a>
-                    </div>
-                </div>
+                <p>Ubicación: Arica, Chile</p>
+                <p>Contacto: <a href="https://wa.me/56981458545" target="_blank" class="footer-link">+56 9 8145 8545</a></p>
+                <p>Email: contacto@importamericancars.cl</p>
             </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2024 Import American Cars. Todos los derechos reservados.</p>
-                <p class="footer-note">Vehículos importados legalmente • Todos los documentos en regla</p>
-            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Import American Cars. Todos los derechos reservados.</p>
         </div>
     </footer>
 
-    <!-- Modales -->
     <div class="modal" id="vehicleModal">
         <div class="modal-content">
             <button class="close-modal" id="closeVehicleModal">
                 <i class="fas fa-times"></i>
             </button>
-            <div class="modal-body" id="vehicleModalContent">
-                <!-- Contenido dinámico -->
-            </div>
+            <div id="vehicleModalContent">
+                </div>
         </div>
     </div>
 
@@ -271,18 +212,13 @@
             <button class="close-modal" id="closeCustomizationModal">
                 <i class="fas fa-times"></i>
             </button>
-            <div class="modal-body">
-                <div class="customization-container" id="customizationContent">
-                    <!-- Contenido dinámico -->
+            <div id="customizationContent">
                 </div>
-            </div>
         </div>
     </div>
 
-    <!-- Notificaciones -->
     <div id="notificationContainer"></div>
 
-    <!-- Scripts -->
     <script type="module" src="js/config.js"></script>
     <script type="module" src="js/supabase.js"></script>
     <script type="module" src="js/productos.js"></script>
