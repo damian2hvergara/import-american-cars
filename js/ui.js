@@ -109,7 +109,7 @@ export class UI {
     // Se maneja en renderVehiculosGrid
   }
   
-  // Mostrar notificación
+  // Mostrar notificación - CORREGIDO
   static showNotification(message, type = 'success') {
     const container = document.getElementById('notificationContainer');
     if (!container) return;
@@ -146,11 +146,11 @@ export class UI {
       ">
         ${icons[type]}
       </div>
-      <div style="flex: 1;">
+      <div style="flex: 1; min-width: 0;">
         <div style="font-size: 14px; font-weight: 500; color: var(--text-primary);">
           ${type === 'success' ? 'Éxito' : type === 'error' ? 'Error' : type === 'warning' ? 'Advertencia' : 'Información'}
         </div>
-        <div style="font-size: 13px; color: var(--text-secondary);">${message}</div>
+        <div style="font-size: 13px; color: var(--text-secondary); overflow-wrap: break-word;">${message}</div>
       </div>
       <button style="
         background: none;
@@ -160,6 +160,7 @@ export class UI {
         padding: 4px;
         border-radius: 6px;
         transition: background 150ms;
+        flex-shrink: 0;
       ">
         <i class="fas fa-times"></i>
       </button>
@@ -189,14 +190,17 @@ export class UI {
     this.showNotification(message, 'error');
   }
   
-  // Mostrar modal
+  // Mostrar modal - CORREGIDO
   static showModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     
     // Resetear transformación
     const content = modal.querySelector('.modal-content');
-    content.style.transform = 'scale(0.95) translateY(20px)';
+    if (content) {
+      content.style.transform = 'scale(0.95) translateY(20px)';
+      content.style.opacity = '0';
+    }
     
     // Mostrar modal
     modal.classList.add('active');
@@ -204,17 +208,23 @@ export class UI {
     
     // Forzar reflow para animación
     setTimeout(() => {
-      content.style.transform = 'scale(1) translateY(0)';
+      if (content) {
+        content.style.transform = 'scale(1) translateY(0)';
+        content.style.opacity = '1';
+      }
     }, 10);
   }
   
-  // Cerrar modal
+  // Cerrar modal - CORREGIDO
   static closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (!modal) return;
     
     const content = modal.querySelector('.modal-content');
-    content.style.transform = 'scale(0.95) translateY(20px)';
+    if (content) {
+      content.style.transform = 'scale(0.95) translateY(20px)';
+      content.style.opacity = '0';
+    }
     
     setTimeout(() => {
       modal.classList.remove('active');
@@ -240,7 +250,7 @@ export class UI {
     });
   }
   
-  // Renderizar grid de vehículos
+  // Renderizar grid de vehículos - CORREGIDO
   static renderVehiculosGrid(vehiculos) {
     const container = document.getElementById('vehiclesContainer');
     if (!container) return;
@@ -271,34 +281,42 @@ export class UI {
       return;
     }
     
-    container.innerHTML = vehiculos.map(vehiculo => `
-      <div class="vehicle-card fade-in" data-id="${vehiculo.id}">
-        <img src="${vehiculo.imagenes[0]}" 
-             alt="${vehiculo.nombre}" 
-             class="vehicle-image"
-             onerror="this.src='${CONFIG.app.defaultImage}'">
-        <div class="vehicle-info">
-          <div class="vehicle-status">
-            ${vehiculo.estado === 'stock' ? 'En Stock Arica' : 
-              vehiculo.estado === 'transit' ? 'En Tránsito' : 
-              'Para Reservar'}
-          </div>
-          <h3 class="vehicle-title">${vehiculo.nombre}</h3>
-          <div class="vehicle-price">${productosManager.formatPrice(vehiculo.precio)} CLP</div>
-          <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: 16px; line-height: 1.5;">
-            ${vehiculo.descripcion.substring(0, 80)}${vehiculo.descripcion.length > 80 ? '...' : ''}
-          </p>
-          <div style="display: flex; gap: 8px;">
-            <button class="button" data-action="consultar" data-id="${vehiculo.id}" style="flex: 1;">
-              <i class="fab fa-whatsapp"></i> Consultar
-            </button>
-            <button class="button button-outline" data-action="kits" data-id="${vehiculo.id}" style="flex: 1;">
-              <i class="fas fa-crown"></i> Kits
-            </button>
+    container.innerHTML = vehiculos.map(vehiculo => {
+      // Asegurar que haya al menos una imagen
+      const primeraImagen = vehiculo.imagenes && vehiculo.imagenes.length > 0 
+        ? vehiculo.imagenes[0] 
+        : CONFIG.app.defaultImage;
+      
+      return `
+        <div class="vehicle-card fade-in" data-id="${vehiculo.id}">
+          <img src="${primeraImagen}" 
+               alt="${vehiculo.nombre}" 
+               class="vehicle-image"
+               onerror="this.src='${CONFIG.app.defaultImage}'"
+               loading="lazy">
+          <div class="vehicle-info">
+            <div class="vehicle-status">
+              ${vehiculo.estado === 'stock' ? 'En Stock Arica' : 
+                vehiculo.estado === 'transit' ? 'En Tránsito' : 
+                'Para Reservar'}
+            </div>
+            <h3 class="vehicle-title">${vehiculo.nombre || 'Vehículo sin nombre'}</h3>
+            <div class="vehicle-price">${productosManager.formatPrice(vehiculo.precio)}</div>
+            <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: 16px; line-height: 1.5; min-height: 45px;">
+              ${vehiculo.descripcion ? (vehiculo.descripcion.substring(0, 80) + (vehiculo.descripcion.length > 80 ? '...' : '')) : 'Sin descripción disponible.'}
+            </p>
+            <div style="display: flex; gap: 8px;">
+              <button class="button" data-action="consultar" data-id="${vehiculo.id}" style="flex: 1;">
+                <i class="fab fa-whatsapp"></i> Consultar
+              </button>
+              <button class="button button-outline" data-action="kits" data-id="${vehiculo.id}" style="flex: 1;">
+                <i class="fas fa-crown"></i> Kits
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
     
     // Asignar eventos a las tarjetas y botones
     container.querySelectorAll('.vehicle-card').forEach(card => {
@@ -322,23 +340,38 @@ export class UI {
       button.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = button.dataset.id;
-        this.customizeVehicle(id); // Abrir modal de personalización
+        this.customizeVehicle(id);
       });
     });
   }
   
-  // Lógica del Slider
+  // Lógica del Slider - CORREGIDO
   static initImageSlider(sliderElement, images, vehiculoNombre) {
+    if (!sliderElement || !images || images.length === 0) {
+      console.error('❌ No hay imágenes para el slider');
+      return;
+    }
+    
     const wrapper = sliderElement.querySelector('.slider-wrapper');
     const prevButton = sliderElement.querySelector('.slider-button-prev');
     const nextButton = sliderElement.querySelector('.slider-button-next');
+    
+    if (!wrapper || !prevButton || !nextButton) {
+      console.error('❌ Elementos del slider no encontrados');
+      return;
+    }
+    
     const totalSlides = images.length;
     let currentSlide = 0;
     
     // Limpiar y re-inyectar imágenes
-    wrapper.innerHTML = images.map(url => `
+    wrapper.innerHTML = images.map((url, index) => `
       <div class="slider-slide">
-        <img src="${url}" alt="Imagen de ${vehiculoNombre}" loading="lazy" onerror="this.src='${CONFIG.app.defaultImage}'">
+        <img src="${url}" 
+             alt="Imagen ${index + 1} de ${vehiculoNombre}" 
+             loading="lazy" 
+             onerror="this.src='${CONFIG.app.defaultImage}'
+             this.onerror=null">
       </div>
     `).join('');
 
@@ -368,7 +401,7 @@ export class UI {
     updateSlider();
   }
   
-  // Mostrar detalles del vehículo (Modal principal)
+  // Mostrar detalles del vehículo (Modal principal) - CORREGIDO
   static showVehicleDetails(vehicleId) {
     const vehiculo = productosManager.getVehiculoById(vehicleId);
     if (!vehiculo) {
@@ -377,6 +410,11 @@ export class UI {
     }
     
     const modalContent = document.getElementById('vehicleModalContent');
+    
+    // Asegurar que haya imágenes
+    const imagenes = vehiculo.imagenes && vehiculo.imagenes.length > 0 
+      ? vehiculo.imagenes 
+      : [CONFIG.app.defaultImage];
     
     // Inyectar el HTML del modal con el contenedor del slider
     modalContent.innerHTML = `
@@ -395,15 +433,17 @@ export class UI {
               vehiculo.estado === 'transit' ? 'En Tránsito' : 
               'Para Reservar'}
           </div>
-          <h2 class="detail-title">${vehiculo.nombre}</h2>
-          <div class="detail-price">${productosManager.formatPrice(vehiculo.precio)} CLP</div>
-          <p class="detail-description">${vehiculo.descripcion}</p>
+          <h2 class="detail-title">${vehiculo.nombre || 'Vehículo'}</h2>
+          <div class="detail-price">${productosManager.formatPrice(vehiculo.precio)}</div>
+          <p class="detail-description">${vehiculo.descripcion || 'Sin descripción disponible.'}</p>
           
           <div class="detail-features">
             ${vehiculo.motor ? `<div><i class="fas fa-cogs"></i> Motor: ${vehiculo.motor}</div>` : ''}
-            ${vehiculo.kilometraje ? `<div><i class="fas fa-road"></i> KM: ${vehiculo.kilometraje}</div>` : ''}
+            ${vehiculo.kilometraje ? `<div><i class="fas fa-road"></i> Kilometraje: ${vehiculo.kilometraje} km</div>` : ''}
             ${vehiculo.ano ? `<div><i class="fas fa-calendar"></i> Año: ${vehiculo.ano}</div>` : ''}
             ${vehiculo.color ? `<div><i class="fas fa-palette"></i> Color: ${vehiculo.color}</div>` : ''}
+            ${vehiculo.transmision ? `<div><i class="fas fa-exchange-alt"></i> Transmisión: ${vehiculo.transmision}</div>` : ''}
+            ${vehiculo.combustible ? `<div><i class="fas fa-gas-pump"></i> Combustible: ${vehiculo.combustible}</div>` : ''}
           </div>
 
           <div class="modal-actions">
@@ -420,7 +460,7 @@ export class UI {
 
     // Inicializar el Slider con el array de imágenes
     const sliderElement = document.getElementById('vehicleImageSlider');
-    this.initImageSlider(sliderElement, vehiculo.imagenes, vehiculo.nombre);
+    this.initImageSlider(sliderElement, imagenes, vehiculo.nombre || 'Vehículo');
     
     // Asignar eventos dentro del modal
     document.getElementById('whatsappFromModal')?.addEventListener('click', (e) => {
@@ -435,7 +475,7 @@ export class UI {
     this.showModal('vehicleModal');
   }
   
-  // Mostrar modal de personalización
+  // Mostrar modal de personalización - CORREGIDO
   static async customizeVehicle(vehicleId) {
     const vehiculo = productosManager.getVehiculoById(vehicleId);
     if (!vehiculo) {
@@ -450,20 +490,26 @@ export class UI {
     }
     
     const modalContent = document.getElementById('customizationContent');
+    
+    // Asegurar imagen principal
+    const imagenPrincipal = vehiculo.imagen_principal_card || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
+    
     modalContent.innerHTML = `
       <div class="customization-header">
-        <h3>Personaliza tu ${vehiculo.nombre}</h3>
+        <h3>Personaliza tu ${vehiculo.nombre || 'Vehículo'}</h3>
         <p>Selecciona un paquete de mejora para ver la comparación visual.</p>
       </div>
 
       <div class="comparison-container">
         <div class="comparison-panel original-vehicle">
           <h3>Vehículo Base</h3>
-          <img id="originalVehicleImage" src="${vehiculo.imagen_principal_card}" alt="Vehículo Original">
+          <img id="originalVehicleImage" src="${imagenPrincipal}" alt="Vehículo Original"
+               onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
         </div>
         <div class="comparison-panel customized-vehicle">
           <h3>Con Kit <span id="selectedKitName">...</span></h3>
-          <img id="customizedVehicleImage" src="${vehiculo.imagen_principal_card}" alt="Vehículo Personalizado">
+          <img id="customizedVehicleImage" src="${imagenPrincipal}" alt="Vehículo Personalizado"
+               onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
         </div>
       </div>
 
@@ -485,7 +531,7 @@ export class UI {
       <div class="customization-summary">
         <div class="summary-line">
           <span>Precio Vehículo Base:</span>
-          <span class="price-value">${productosManager.formatPrice(vehiculo.precio)} CLP</span>
+          <span class="price-value">${productosManager.formatPrice(vehiculo.precio)}</span>
         </div>
         <div class="summary-line">
           <span>Costo Kit Seleccionado:</span>
@@ -504,33 +550,37 @@ export class UI {
     
     // 1. Asignar Event Listeners a los botones de kits
     const kitSelectionContainer = document.getElementById('kitSelectionContainer');
-    kitSelectionContainer.querySelectorAll('.kit-button').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const kitId = e.currentTarget.dataset.kitId;
-        const kitNombre = e.currentTarget.dataset.kitNombre;
-        const kitPrecio = parseFloat(e.currentTarget.dataset.kitPrecio);
-        
-        // Llama a la lógica de selección y comparación
-        this.selectKit(vehiculo, kitId, kitNombre, kitPrecio);
-        
-        // Actualizar clase active inmediatamente
-        kitSelectionContainer.querySelectorAll('.kit-button').forEach(btn => btn.classList.remove('active'));
-        e.currentTarget.classList.add('active');
+    if (kitSelectionContainer) {
+      kitSelectionContainer.querySelectorAll('.kit-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const kitId = e.currentTarget.dataset.kitId;
+          const kitNombre = e.currentTarget.dataset.kitNombre;
+          const kitPrecio = parseFloat(e.currentTarget.dataset.kitPrecio);
+          
+          // Llama a la lógica de selección y comparación
+          this.selectKit(vehiculo, kitId, kitNombre, kitPrecio);
+          
+          // Actualizar clase active inmediatamente
+          kitSelectionContainer.querySelectorAll('.kit-button').forEach(btn => btn.classList.remove('active'));
+          e.currentTarget.classList.add('active');
+        });
       });
-    });
 
-    // 2. Inicializar con el kit Standard (o el primero)
-    const defaultKitButton = kitSelectionContainer.querySelector('.kit-button[data-default-kit="true"]') || 
-                            kitSelectionContainer.querySelector('.kit-button');
-    if (defaultKitButton) {
-      defaultKitButton.click();
+      // 2. Inicializar con el kit Standard (o el primero)
+      const defaultKitButton = kitSelectionContainer.querySelector('.kit-button[data-default-kit="true"]') || 
+                              kitSelectionContainer.querySelector('.kit-button');
+      if (defaultKitButton) {
+        defaultKitButton.click();
+      }
     }
     
     // 3. Evento para solicitar cotización
     document.getElementById('requestQuote')?.addEventListener('click', () => {
       // Obtener el kit seleccionado
-      const selectedButton = kitSelectionContainer.querySelector('.kit-button.active');
-      const selectedKit = productosManager.getKitsForDisplay().find(k => k.id === selectedButton?.dataset.kitId);
+      const selectedButton = kitSelectionContainer?.querySelector('.kit-button.active');
+      const selectedKit = selectedButton ? 
+        productosManager.getKitsForDisplay().find(k => k.id === selectedButton.dataset.kitId) : 
+        kits[0];
       
       this.contactVehicle(vehiculo.id, selectedKit);
     });
@@ -538,32 +588,63 @@ export class UI {
     this.showModal('customizationModal');
   }
 
-  // Lógica para seleccionar un kit y actualizar la imagen de comparación
+  // CORREGIDO: Lógica para seleccionar un kit y actualizar la imagen de comparación
   static async selectKit(vehiculo, kitId, kitNombre, kitPrecio) {
-    const originalImageUrl = vehiculo.imagen_principal_card;
+    const originalImageUrl = vehiculo.imagen_principal_card || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
     const customizedImageElement = document.getElementById('customizedVehicleImage');
     const selectedKitNameElement = document.getElementById('selectedKitName');
     const kitPriceValueElement = document.getElementById('kitPriceValue');
     const totalPriceValueElement = document.getElementById('totalPriceValue');
     
-    // Actualizar nombres y precios inmediatamente
-    selectedKitNameElement.textContent = kitNombre;
-    kitPriceValueElement.textContent = `+${productosManager.formatPrice(kitPrecio)} CLP`;
-    const totalPrice = (vehiculo.precio || 0) + kitPrecio;
-    totalPriceValueElement.textContent = `${productosManager.formatPrice(totalPrice)} CLP`;
-
-    // Si es el kit "Standard" (precio 0), usamos la imagen original inmediatamente
-    if (kitPrecio === 0) {
-      customizedImageElement.src = originalImageUrl;
+    if (!customizedImageElement || !selectedKitNameElement || !kitPriceValueElement || !totalPriceValueElement) {
+      console.error('❌ Elementos del DOM no encontrados en selectKit');
       return;
     }
     
-    // Intentar obtener la imagen personalizada de Supabase
-    // Puedes añadir un spinner visual en tu HTML/CSS mientras carga
-    let imageUrl = await productosManager.getCustomizationImage(vehiculo.id, kitId);
+    // Mostrar loading
+    customizedImageElement.style.opacity = '0.7';
     
-    // Si se encuentra la imagen, úsala. Si no, usa la imagen original como fallback.
-    customizedImageElement.src = imageUrl || originalImageUrl; 
+    // Actualizar nombres y precios inmediatamente
+    selectedKitNameElement.textContent = kitNombre;
+    kitPriceValueElement.textContent = kitPrecio > 0 ? `+${productosManager.formatPrice(kitPrecio)}` : 'INCLUIDO';
+    const totalPrice = (vehiculo.precio || 0) + kitPrecio;
+    totalPriceValueElement.textContent = `${productosManager.formatPrice(totalPrice)}`;
+
+    // Si es el kit "Standard" (precio 0), usar imagen original
+    if (kitPrecio === 0) {
+      customizedImageElement.src = originalImageUrl;
+      customizedImageElement.style.opacity = '1';
+      return;
+    }
+    
+    try {
+      // Intentar obtener la imagen personalizada de Supabase
+      let imageUrl = await productosManager.getCustomizationImage(vehiculo.id, kitId);
+      
+      // Si no hay imagen personalizada, usar la imagen base
+      if (!imageUrl) {
+        console.log(`ℹ️ No hay imagen personalizada para ${kitNombre}. Usando imagen base.`);
+        imageUrl = originalImageUrl;
+      }
+      
+      // Precargar la imagen
+      const img = new Image();
+      img.onload = () => {
+        customizedImageElement.src = imageUrl;
+        customizedImageElement.style.opacity = '1';
+      };
+      img.onerror = () => {
+        console.warn(`⚠️ Error al cargar imagen personalizada: ${imageUrl}`);
+        customizedImageElement.src = originalImageUrl;
+        customizedImageElement.style.opacity = '1';
+      };
+      img.src = imageUrl;
+      
+    } catch (error) {
+      console.error('❌ Error al cargar imagen de kit:', error);
+      customizedImageElement.src = originalImageUrl;
+      customizedImageElement.style.opacity = '1';
+    }
   }
 
   // Mostrar todos los vehículos para personalización
@@ -571,7 +652,6 @@ export class UI {
     this.closeModal('vehicleModal');
     this.closeModal('customizationModal');
     
-    // Para simplificar, simplemente navegaremos a la sección de vehículos
     window.scrollTo({ top: document.getElementById('vehicles').offsetTop - 80, behavior: 'smooth' });
     this.showNotification("Selecciona un vehículo para personalizarlo.", "info");
   }
