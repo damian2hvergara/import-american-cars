@@ -494,69 +494,103 @@ static async customizeVehicle(vehicleId) {
   // Asegurar imagen principal
   const imagenPrincipal = vehiculo.imagen_principal_card || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
   
-  // ⚠️ REEMPLAZA DESDE AQUÍ (línea ~480)
-  modalContent.innerHTML = `
-    <div class="customization-header">
-      <h3>Personaliza tu ${vehiculo.nombre || 'Vehículo'}</h3>
-      <p>Selecciona un paquete de mejora para ver la comparación visual</p>
+modalContent.innerHTML = `
+<div class="comparison-section">
+    <div class="comparison-header">
+        <h2 class="comparison-title">Personaliza tu ${vehiculo.nombre || 'Vehículo'}</h2>
+        <p class="comparison-subtitle">Compara visualmente y selecciona el kit de mejora perfecto</p>
     </div>
 
-    <div class="comparison-container">
-      <div class="comparison-panel original-vehicle">
-        <h3>Vehículo Base</h3>
-        <img id="originalVehicleImage" src="${imagenPrincipal}" alt="Vehículo Original"
-             onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
-      </div>
-      <div class="comparison-panel customized-vehicle">
-        <h3>Con Kit <span id="selectedKitName">Standard</span></h3>
-        <img id="customizedVehicleImage" src="${imagenPrincipal}" alt="Vehículo Personalizado"
-             onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
-      </div>
+    <div class="visual-comparison">
+        <div class="comparison-divider">
+            <i class="fas fa-exchange-alt"></i>
+        </div>
+        
+        <!-- COLUMNA ORIGINAL -->
+        <div class="comparison-column">
+            <div class="column-header">
+                <h3>Vehículo Original</h3>
+                <div class="column-badge">Versión Base</div>
+            </div>
+            <div class="image-container">
+                <img id="originalVehicleImage" src="${imagenPrincipal}" 
+                     alt="Vehículo Original" class="comparison-image"
+                     onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
+            </div>
+            <div class="column-footer">
+                <span class="price-label">Precio Base</span>
+                <span class="price-display">${productosManager.formatPrice(vehiculo.precio)}</span>
+            </div>
+        </div>
+        
+        <!-- COLUMNA PERSONALIZADA -->
+        <div class="comparison-column">
+            <div class="column-header">
+                <h3>Vehículo Personalizado</h3>
+                <div class="column-badge" id="selectedKitBadge">Standard</div>
+            </div>
+            <div class="image-container">
+                <img id="customizedVehicleImage" src="${imagenPrincipal}" 
+                     alt="Vehículo Personalizado" class="comparison-image"
+                     onerror="this.src='${CONFIG.app.defaultImage}'; this.onerror=null">
+            </div>
+            <div class="column-footer">
+                <span class="price-label">Precio con Kit</span>
+                <span class="price-display" id="combinedPriceDisplay">${productosManager.formatPrice(vehiculo.precio)}</span>
+            </div>
+        </div>
     </div>
 
-    <div style="margin: var(--space-3xl) 0 var(--space-2xl);">
-      <h4 style="font-size: 17px; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg); text-align: center;">
-        Seleccionar Paquete de Mejora
-      </h4>
-      <div id="kitSelectionContainer" class="kit-selection-controls">
-        ${kits.map(kit => `
-          <button class="button kit-button" 
-                  data-kit-id="${kit.id}" 
-                  data-vehiculo-id="${vehiculo.id}"
-                  data-kit-precio="${kit.precio}"
-                  data-kit-nombre="${kit.nombre}"
-                  ${kit.nivel === 'standar' ? 'data-default-kit="true"' : ''}>
-            ${kit.nombre} 
-            <span class="kit-price">(${productosManager.formatPrice(kit.precio)})</span>
-          </button>
-        `).join('')}
-      </div>
-    </div>
-    
-    <div class="customization-summary">
-      <div class="summary-line">
-        <span>Precio Vehículo Base:</span>
-        <span class="price-value">${productosManager.formatPrice(vehiculo.precio)}</span>
-      </div>
-      <div class="summary-line">
-        <span>Costo Kit Seleccionado:</span>
-        <span class="price-value" id="kitPriceValue">INCLUIDO</span>
-      </div>
-      <div class="summary-total">
-        <span>Precio Total Estimado:</span>
-        <span class="price-value" id="totalPriceValue">${productosManager.formatPrice(vehiculo.precio)}</span>
-      </div>
-    </div>
+    <!-- SECCIÓN DE KITS FIJA -->
+    <div class="kit-selection-section">
+        <h3 class="selection-title">Selecciona tu Kit de Mejora</h3>
+        
+        <div class="kit-cards-horizontal" id="kitSelectionContainer">
+            ${kits.map(kit => `
+            <div class="kit-card-horizontal" 
+                 data-kit-id="${kit.id}"
+                 data-vehiculo-id="${vehiculo.id}"
+                 data-kit-precio="${kit.precio}"
+                 data-kit-nombre="${kit.nombre}"
+                 ${kit.nivel === 'standar' ? 'data-default-kit="true"' : ''}>
+                <div class="kit-icon-horizontal">
+                    <i class="${kit.nivel === 'standar' ? 'fas fa-check-circle' : 
+                               kit.nivel === 'medium' ? 'fas fa-star' : 
+                               'fas fa-crown'}"></i>
+                </div>
+                <h4 class="kit-name-horizontal">${kit.nombre}</h4>
+                <div class="kit-price-horizontal">${kit.precio > 0 ? '+' + productosManager.formatPrice(kit.precio) : 'INCLUIDO'}</div>
+                <p class="kit-description-horizontal">${kit.descripcion || 'Kit de mejora premium'}</p>
+            </div>
+            `).join('')}
+        </div>
 
-    <div style="text-align: center; margin-top: var(--space-3xl);">
-      <button class="button whatsapp-btn" id="requestQuote" style="padding: var(--space-lg) var(--space-3xl); font-size: 17px;">
-        <i class="fab fa-whatsapp"></i> Solicitar Cotización con este Kit
-      </button>
+        <!-- RESUMEN DE PRECIOS -->
+        <div class="price-summary">
+            <div class="summary-row">
+                <span class="summary-label">Precio del vehículo:</span>
+                <span class="summary-value" id="basePriceValue">${productosManager.formatPrice(vehiculo.precio)}</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Kit seleccionado:</span>
+                <span class="summary-value" id="kitPriceValue">Standard (Incluido)</span>
+            </div>
+            <div class="summary-row summary-total">
+                <span class="summary-label">PRECIO TOTAL:</span>
+                <span class="summary-value" id="totalPriceValue">${productosManager.formatPrice(vehiculo.precio)}</span>
+            </div>
+        </div>
+
+        <!-- BOTÓN DE ACCIÓN -->
+        <div class="action-button-container">
+            <button class="whatsapp-action-btn" id="requestQuote">
+                <i class="fab fa-whatsapp"></i>
+                Solicitar cotización con este kit
+            </button>
+        </div>
     </div>
-  `;
-  // ⚠️ HASTA AQUÍ
-  
-  // El resto del código se mantiene igual...
+</div>
+`;
   // 1. Asignar Event Listeners a los botones de kits
   const kitSelectionContainer = document.getElementById('kitSelectionContainer');
   if (kitSelectionContainer) {
@@ -597,19 +631,21 @@ static async customizeVehicle(vehicleId) {
   this.showModal('customizationModal');
 }
 
-  // CORREGIDO: Lógica para seleccionar un kit y actualizar la imagen de comparación
-  static async selectKit(vehiculo, kitId, kitNombre, kitPrecio) {
+static async selectKit(vehiculo, kitId, kitNombre, kitPrecio) {
     const originalImageUrl = vehiculo.imagen_principal_card || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
     const customizedImageElement = document.getElementById('customizedVehicleImage');
-    const selectedKitNameElement = document.getElementById('selectedKitName');
-    const kitPriceValueElement = document.getElementById('kitPriceValue');
-    const totalPriceValueElement = document.getElementById('totalPriceValue');
+    const selectedKitBadge = document.getElementById('selectedKitBadge');
+    const combinedPriceDisplay = document.getElementById('combinedPriceDisplay');
+    const kitPriceValue = document.getElementById('kitPriceValue');
+    const totalPriceValue = document.getElementById('totalPriceValue');
     
-    if (!customizedImageElement || !selectedKitNameElement || !kitPriceValueElement || !totalPriceValueElement) {
-      console.error('❌ Elementos del DOM no encontrados en selectKit');
-      return;
-    }
-    
+    // Actualizar badge y precios inmediatamente
+    selectedKitBadge.textContent = kitNombre;
+    const totalPrice = (vehiculo.precio || 0) + kitPrecio;
+    combinedPriceDisplay.textContent = productosManager.formatPrice(totalPrice);
+    kitPriceValue.textContent = `${kitNombre} (${kitPrecio > 0 ? '+' + productosManager.formatPrice(kitPrecio) : 'Incluido'})`;
+    totalPriceValue.textContent = productosManager.formatPrice(totalPrice);
+  
     // Mostrar loading
     customizedImageElement.style.opacity = '0.7';
     
