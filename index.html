@@ -94,7 +94,8 @@
                         <div class="indicator-label">Para Reservar</div>
                     </div>
                 </div>
-            </div>            
+            </div>
+            
         </div>
     </section>
 
@@ -291,13 +292,6 @@
             const yearElement = document.getElementById('currentYear');
             if (yearElement) {
                 yearElement.textContent = new Date().getFullYear();
-            }
-        });
-        
-        // Recargar datos
-        document.getElementById('reloadDataButton')?.addEventListener('click', function() {
-            if (window.app) {
-                window.app.reloadData();
             }
         });
     </script>
