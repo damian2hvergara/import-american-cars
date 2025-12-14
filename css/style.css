@@ -685,3 +685,447 @@ body {
 .fade-in {
     animation: fadeIn 0.5s ease-out;
 }
+/* ===== ESTILOS ADICIONALES PARA LA VERSIÓN CORREGIDA ===== */
+
+/* Logo mejorado */
+.logo-text {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: -0.5px;
+}
+
+.logo-subtext {
+    font-size: 12px;
+    color: #86868b;
+    display: block;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+/* Hero mejorado */
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 800;
+    letter-spacing: -0.003em;
+    margin-bottom: 18px;
+    line-height: 1.1;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    color: #86868b;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.5;
+}
+
+.hero-cta {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.hero-button {
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Indicadores mejorados */
+.indicator {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 20px;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: var(--border);
+    min-width: 200px;
+}
+
+.indicator:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+
+.indicator-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    background: var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--black);
+}
+
+.indicator-content {
+    flex: 1;
+}
+
+.indicator-number {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: var(--black);
+}
+
+.indicator-label {
+    font-size: 14px;
+    color: #86868b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+/* Section containers */
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 22px;
+}
+
+/* Kits mejorados */
+.kit-features {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.kit-features li {
+    padding: 6px 0;
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.kit-features i {
+    color: var(--success);
+    font-size: 12px;
+}
+
+.kit-disclaimer {
+    margin-top: 16px;
+    font-size: 14px;
+    color: #86868b;
+    font-style: italic;
+}
+
+/* Instagram mejorado */
+.instagram-icon {
+    font-size: 48px;
+    color: var(--instagram);
+    margin-bottom: 20px;
+}
+
+/* Footer mejorado */
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 22px;
+}
+
+.footer-logo {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.footer-tagline {
+    color: #86868b;
+    margin-top: 8px;
+    font-size: 16px;
+}
+
+.footer-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.contact-info h3,
+.social-links h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--black);
+}
+
+.contact-info p {
+    color: #86868b;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.social-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.social-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: var(--black);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.social-button.whatsapp {
+    background: #25D366;
+}
+
+.social-button.instagram {
+    background: linear-gradient(45deg, #405DE6, #833AB4, #E1306C);
+}
+
+.social-button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 40px;
+    border-top: var(--border);
+}
+
+.footer-bottom p {
+    color: #86868b;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.footer-note {
+    font-size: 13px;
+    color: #a1a1a6;
+}
+
+/* Modal mejorado */
+.modal-content {
+    background: var(--white);
+    max-width: 900px;
+    margin: 80px auto;
+    border-radius: 20px;
+    position: relative;
+    animation: modalAppear 0.3s ease-out;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: var(--white);
+    border: var(--border);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--black);
+    z-index: 10;
+    transition: all 0.3s;
+}
+
+.close-modal:hover {
+    background: var(--gray-100);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 36px;
+    }
+    
+    .hero-subtitle {
+        font-size: 18px;
+    }
+    
+    .hero-cta {
+        flex-direction: column;
+    }
+    
+    .hero-button {
+        width: 100%;
+    }
+    
+    .stock-indicators {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .indicator {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+    
+    .modal-content {
+        margin: 20px;
+        max-width: calc(100% - 40px);
+        border-radius: 16px;
+    }
+    
+    .footer-info {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .contact-info p {
+        justify-content: center;
+    }
+    
+    .social-buttons {
+        justify-content: center;
+    }
+}
+
+/* Animaciones mejoradas */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Loading spinner mejorado */
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid var(--gray-100);
+    border-top-color: var(--black);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-spinner i {
+    font-size: 24px;
+    color: var(--black);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Mejoras en botones */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--black);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #333;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.button-outline {
+    background: transparent;
+    color: var(--black);
+    border: 2px solid var(--black);
+}
+
+.button-outline:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+/* Mejoras en tarjetas de vehículos */
+.vehicle-card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.vehicle-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--bronze), var(--silver), var(--gold));
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.vehicle-card:hover::before {
+    opacity: 1;
+}
+
+.vehicle-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.vehicle-card:hover .vehicle-image {
+    transform: scale(1.05);
+}
