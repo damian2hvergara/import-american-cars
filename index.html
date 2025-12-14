@@ -5,75 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Import American Cars | IAC - Vehículos USA</title>
     
+    <!-- Meta tags Apple -->
     <meta name="theme-color" content="#f5f5f7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
     <meta name="description" content="Importación de vehículos seleccionados desde EE.UU. a Zona Franca Arica. Calidad premium y personalización.">
     
+    <!-- Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-    
     <header class="header">
-        <div class="container">
-            <nav class="navbar">
-                <a href="#hero" class="logo">IAC</a>
-                <div class="nav-links">
-                    <a href="#vehicles">Stock</a>
-                    <a href="#kits">Kits Premium</a>
-                    <a href="#about">Nosotros</a>
-                    <a href="#contact">Contacto</a>
-                </div>
-                <div class="menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
-                </div>
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-text">Import American Cars- Arica</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#vehicles" class="nav-link">Vehículos</a>
+                <a href="#customize" class="nav-link">Kits Upgrade</a>
+                <a href="#instagram" class="nav-link">Instagram</a>
+                <a href="#contact" class="nav-link">Contacto</a>
             </nav>
-        </div>
-        <div class="mobile-menu" id="mobileMenu">
-            <a href="#vehicles">Stock</a>
-            <a href="#kits">Kits Premium</a>
-            <a href="#about">Nosotros</a>
-            <a href="#contact">Contacto</a>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </header>
-    
-    <section class="hero" id="hero">
+
+    <section class="hero" id="home">
         <div class="hero-content">
-            <h1>Vehículos Premium de USA en Arica</h1>
-            <p class="hero-subtitle">Importación directa. Personalización exclusiva con Kits Upgrade.</p>
-            <a href="#vehicles" class="btn-primary" style="display:inline-block; font-size:var(--text-lg); padding:var(--space-md) var(--space-2xl); margin-top:var(--space-lg); border-radius:10px;">Ver Stock Completo</a>
+            <h1 class="hero-title">
+                <span class="hero-main">IAC</span>
+            </h1>
+            <p class="hero-subtitle">Importación de vehículos exclusivos desde EE.UU. a Zona Franca Arica</p>
+            
+            <div class="stock-indicators">
+                <div class="indicator" data-filter="stock">
+                    <div class="indicator-icon" style="color: #34C759;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="indicator-content">
+                        <div class="indicator-number" id="stockCount">0</div>
+                        <div class="indicator-label">En Stock Arica</div>
+                    </div>
+                </div>
+                <div class="indicator" data-filter="transit">
+                    <div class="indicator-icon" style="color: #34C759;">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="indicator-content">
+                        <div class="indicator-number" id="transitCount">0</div>
+                        <div class="indicator-label">En Tránsito</div>
+                    </div>
+                </div>
+                <div class="indicator" data-filter="reserve">
+                    <div class="indicator-icon" style="color: #FF9500;">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="indicator-content">
+                        <div class="indicator-number" id="reserveCount">0</div>
+                        <div class="indicator-label">Para Reservar</div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </section>
 
-    <section class="container" style="padding-top: 0; margin-top: -80px; z-index: 10; position: relative;">
-        <div class="stock-indicators">
-            <div class="indicator stock" data-filter="stock">
-                <i class="fas fa-warehouse"></i>
-                <span class="indicator-count" id="stockCount">0</span>
-                <span class="indicator-title">Stock Arica</span>
-            </div>
-            <div class="indicator transit" data-filter="transit">
-                <i class="fas fa-ship"></i> <span class="indicator-count" id="transitCount">0</span>
-                <span class="indicator-title">En Tránsito</span>
-            </div>
-            <div class="indicator reserve" data-filter="reserve">
-                <i class="fas fa-calendar-check"></i>
-                <span class="indicator-count" id="reserveCount">0</span>
-                <span class="indicator-title">Para Reservar</span>
-            </div>
-        </div>
-    </section>
-
-    <section id="vehicles" class="container">
-        <h2 class="section-title">Nuestra Selección de Vehículos</h2>
+    <section class="vehicles-section" id="vehicles">
+        <h2 class="section-title">Nuestros Vehículos</h2>
+        <p class="section-subtitle">Selección premium de vehículos americanos importados</p>
         
         <div class="filter-controls">
             <button class="filter-button active" data-filter="all">Todos</button>
@@ -82,160 +93,153 @@
             <button class="filter-button" data-filter="reserve">Para Reservar</button>
         </div>
         
-        <div class="vehicles-grid" id="vehiclesGrid">
-            </div>
+        <div class="vehicles-grid" id="vehiclesContainer">
+            <!-- Los vehículos se cargarán aquí dinámicamente -->
+        </div>
+    </section>
+
+    <section class="kits-section" id="customize">
+        <h2 class="section-title">Kits Upgrade Premium</h2>
+        <p class="section-subtitle">Personaliza tu vehículo con nuestros paquetes de mejora exclusivos</p>
         
-        <div id="noVehiclesMessage" class="hidden" style="text-align: center; padding: 50px; color: #6d6d71;">
-            <i class="fas fa-frown" style="font-size: 30px; margin-bottom: 10px;"></i>
-            <p>No se encontraron vehículos que coincidan con el filtro.</p>
+        <div class="kits-grid">
+            <div class="kit-card">
+                <div class="kit-icon" style="color: #34C759;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="kit-title">Standard</h3>
+                <p class="kit-description">Preparación básica incluida con cada vehículo</p>
+                <div class="kit-price">INCLUIDO</div>
+                <ul class="kit-features">
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Limpieza completa</li>
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Revisión mecánica</li>
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Documentación en regla</li>
+                </ul>
+            </div>
+            <div class="kit-card">
+                <div class="kit-icon" style="color: #34C759;">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3 class="kit-title">Medium</h3>
+                <p class="kit-description">Mejoras estéticas y funcionales avanzadas</p>
+                <div class="kit-price">DESDE $1.2M</div>
+                <ul class="kit-features">
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Todo lo del Kit Standard</li>
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Llantas deportivas</li>
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Tratamiento de pintura</li>
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Audio Premium</li>
+                </ul>
+            </div>
+            <div class="kit-card">
+                <div class="kit-icon" style="color: #FF9500;">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h3 class="kit-title">Full Power</h3>
+                <p class="kit-description">Transformación premium completa y de alto rendimiento</p>
+                <div class="kit-price">DESDE $2.5M</div>
+                <ul class="kit-features">
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Todo lo del Kit Medium</li>
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Reprogramación de motor</li>
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Suspensión deportiva</li>
+                    <li><i class="fas fa-check" style="color: #34C759;"></i> Kit de carrocería exclusivo</li>
+                </ul>
+            </div>
         </div>
         
-    </section>
-    
-    <section id="kits">
-        <div class="container">
-            <h2 class="section-title">Kits Upgrade Premium</h2>
-            <p class="kits-intro">
-                Personaliza tu vehículo importado con nuestras opciones de mejora exclusivas. 
-                Elige un vehículo de nuestro stock y prueba cómo se verá con un Kit.
-            </p>
-            <button id="showAllKits" class="btn-kits-cta">
-                <i class="fas fa-magic"></i>
-                Personalizar Mi Vehículo Ahora
+        <p class="kit-disclaimer">
+            * Los kits varían por modelo. Puedes personalizar y cotizar el kit exacto al seleccionar un vehículo.
+        </p>
+        
+        <div class="kits-cta">
+            <button class="button button-outline" id="showAllKits">
+                <i class="fas fa-search"></i> Ver Vehículos para Personalizar
             </button>
         </div>
     </section>
 
-    <section id="about" class="container">
-        <h2 class="section-title">Sobre Nosotros</h2>
-        <div style="max-width: 800px; margin: 0 auto; text-align: center; color: #6d6d71;">
-            <p style="margin-bottom: var(--space-lg);">
-                En Import American Cars, nos especializamos en la selección y comercialización de vehículos de alta gama 
-                provenientes de Estados Unidos, con destino a Zona Franca Arica. Nuestra filosofía se basa en la 
-                transparencia, la calidad premium y una experiencia de compra personalizada.
-            </p>
-            <p>
-                Cada vehículo pasa por un riguroso proceso de inspección y puede ser mejorado con nuestros 
-                exclusivos Kits Upgrade para asegurar que obtengas el automóvil de tus sueños, adaptado a tu estilo.
-            </p>
+    <section class="instagram-section" id="instagram">
+        <h2 class="section-title">Nuestro Instagram</h2>
+        <p class="section-subtitle">Sigue nuestro trabajo y los vehículos que transformamos</p>
+        
+        <div class="instagram-feed" id="instagramFeed">
+            <!-- El feed de Instagram se cargará aquí dinámicamente -->
+        </div>
+        
+        <div class="instagram-cta">
+            <a href="https://www.instagram.com/import_american_cars" target="_blank" class="button button-outline">
+                <i class="fab fa-instagram"></i> Seguir en Instagram
+            </a>
         </div>
     </section>
 
-    <section id="contact" class="container">
-        <h2 class="section-title">Hablemos</h2>
-        <p style="color: #6d6d71;">Contáctanos directamente para consultas sobre stock, reservas o personalizaciones.</p>
+    <section class="contact-section" id="contact">
+        <h2 class="section-title">Contacto</h2>
+        <p class="section-subtitle">Contáctanos para encontrar el vehículo americano de tus sueños</p>
         
         <div class="contact-buttons">
-            <a href="https://wa.me/56981458545" target="_blank" class="contact-button whatsapp-btn">
-                <i class="fab fa-whatsapp"></i>
-                WhatsApp
+            <a href="https://wa.me/56981458545" target="_blank" class="button whatsapp-btn">
+                <i class="fab fa-whatsapp"></i> WhatsApp
             </a>
-            <a href="https://www.instagram.com/import_american_cars" target="_blank" class="contact-button instagram-btn">
-                <i class="fab fa-instagram"></i>
-                Instagram
+            <a href="https://www.instagram.com/import_american_cars" target="_blank" class="button button-outline">
+                <i class="fab fa-instagram"></i> Instagram
             </a>
-            </div>
+            <a href="mailto:contacto@importamericancars.cl" class="button button-outline">
+                <i class="fas fa-envelope"></i> Email
+            </a>
+        </div>
+        
+        <div class="contact-info">
+            <p><i class="fas fa-map-marker-alt"></i> Zona Franca Arica, Chile</p>
+            <p><i class="fas fa-phone-alt"></i> +56 9 8145 8545</p>
+            <p><i class="fas fa-clock"></i> Lunes a Viernes 9:00 - 19:00</p>
+        </div>
     </section>
-    
-    <section id="instagram" class="container">
-        <h2 class="section-title">Instagram Feed</h2>
-        <div class="instagram-feed" id="instagramFeed">
-            </div>
-    </section>
-    
+
     <footer class="footer">
-        <div class="container footer-content">
-            <p>&copy; <span id="currentYear">2024</span> Import American Cars. Todos los derechos reservados.</p>
-            <div class="footer-links">
-                <a href="#about">Misión</a>
-                <a href="#contact">Soporte</a>
-                <a href="#">Privacidad</a>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span class="logo-text">Import American Cars</span>
+                <span class="footer-tagline">Importación premium desde EE.UU.</span>
             </div>
+            <div class="footer-info">
+                <p><i class="fas fa-map-marker-alt"></i> Zona Franca Arica</p>
+                <p><i class="fas fa-phone-alt"></i> <a href="https://wa.me/56981458545" target="_blank" class="footer-link">+56 9 8145 8545</a></p>
+                <p><i class="fas fa-envelope"></i> contacto@importamericancars.cl</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear">2025</span> Import American Cars (IAC). Todos los derechos reservados.</p>
         </div>
     </footer>
-    
-    <div id="vehicleModal" class="modal-overlay">
+
+    <!-- Modal Detalles del Vehículo -->
+    <div class="modal" id="vehicleModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="vehicleDetailName">Vehículo</h3>
-                <button class="modal-close" id="closeVehicleModal"><i class="fas fa-times"></i></button>
-            </div>
-            <img src="placeholder.jpg" alt="Detalle del Vehículo" class="detail-image" id="vehicleDetailImage">
-            <p id="vehicleDetailStatus" class="vehicle-status status-stock"></p>
-            <p class="detail-price" id="vehicleDetailPrice">$0 CLP</p>
-            
-            <div class="detail-features" id="vehicleDetailFeatures">
-                </div>
-            
-            <p style="font-size: var(--text-base); color: var(--gray-800); margin-bottom: var(--space-lg);" id="vehicleDetailDescription"></p>
-
-            <div class="modal-actions">
-                <button class="btn-primary" id="contactVehicleDetailBtn">
-                    <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
-                </button>
-                <button class="btn-secondary" id="customizeVehicleBtn">
-                    <i class="fas fa-magic"></i> Aplicar Kit Upgrade
-                </button>
+            <button class="close-modal" id="closeVehicleModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="vehicleModalContent">
+                <!-- Contenido del modal se cargará aquí dinámicamente -->
             </div>
         </div>
     </div>
-    
-    <div id="customizationModal" class="modal-overlay">
+
+    <!-- Modal Personalización -->
+    <div class="modal" id="customizationModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Personaliza: <span id="kitVehicleName"></span></h3>
-                <button class="modal-close" id="closeCustomizationModal"><i class="fas fa-times"></i></button>
+            <button class="close-modal" id="closeCustomizationModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="customizationContent">
+                <!-- Contenido del modal se cargará aquí dinámicamente -->
             </div>
-            
-            <div class="kit-customization-content">
-                <div class="comparison-view">
-                    <h4 style="font-weight: 500; font-size: var(--text-lg); margin-bottom: var(--space-md);">Vista Previa del Kit</h4>
-                    
-                    <div class="comparison-split-view">
-                        <div class="comparison-image-container" id="originalImageContainer">
-                            <img id="originalImage" src="placeholder.jpg" alt="Original">
-                            <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); color: white; padding: 5px 10px; border-radius: 6px; font-size: var(--text-sm);">Original</div>
-                        </div>
-                        
-                        <div class="comparison-image-container" id="customizedImageContainer">
-                            <img id="customizedImage" src="placeholder.jpg" alt="Con Kit">
-                            <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,122,255,0.7); color: white; padding: 5px 10px; border-radius: 6px; font-size: var(--text-sm);">Con Kit</div>
-                        </div>
-                        
-                        <div class="comparison-slider" id="comparisonSlider"></div>
-
-                    </div>
-                    <p style="font-size: var(--text-sm); color: #6d6d71; margin-top: var(--space-md); text-align: center;">Arrastra el separador ↔️ para ver la comparación.</p>
-
-                </div>
-                
-                <div class="kit-selection-panel">
-                    <h4 style="font-weight: 500; font-size: var(--text-lg); margin-bottom: var(--space-md);">Selecciona un Kit</h4>
-                    <div id="kitOptionsContainer">
-                        </div>
-                </div>
-            </div>
-            
-            <div class="customization-actions">
-                <div class="total-price-display">
-                    Precio Total Estimado: <br>
-                    <span id="kitTotalPrice">CLP 0</span>
-                </div>
-                <button class="btn-primary" id="contactKitBtn">
-                    <i class="fab fa-whatsapp"></i> Contactar con Kit Seleccionado
-                </button>
-            </div>
-
         </div>
     </div>
-    
-    <div id="loadingOverlay" class="modal-overlay">
-        <div class="loader"></div>
-    </div>
-    
-    <div id="notificationContainer" class="notification-container">
-        </div>
 
+    <!-- Contenedor de Notificaciones -->
+    <div id="notificationContainer"></div>
+
+    <!-- Scripts -->
     <script type="module" src="js/config.js"></script>
     <script type="module" src="js/supabase.js"></script>
     <script type="module" src="js/productos.js"></script>
