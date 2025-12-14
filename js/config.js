@@ -4,11 +4,7 @@
 export const CONFIG = {
   // Supabase - Credenciales PÚBLICAS
   supabase: {
-    url: "https://cflpmluvhfldewiitymh.supabase.co/rest/v1/iac?select=",
-    
--H "apikey: SUPABASE_CLIENT_ANON_KEY" \
--H "Authorization: Bearer SUPABASE_CLIENT_ANON_KEY"
-          
+    url: "https://cflpmluvhfldewiitymh.supabase.co",
     anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmbHBtbHV2aGZsZGV3aWl0eW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3MDAwODQsImV4cCI6MjAyNTI3NjA4NH0.1z3Y0YQl-13M-HZOr5AMYV3G8mggEON6wJvO_DV5_Mw"
   },
   
@@ -37,6 +33,6 @@ export const CONFIG = {
     formatoPrecio: "CLP",
     mostrarStock: true,
     mostrarInstagram: true,
-    defaultImage: "https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    defaultImage: "https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w-800&q=80"
   }
 };
