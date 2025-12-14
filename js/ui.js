@@ -27,7 +27,7 @@ export class UI {
         const filter = e.currentTarget.dataset.filter;
         if (filter) {
           productosManager.filtrarVehiculos(filter);
-          window.scrollTo({ top: document.getElementById('vehicles').offsetTop - 44, behavior: 'smooth' });
+          window.scrollTo({ top: document.getElementById('vehicles').offsetTop - 80, behavior: 'smooth' });
         }
       });
     });
@@ -80,6 +80,13 @@ export class UI {
         mobileMenu.classList.remove('active');
       });
     });
+    
+    // Cerrar al hacer click fuera
+    document.addEventListener('click', (e) => {
+      if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+        mobileMenu.classList.remove('active');
+      }
+    });
   }
   
   // Mostrar loading
@@ -87,11 +94,11 @@ export class UI {
     const container = document.getElementById('vehiclesContainer');
     if (container) {
       container.innerHTML = `
-        <div class="loading-message">
-          <div class="loading-spinner">
+        <div class="loading-message" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+          <div class="loading-spinner" style="font-size: 40px; margin-bottom: 20px; color: var(--text-tertiary);">
             <i class="fas fa-spinner fa-spin"></i>
           </div>
-          <p>Cargando vehículos desde la base de datos...</p>
+          <p style="font-size: 17px; color: var(--text-secondary);">Cargando vehículos desde la base de datos...</p>
         </div>
       `;
     }
@@ -109,32 +116,70 @@ export class UI {
     
     const notification = document.createElement('div');
     notification.className = 'notification';
+    
+    const icons = {
+      success: '✓',
+      error: '✕',
+      warning: '⚠',
+      info: 'i'
+    };
+    
+    const colors = {
+      success: '#34C759',
+      error: '#FF3B30',
+      warning: '#FF9500',
+      info: '#007AFF'
+    };
+    
     notification.innerHTML = `
-      <div style="color: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--warning)'};">
-        ${type === 'success' ? '✓' : type === 'error' ? '✗' : '⚠'}
+      <div style="
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        background: ${colors[type]};
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+      ">
+        ${icons[type]}
       </div>
       <div style="flex: 1;">
-        <div style="font-weight: 500; font-size: 14px; margin-bottom: 4px; color: var(--black);">
-          ${type === 'success' ? 'Éxito' : type === 'error' ? 'Error' : 'Advertencia'}
+        <div style="font-size: 14px; font-weight: 500; color: var(--text-primary);">
+          ${type === 'success' ? 'Éxito' : type === 'error' ? 'Error' : type === 'warning' ? 'Advertencia' : 'Información'}
         </div>
-        <div style="font-size: 13px; color: #86868b;">${message}</div>
+        <div style="font-size: 13px; color: var(--text-secondary);">${message}</div>
       </div>
-      <button style="background: none; border: none; color: #86868b; cursor: pointer; padding: 0;">
+      <button style="
+        background: none;
+        border: none;
+        color: var(--text-tertiary);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 6px;
+        transition: background 150ms;
+      ">
         <i class="fas fa-times"></i>
       </button>
     `;
     
     container.appendChild(notification);
     
-    // Asignar evento para cerrar
+    // Cerrar al hacer click en el botón
     notification.querySelector('button').addEventListener('click', () => {
-      notification.remove();
+      notification.style.transform = 'translateX(100%)';
+      notification.style.opacity = '0';
+      setTimeout(() => notification.remove(), 300);
     });
     
     // Auto-eliminar después de 5 segundos
     setTimeout(() => {
       if (notification.parentNode) {
-        notification.remove();
+        notification.style.transform = 'translateX(100%)';
+        notification.style.opacity = '0';
+        setTimeout(() => notification.remove(), 300);
       }
     }, 5000);
   }
@@ -146,19 +191,43 @@ export class UI {
   
   // Mostrar modal
   static showModal(modalId) {
-    document.getElementById(modalId)?.classList.add('active');
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    
+    // Resetear transformación
+    const content = modal.querySelector('.modal-content');
+    content.style.transform = 'scale(0.95) translateY(20px)';
+    
+    // Mostrar modal
+    modal.classList.add('active');
     document.body.classList.add('modal-open');
+    
+    // Forzar reflow para animación
+    setTimeout(() => {
+      content.style.transform = 'scale(1) translateY(0)';
+    }, 10);
   }
   
   // Cerrar modal
   static closeModal(modalId) {
-    document.getElementById(modalId)?.classList.remove('active');
-    document.body.classList.remove('modal-open');
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    
+    const content = modal.querySelector('.modal-content');
+    content.style.transform = 'scale(0.95) translateY(20px)';
+    
+    setTimeout(() => {
+      modal.classList.remove('active');
+      document.body.classList.remove('modal-open');
+    }, 150);
   }
   
   // Actualizar contador
   static updateCounter(elementId, count) {
-    document.getElementById(elementId).textContent = count;
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.textContent = count;
+    }
   }
   
   // Actualizar botones de filtro
@@ -179,13 +248,13 @@ export class UI {
     if (!vehiculos || vehiculos.length === 0) {
       container.innerHTML = `
         <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
-          <div style="font-size: 48px; margin-bottom: 20px; color: #86868b;">
+          <div style="font-size: 48px; margin-bottom: 20px; color: var(--text-tertiary);">
             <i class="fas fa-car"></i>
           </div>
-          <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--black);">
+          <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--text-primary);">
             No hay vehículos disponibles
           </h3>
-          <p style="color: #86868b; margin-bottom: 20px;">
+          <p style="color: var(--text-secondary); margin-bottom: 20px;">
             No hay vehículos que coincidan con el filtro seleccionado.
           </p>
           <button class="button" data-filter="all" style="width: auto; padding: 10px 20px;">
@@ -216,7 +285,7 @@ export class UI {
           </div>
           <h3 class="vehicle-title">${vehiculo.nombre}</h3>
           <div class="vehicle-price">${productosManager.formatPrice(vehiculo.precio)} CLP</div>
-          <p style="color: #86868b; font-size: 14px; margin-bottom: 16px;">
+          <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: 16px; line-height: 1.5;">
             ${vehiculo.descripcion.substring(0, 80)}${vehiculo.descripcion.length > 80 ? '...' : ''}
           </p>
           <div style="display: flex; gap: 8px;">
@@ -258,45 +327,45 @@ export class UI {
     });
   }
   
-  // Lógica del Slider (NUEVO REQUISITO 1)
+  // Lógica del Slider
   static initImageSlider(sliderElement, images, vehiculoNombre) {
-      const wrapper = sliderElement.querySelector('.slider-wrapper');
-      const prevButton = sliderElement.querySelector('.slider-button-prev');
-      const nextButton = sliderElement.querySelector('.slider-button-next');
-      const totalSlides = images.length;
-      let currentSlide = 0;
-      
-      // Limpiar y re-inyectar imágenes
-      wrapper.innerHTML = images.map(url => `
-          <div class="slider-slide">
-            <img src="${url}" alt="Imagen de ${vehiculoNombre}" loading="lazy" onerror="this.src='${CONFIG.app.defaultImage}'">
-          </div>
-      `).join('');
+    const wrapper = sliderElement.querySelector('.slider-wrapper');
+    const prevButton = sliderElement.querySelector('.slider-button-prev');
+    const nextButton = sliderElement.querySelector('.slider-button-next');
+    const totalSlides = images.length;
+    let currentSlide = 0;
+    
+    // Limpiar y re-inyectar imágenes
+    wrapper.innerHTML = images.map(url => `
+      <div class="slider-slide">
+        <img src="${url}" alt="Imagen de ${vehiculoNombre}" loading="lazy" onerror="this.src='${CONFIG.app.defaultImage}'">
+      </div>
+    `).join('');
 
-      // Mostrar/ocultar botones si solo hay una imagen
-      sliderElement.classList.toggle('single-image', totalSlides <= 1);
-      
-      const updateSlider = () => {
-          wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-          prevButton.disabled = currentSlide === 0;
-          nextButton.disabled = currentSlide === totalSlides - 1;
-      };
-      
-      nextButton.onclick = () => {
-          if (currentSlide < totalSlides - 1) {
-              currentSlide++;
-              updateSlider();
-          }
-      };
-      
-      prevButton.onclick = () => {
-          if (currentSlide > 0) {
-              currentSlide--;
-              updateSlider();
-          }
-      };
-      
-      updateSlider();
+    // Mostrar/ocultar botones si solo hay una imagen
+    sliderElement.classList.toggle('single-image', totalSlides <= 1);
+    
+    const updateSlider = () => {
+      wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+      prevButton.disabled = currentSlide === 0;
+      nextButton.disabled = currentSlide === totalSlides - 1;
+    };
+    
+    nextButton.onclick = () => {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        updateSlider();
+      }
+    };
+    
+    prevButton.onclick = () => {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlider();
+      }
+    };
+    
+    updateSlider();
   }
   
   // Mostrar detalles del vehículo (Modal principal)
@@ -312,14 +381,12 @@ export class UI {
     // Inyectar el HTML del modal con el contenedor del slider
     modalContent.innerHTML = `
       <div class="vehicle-details">
-        
         <div class="image-gallery-container">
-            <div id="vehicleImageSlider" class="slider-container">
-                <div class="slider-wrapper">
-                    </div>
-                <button class="slider-button-prev"><i class="fas fa-chevron-left"></i></button>
-                <button class="slider-button-next"><i class="fas fa-chevron-right"></i></button>
-            </div>
+          <div id="vehicleImageSlider" class="slider-container">
+            <div class="slider-wrapper"></div>
+            <button class="slider-button-prev"><i class="fas fa-chevron-left"></i></button>
+            <button class="slider-button-next"><i class="fas fa-chevron-right"></i></button>
+          </div>
         </div>
         
         <div class="details-content">
@@ -333,9 +400,10 @@ export class UI {
           <p class="detail-description">${vehiculo.descripcion}</p>
           
           <div class="detail-features">
-            ${vehiculo.motor ? `<div><i class="fas fa-engine"></i> Motor: ${vehiculo.motor}</div>` : ''}
+            ${vehiculo.motor ? `<div><i class="fas fa-cogs"></i> Motor: ${vehiculo.motor}</div>` : ''}
             ${vehiculo.kilometraje ? `<div><i class="fas fa-road"></i> KM: ${vehiculo.kilometraje}</div>` : ''}
             ${vehiculo.ano ? `<div><i class="fas fa-calendar"></i> Año: ${vehiculo.ano}</div>` : ''}
+            ${vehiculo.color ? `<div><i class="fas fa-palette"></i> Color: ${vehiculo.color}</div>` : ''}
           </div>
 
           <div class="modal-actions">
@@ -358,6 +426,7 @@ export class UI {
     document.getElementById('whatsappFromModal')?.addEventListener('click', (e) => {
       this.contactVehicle(e.currentTarget.dataset.id);
     });
+    
     document.getElementById('customizeBtn')?.addEventListener('click', (e) => {
       this.closeModal('vehicleModal');
       this.customizeVehicle(e.currentTarget.dataset.id);
@@ -366,7 +435,7 @@ export class UI {
     this.showModal('vehicleModal');
   }
   
-  // Mostrar modal de personalización (NUEVO REQUISITO 2 & 3)
+  // Mostrar modal de personalización
   static async customizeVehicle(vehicleId) {
     const vehiculo = productosManager.getVehiculoById(vehicleId);
     if (!vehiculo) {
@@ -382,87 +451,88 @@ export class UI {
     
     const modalContent = document.getElementById('customizationContent');
     modalContent.innerHTML = `
-        <div class="customization-header">
-            <h3>Personaliza tu ${vehiculo.nombre}</h3>
-            <p>Selecciona un paquete de mejora para ver la comparación visual.</p>
-        </div>
+      <div class="customization-header">
+        <h3>Personaliza tu ${vehiculo.nombre}</h3>
+        <p>Selecciona un paquete de mejora para ver la comparación visual.</p>
+      </div>
 
-        <div class="comparison-container">
-            <div class="comparison-panel original-vehicle">
-                <h3>Vehículo Base</h3>
-                <img id="originalVehicleImage" src="${vehiculo.imagen_principal_card}" alt="Vehículo Original">
-            </div>
-            <div class="comparison-panel customized-vehicle">
-                <h3>Con Kit <span id="selectedKitName">...</span></h3>
-                <img id="customizedVehicleImage" src="${vehiculo.imagen_principal_card}" alt="Vehículo Personalizado">
-            </div>
+      <div class="comparison-container">
+        <div class="comparison-panel original-vehicle">
+          <h3>Vehículo Base</h3>
+          <img id="originalVehicleImage" src="${vehiculo.imagen_principal_card}" alt="Vehículo Original">
         </div>
+        <div class="comparison-panel customized-vehicle">
+          <h3>Con Kit <span id="selectedKitName">...</span></h3>
+          <img id="customizedVehicleImage" src="${vehiculo.imagen_principal_card}" alt="Vehículo Personalizado">
+        </div>
+      </div>
 
-        <h4>Seleccionar Paquete de Mejora:</h4>
-        <div id="kitSelectionContainer" class="kit-selection-controls">
-            ${kits.map(kit => `
-                <button class="button kit-button" 
-                        data-kit-id="${kit.id}" 
-                        data-vehiculo-id="${vehiculo.id}"
-                        data-kit-precio="${kit.precio}"
-                        data-kit-nombre="${kit.nombre}"
-                        ${kit.nivel === 'standar' ? 'data-default-kit="true"' : ''}>
-                    ${kit.nombre} 
-                    <span class="kit-price">(${productosManager.formatPrice(kit.precio)})</span>
-                </button>
-            `).join('')}
+      <h4>Seleccionar Paquete de Mejora:</h4>
+      <div id="kitSelectionContainer" class="kit-selection-controls">
+        ${kits.map(kit => `
+          <button class="button kit-button" 
+                  data-kit-id="${kit.id}" 
+                  data-vehiculo-id="${vehiculo.id}"
+                  data-kit-precio="${kit.precio}"
+                  data-kit-nombre="${kit.nombre}"
+                  ${kit.nivel === 'standar' ? 'data-default-kit="true"' : ''}>
+            ${kit.nombre} 
+            <span class="kit-price">(${productosManager.formatPrice(kit.precio)})</span>
+          </button>
+        `).join('')}
+      </div>
+      
+      <div class="customization-summary">
+        <div class="summary-line">
+          <span>Precio Vehículo Base:</span>
+          <span class="price-value">${productosManager.formatPrice(vehiculo.precio)} CLP</span>
         </div>
-        
-        <div class="customization-summary">
-            <div class="summary-line">
-                <span>Precio Vehículo Base:</span>
-                <span class="price-value">${productosManager.formatPrice(vehiculo.precio)} CLP</span>
-            </div>
-            <div class="summary-line">
-                <span>Costo Kit Seleccionado:</span>
-                <span class="price-value" id="kitPriceValue">...</span>
-            </div>
-            <div class="summary-total">
-                <span>Precio Total Estimado:</span>
-                <span class="price-value" id="totalPriceValue">...</span>
-            </div>
+        <div class="summary-line">
+          <span>Costo Kit Seleccionado:</span>
+          <span class="price-value" id="kitPriceValue">...</span>
         </div>
+        <div class="summary-total">
+          <span>Precio Total Estimado:</span>
+          <span class="price-value" id="totalPriceValue">...</span>
+        </div>
+      </div>
 
-        <button class="button whatsapp-btn" id="requestQuote" style="margin-top: 24px;">
-            <i class="fab fa-whatsapp"></i> Solicitar Cotización con este Kit
-        </button>
+      <button class="button whatsapp-btn" id="requestQuote" style="margin-top: 24px;">
+        <i class="fab fa-whatsapp"></i> Solicitar Cotización con este Kit
+      </button>
     `;
     
     // 1. Asignar Event Listeners a los botones de kits
     const kitSelectionContainer = document.getElementById('kitSelectionContainer');
     kitSelectionContainer.querySelectorAll('.kit-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const kitId = e.currentTarget.dataset.kitId;
-            const kitNombre = e.currentTarget.dataset.kitNombre;
-            const kitPrecio = parseFloat(e.currentTarget.dataset.kitPrecio);
-            
-            // Llama a la lógica de selección y comparación
-            this.selectKit(vehiculo, kitId, kitNombre, kitPrecio);
-            
-            // Actualizar clase active inmediatamente
-            kitSelectionContainer.querySelectorAll('.kit-button').forEach(btn => btn.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-        });
+      button.addEventListener('click', (e) => {
+        const kitId = e.currentTarget.dataset.kitId;
+        const kitNombre = e.currentTarget.dataset.kitNombre;
+        const kitPrecio = parseFloat(e.currentTarget.dataset.kitPrecio);
+        
+        // Llama a la lógica de selección y comparación
+        this.selectKit(vehiculo, kitId, kitNombre, kitPrecio);
+        
+        // Actualizar clase active inmediatamente
+        kitSelectionContainer.querySelectorAll('.kit-button').forEach(btn => btn.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+      });
     });
 
-    // 2. Inicializar con el kit Standar (o el primero)
-    const defaultKitButton = kitSelectionContainer.querySelector('.kit-button[data-default-kit="true"]') || kitSelectionContainer.querySelector('.kit-button');
+    // 2. Inicializar con el kit Standard (o el primero)
+    const defaultKitButton = kitSelectionContainer.querySelector('.kit-button[data-default-kit="true"]') || 
+                            kitSelectionContainer.querySelector('.kit-button');
     if (defaultKitButton) {
-        defaultKitButton.click();
+      defaultKitButton.click();
     }
     
     // 3. Evento para solicitar cotización
     document.getElementById('requestQuote')?.addEventListener('click', () => {
-        // Obtener el kit seleccionado
-        const selectedButton = kitSelectionContainer.querySelector('.kit-button.active');
-        const selectedKit = productosManager.getKitsForDisplay().find(k => k.id === selectedButton?.dataset.kitId);
-        
-        this.contactVehicle(vehiculo.id, selectedKit);
+      // Obtener el kit seleccionado
+      const selectedButton = kitSelectionContainer.querySelector('.kit-button.active');
+      const selectedKit = productosManager.getKitsForDisplay().find(k => k.id === selectedButton?.dataset.kitId);
+      
+      this.contactVehicle(vehiculo.id, selectedKit);
     });
     
     this.showModal('customizationModal');
@@ -470,43 +540,43 @@ export class UI {
 
   // Lógica para seleccionar un kit y actualizar la imagen de comparación
   static async selectKit(vehiculo, kitId, kitNombre, kitPrecio) {
-      const originalImageUrl = vehiculo.imagen_principal_card;
-      const customizedImageElement = document.getElementById('customizedVehicleImage');
-      const selectedKitNameElement = document.getElementById('selectedKitName');
-      const kitPriceValueElement = document.getElementById('kitPriceValue');
-      const totalPriceValueElement = document.getElementById('totalPriceValue');
-      
-      // Actualizar nombres y precios inmediatamente
-      selectedKitNameElement.textContent = kitNombre;
-      kitPriceValueElement.textContent = `+${productosManager.formatPrice(kitPrecio)} CLP`;
-      const totalPrice = (vehiculo.precio || 0) + kitPrecio;
-      totalPriceValueElement.textContent = `${productosManager.formatPrice(totalPrice)} CLP`;
+    const originalImageUrl = vehiculo.imagen_principal_card;
+    const customizedImageElement = document.getElementById('customizedVehicleImage');
+    const selectedKitNameElement = document.getElementById('selectedKitName');
+    const kitPriceValueElement = document.getElementById('kitPriceValue');
+    const totalPriceValueElement = document.getElementById('totalPriceValue');
+    
+    // Actualizar nombres y precios inmediatamente
+    selectedKitNameElement.textContent = kitNombre;
+    kitPriceValueElement.textContent = `+${productosManager.formatPrice(kitPrecio)} CLP`;
+    const totalPrice = (vehiculo.precio || 0) + kitPrecio;
+    totalPriceValueElement.textContent = `${productosManager.formatPrice(totalPrice)} CLP`;
 
-      // Si es el kit "Standar" (precio 0), usamos la imagen original inmediatamente
-      if (kitPrecio === 0 || vehiculo.id === kitId) {
-          customizedImageElement.src = originalImageUrl;
-          return;
-      }
-      
-      // Intentar obtener la imagen personalizada de Supabase
-      // Puedes añadir un spinner visual en tu HTML/CSS mientras carga
-      let imageUrl = await productosManager.getCustomizationImage(vehiculo.id, kitId);
-      
-      // Si se encuentra la imagen, úsala. Si no, usa la imagen original como fallback.
-      customizedImageElement.src = imageUrl || originalImageUrl; 
+    // Si es el kit "Standard" (precio 0), usamos la imagen original inmediatamente
+    if (kitPrecio === 0) {
+      customizedImageElement.src = originalImageUrl;
+      return;
+    }
+    
+    // Intentar obtener la imagen personalizada de Supabase
+    // Puedes añadir un spinner visual en tu HTML/CSS mientras carga
+    let imageUrl = await productosManager.getCustomizationImage(vehiculo.id, kitId);
+    
+    // Si se encuentra la imagen, úsala. Si no, usa la imagen original como fallback.
+    customizedImageElement.src = imageUrl || originalImageUrl; 
   }
 
-  // Mostrar todos los vehículos para personalización (se mantiene)
+  // Mostrar todos los vehículos para personalización
   static showAllVehiclesForCustomization() {
     this.closeModal('vehicleModal');
     this.closeModal('customizationModal');
     
     // Para simplificar, simplemente navegaremos a la sección de vehículos
-    window.scrollTo({ top: document.getElementById('vehicles').offsetTop - 44, behavior: 'smooth' });
+    window.scrollTo({ top: document.getElementById('vehicles').offsetTop - 80, behavior: 'smooth' });
     this.showNotification("Selecciona un vehículo para personalizarlo.", "info");
   }
 
-  // Contactar vehículo (se mantiene, pero ahora acepta el objeto kit)
+  // Contactar vehículo
   static contactVehicle(vehicleId, kit = null) {
     const vehiculo = productosManager.getVehiculoById(vehicleId);
     if (!vehiculo) {
@@ -516,5 +586,10 @@ export class UI {
     
     const whatsappUrl = productosManager.getWhatsAppUrl(vehiculo, kit);
     window.open(whatsappUrl, '_blank');
+  }
+  
+  // Mostrar mensaje general
+  static showMessage(message) {
+    this.showNotification(message, 'info');
   }
 }
