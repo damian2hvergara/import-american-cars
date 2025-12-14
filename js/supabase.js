@@ -239,3 +239,43 @@ supabaseService.getVehiculos()
   .catch(error => {
     console.error('❌ Error en prueba de conexión:', error);
   });
+// En supabase.js
+
+export const supabaseService = {
+  // ... getVehiculos (asumimos que sigue igual) ...
+
+  // 1. Obtener todos los Kits de Mejora
+  async getKits() {
+    console.log('🛠️ Iniciando carga de kits de mejora...');
+    try {
+      const url = `${CONFIG.supabase.url}/rest/v1/kits_upgrade?select=*&order=precio.asc`;
+      const response = await fetch(url, { /* headers, etc. */ });
+      if (!response.ok) throw new Error(await response.text());
+      const data = await response.json();
+      console.log(`📦 Kits cargados: ${data.length}`);
+      return data;
+    } catch (error) {
+      console.error('❌ Error al cargar los kits:', error);
+      return []; // Devolver array vacío en caso de error
+    }
+  },
+
+  // 2. Obtener la imagen específica de un vehículo con un kit
+  async getKitImageForVehicle(vehiculoId, kitId) {
+    console.log(`🖼️ Buscando imagen para Vehículo ${vehiculoId} con Kit ${kitId}...`);
+    try {
+      // Usar 'vehiculo_kits' y filtrar por los dos IDs
+      const url = `${CONFIG.supabase.url}/rest/v1/vehiculo_kits?select=imagen_kit_url&vehiculo_id=eq.${vehiculoId}&kit_id=eq.${kitId}`;
+      const response = await fetch(url, { /* headers, etc. */ });
+      if (!response.ok) throw new Error(await response.text());
+      const data = await response.json();
+
+      // Devolver la primera URL encontrada
+      return data[0]?.imagen_kit_url || null; 
+
+    } catch (error) {
+      console.error('❌ Error al buscar imagen de kit:', error);
+      return null;
+    }
+  }
+};
