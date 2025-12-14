@@ -4,7 +4,7 @@ console.log('🔧 Inicializando conexión a Supabase...');
 console.log('URL:', CONFIG.supabase.url);
 console.log('API Key presente:', CONFIG.supabase.anonKey ? '✅' : '❌');
 
-// Servicio seguro de datos usando fetch directo (más confiable)
+// Servicio de datos usando fetch directo
 export const supabaseService = {
   
   // Obtener todos los vehículos activos
@@ -14,14 +14,14 @@ export const supabaseService = {
     try {
       const url = `${CONFIG.supabase.url}/rest/v1/iac?select=*`;
       console.log('📡 URL de consulta:', url);
+      console.log('🔑 Usando API Key:', CONFIG.supabase.anonKey.substring(0, 20) + '...');
       
       const response = await fetch(url, {
         method: 'GET',
         headers: {
           'apikey': CONFIG.supabase.anonKey,
           'Authorization': `Bearer ${CONFIG.supabase.anonKey}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation'
+          'Content-Type': 'application/json'
         }
       });
       
@@ -31,26 +31,16 @@ export const supabaseService = {
         const errorText = await response.text();
         console.error('❌ Error HTTP:', errorText);
         
-        // Intentar sin prefer header
-        console.log('🔄 Intentando sin header Prefer...');
-        const response2 = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'apikey': CONFIG.supabase.anonKey,
-            'Authorization': `Bearer ${CONFIG.supabase.anonKey}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
-        if (!response2.ok) {
-          const errorText2 = await response2.text();
-          console.error('❌ Error HTTP (segundo intento):', errorText2);
-          return [];
+        // Mostrar mensaje más detallado
+        if (response.status === 401) {
+          console.error('⚠️ ERROR 401: La API key puede ser incorrecta o la tabla no existe');
+          console.error('   Verifica:');
+          console.error('   1. Que la API key en config.js sea correcta');
+          console.error('   2. Que la tabla "iac" exista en Supabase');
+          console.error('   3. Que tengas permisos de lectura en la tabla');
         }
         
-        const data2 = await response2.json();
-        console.log(`✅ ${data2?.length || 0} vehículos obtenidos (segundo intento)`);
-        return this.filtrarVehiculosActivos(data2);
+        return [];
       }
       
       const data = await response.json();
@@ -58,16 +48,30 @@ export const supabaseService = {
       
       // Log del primer vehículo para debug
       if (data && data.length > 0) {
-        console.log('📄 Primer vehículo recibido:', {
-          id: data[0].id,
-          nombre: data[0].nombre,
-          precio: data[0].precio,
-          estado: data[0].estado,
-          activo: data[0].activo,
-          columnas: Object.keys(data[0])
-        });
+        console.log('📄 Primer vehículo recibido:');
+        const primerVehiculo = data[0];
+        console.log('ID:', primerVehiculo.id);
+        console.log('Nombre:', primerVehiculo.nombre || 'No tiene nombre');
+        console.log('Precio:', primerVehiculo.precio || 'No tiene precio');
+        console.log('Estado:', primerVehiculo.estado || 'No tiene estado');
+        console.log('Activo:', primerVehiculo.activo || 'No tiene activo');
+        console.log('Todas las columnas:', Object.keys(primerVehiculo));
+        
+        // Verificar columnas de imagen
+        const columnasImagen = Object.keys(primerVehiculo).filter(key => 
+          key.toLowerCase().includes('imagen') || 
+          key.toLowerCase().includes('foto') || 
+          key.toLowerCase().includes('image')
+        );
+        console.log('Columnas de imagen:', columnasImagen);
+        if (columnasImagen.length > 0) {
+          console.log('Primera imagen:', primerVehiculo[columnasImagen[0]]);
+        }
+      } else {
+        console.log('⚠️ La tabla está vacía o no devolvió datos');
       }
       
+      // Filtrar por activo si la columna existe
       return this.filtrarVehiculosActivos(data);
       
     } catch (error) {
@@ -128,16 +132,12 @@ export const supabaseService = {
     try {
       console.log(`🔧 Obteniendo kits para vehículo ID: ${vehiculoId}`);
       
-      // Primero obtener el vehículo
       const vehiculo = await this.getVehiculoById(vehiculoId);
       if (!vehiculo) {
         console.log(`⚠️ Vehículo ${vehiculoId} no encontrado, usando kits por defecto`);
         return this.getDefaultKits();
       }
       
-      console.log('📋 Vehículo encontrado, buscando datos de kits...');
-      
-      // Kits base
       const kits = [
         {
           id: "standar",
@@ -172,7 +172,7 @@ export const supabaseService = {
         });
       }
       
-      console.log(`✅ ${kits.length} kits generados para vehículo ${vehiculoId}`);
+      console.log(`✅ ${kits.length} kits generados`);
       return kits;
       
     } catch (error) {
@@ -223,12 +223,18 @@ export const supabaseService = {
   }
 };
 
-// Probar conexión al cargar
-console.log('🔄 Realizando prueba de conexión inicial...');
+// Probar conexión inmediatamente
+console.log('🔄 Probando conexión con nueva API key...');
 supabaseService.getVehiculos()
   .then(data => {
-    console.log('🎉 Prueba de conexión exitosa!');
-    console.log(`📊 Total de vehículos: ${data.length}`);
+    if (data.length > 0) {
+      console.log('🎉 ¡CONEXIÓN EXITOSA!');
+      console.log(`📊 ${data.length} vehículos cargados correctamente`);
+      console.log('Nombres de vehículos:', data.map(v => v.nombre || 'Sin nombre').join(', '));
+    } else {
+      console.log('⚠️ Conexión exitosa pero la tabla está vacía');
+      console.log('   Verifica que tu tabla "iac" tenga datos en Supabase');
+    }
   })
   .catch(error => {
     console.error('❌ Error en prueba de conexión:', error);
