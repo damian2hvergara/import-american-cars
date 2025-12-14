@@ -52,7 +52,7 @@ export class ProductosManager {
   
   // Mostrar mensaje cuando no hay vehículos
   mostrarMensajeSinVehiculos() {
-    UI.showMessage('No hay vehículos disponibles en este momento. Puedes contactarnos directamente.');
+    UI.showNotification('No hay vehículos disponibles en este momento. Puedes contactarnos directamente.', 'info');
     
     const container = document.getElementById('vehiclesContainer');
     if (container) {
@@ -61,7 +61,7 @@ export class ProductosManager {
           <div style="font-size: 48px; margin-bottom: 20px; color: #86868b;">
             <i class="fas fa-car"></i>
           </div>
-          <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--black);">
+          <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--text-primary);">
             No hay vehículos disponibles
           </h3>
           <p style="color: #86868b; margin-bottom: 20px;">
@@ -76,47 +76,62 @@ export class ProductosManager {
     }
   }
   
-  // Procesar datos del vehículo
+  // Procesar datos del vehículo - CORREGIDO
   procesarVehiculo(vehiculo) {
     // 1. Asignar ID (si no tiene) y Precio
     vehiculo.id = vehiculo.id || 'temp_id_' + Math.random(); 
     vehiculo.precio = supabaseService.findVehiclePrice(vehiculo);
     
-    // 2. Manejar el array de imágenes (NUEVO REQUISITO)
+    // 2. Manejar el array de imágenes - CORRECCIÓN CRÍTICA
     const imagenes = [];
     
     // Si la columna 'imagenes' (text[]) existe y es un array, úsala.
     if (Array.isArray(vehiculo.imagenes) && vehiculo.imagenes.length > 0) {
-      imagenes.push(...vehiculo.imagenes.map(url => this.getCloudinaryUrl(url)));
-    } else {
-      // Lógica de fallback si 'imagenes' no existe o está vacía, usando las columnas viejas
+      // Filtrar URLs inválidas
+      const imagenesValidas = vehiculo.imagenes
+        .map(url => this.getCloudinaryUrl(url))
+        .filter(url => url && !url.includes('ejemplo-imagen.com')); // Filtrar URLs inválidas
+      
+      imagenes.push(...imagenesValidas);
+      console.log(` 📸 ${imagenesValidas.length} imágenes válidas del array`);
+    } 
+    
+    // 3. Fallback a columnas individuales si el array está vacío
+    if (imagenes.length === 0) {
       const posiblesColumnas = [
-        'imagen_1', 'imagen_2', 'imagen_3', 'foto_principal', 'foto_1', 'foto_2', 'foto_3', 'imagen_principal', 'url_imagen', 'url_foto', 'image_url', 'main_image', 'photo_url', 'img_url'
+        'imagen_1', 'imagen_2', 'imagen_3', 'imagen_4', 'imagen_5',
+        'foto_principal', 'foto_1', 'foto_2', 'foto_3',
+        'imagen_principal', 'url_imagen', 'url_foto', 
+        'image_url', 'main_image', 'photo_url', 'img_url'
       ];
       
       // Buscar en todas las columnas posibles
       for (const columna of posiblesColumnas) {
         if (vehiculo[columna] && typeof vehiculo[columna] === 'string' && vehiculo[columna].trim()) {
           const url = this.getCloudinaryUrl(vehiculo[columna]);
-          if (url && !imagenes.includes(url)) {
+          if (url && !url.includes('ejemplo-imagen.com') && !imagenes.includes(url)) {
             imagenes.push(url);
-            console.log(` 📸 Imagen de ${columna}: ${url.substring(0, 60)}...`);
+            console.log(` 📸 Imagen de ${columna}: ${url.substring(0, 50)}...`);
           }
         }
       }
     }
 
-    // Si no hay imágenes, usar una por defecto
+    // 4. Si no hay imágenes válidas, usar imágenes por defecto
     if (imagenes.length === 0) {
-      console.log(` ⚠️ Sin imágenes, usando imagen por defecto para ${vehiculo.nombre}`);
-      imagenes.push(CONFIG.app.defaultImage);
+      console.log(` ⚠️ Sin imágenes válidas, usando imágenes por defecto para ${vehiculo.nombre}`);
+      imagenes.push(
+        'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      );
     }
     
-    // Asignar el array procesado y la imagen principal (la primera del array)
+    // 5. Asignar el array procesado y la imagen principal (la primera del array)
     vehiculo.imagenes = imagenes;
     vehiculo.imagen_principal_card = imagenes[0]; // Usar la primera imagen para la tarjeta
     
-    // Asignar estado de forma más limpia
+    // 6. Asignar estado de forma más limpia
     vehiculo.estado = vehiculo.estado?.toLowerCase() === 'stock' ? 'stock' : 
                       vehiculo.estado?.toLowerCase() === 'transit' ? 'transit' : 
                       'reserve';
@@ -138,14 +153,40 @@ export class ProductosManager {
     return supabaseService.getKitImageForVehicle(vehiculoId, kitId);
   }
   
-  // Obtener URL de Cloudinary (se mantiene igual)
+  // Obtener URL de Cloudinary - CORREGIDO
   getCloudinaryUrl(publicId) {
-    if (!publicId || publicId.startsWith('http')) return publicId;
+    if (!publicId) return null;
     
-    // Asume que el ID ya incluye el folder si es necesario
-    const parts = publicId.split('/');
-    const cleanId = parts[parts.length - 1];
+    // 1. Si ya es una URL completa válida, la devolvemos
+    if (publicId.startsWith('http')) {
+      // Verificar que no sea una URL inválida
+      if (publicId.includes('ejemplo-imagen.com')) {
+        console.warn(` ⚠️ URL inválida detectada: ${publicId}`);
+        return null;
+      }
+      return publicId;
+    }
     
+    // 2. Limpiar el publicId
+    let cleanId = publicId.trim();
+    
+    // 3. Si tiene extensión, quitarla (Cloudinary lo maneja mejor)
+    const extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+    for (const ext of extensions) {
+      if (cleanId.toLowerCase().endsWith(ext)) {
+        cleanId = cleanId.substring(0, cleanId.length - ext.length);
+        break;
+      }
+    }
+    
+    // 4. Si ya tiene el folder incluido
+    if (cleanId.includes('/')) {
+      const parts = cleanId.split('/');
+      const filename = parts[parts.length - 1];
+      return `https://res.cloudinary.com/${CONFIG.cloudinary.cloudName}/image/upload/v1/vehiculos/${filename}`;
+    }
+    
+    // 5. URL estándar de Cloudinary
     return `https://res.cloudinary.com/${CONFIG.cloudinary.cloudName}/image/upload/v1/vehiculos/${cleanId}`;
   }
   
