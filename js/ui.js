@@ -293,6 +293,8 @@ export class UI {
     }
     
     try {
+      // Importar dinámicamente para evitar problemas de dependencia circular
+      const { supabaseService } = await import('./supabase.js');
       const kits = await supabaseService.getKitsByVehiculo(vehiculo.id);
       
       const modalContent = document.getElementById('customizationContent');
