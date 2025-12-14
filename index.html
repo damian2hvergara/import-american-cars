@@ -1,3 +1,5 @@
+[file name]: index (1).html
+[file content begin]
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,9 +16,6 @@
     
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
@@ -28,14 +27,14 @@
     <header class="header">
         <div class="header-container">
             <div class="logo">
-                <span class="logo-text">Import American Cars- Arica</span>
+                <span class="logo-text">Import American Cars</span>
             </div>
-            <nav class="nav-links">
+            <div class="nav-links">
                 <a href="#vehicles" class="nav-link">Vehículos</a>
                 <a href="#customize" class="nav-link">Kits Upgrade</a>
                 <a href="#instagram" class="nav-link">Instagram</a>
                 <a href="#contact" class="nav-link">Contacto</a>
-            </nav>
+            </div>
             <button class="menu-toggle" id="menuToggle">
                 <i class="fas fa-bars"></i>
             </button>
@@ -43,47 +42,44 @@
     </header>
 
     <section class="hero" id="home">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <span class="hero-main">IAC</span>
-            </h1>
-            <p class="hero-subtitle">Importación de vehículos exclusivos desde EE.UU. a Zona Franca Arica</p>
-            
-            <div class="stock-indicators">
-                <div class="indicator" data-filter="stock">
-                    <div class="indicator-icon" style="color: #34C759;">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="indicator-content">
-                        <div class="indicator-number" id="stockCount">0</div>
-                        <div class="indicator-label">En Stock Arica</div>
-                    </div>
+        <h1 class="hero-title">
+            <span class="hero-main">Vehículos Americanos</span>
+        </h1>
+        <p class="hero-subtitle">Importación directa desde USA. Kits Upgrade personalizados. Entrega en Arica.</p>
+        
+        <div class="stock-indicators">
+            <div class="indicator" data-filter="stock">
+                <div class="indicator-icon" style="color: var(--success);">
+                    <i class="fas fa-check-circle"></i>
                 </div>
-                <div class="indicator" data-filter="transit">
-                    <div class="indicator-icon" style="color: #34C759;">
-                        <i class="fas fa-shipping-fast"></i>
-                    </div>
-                    <div class="indicator-content">
-                        <div class="indicator-number" id="transitCount">0</div>
-                        <div class="indicator-label">En Tránsito</div>
-                    </div>
-                </div>
-                <div class="indicator" data-filter="reserve">
-                    <div class="indicator-icon" style="color: #FF9500;">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <div class="indicator-content">
-                        <div class="indicator-number" id="reserveCount">0</div>
-                        <div class="indicator-label">Para Reservar</div>
-                    </div>
+                <div class="indicator-content">
+                    <div class="indicator-number" id="stockCount">0</div>
+                    <div class="indicator-label">En Stock Arica</div>
                 </div>
             </div>
-            
+            <div class="indicator" data-filter="transit">
+                <div class="indicator-icon" style="color: var(--success);">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <div class="indicator-content">
+                    <div class="indicator-number" id="transitCount">0</div>
+                    <div class="indicator-label">En Tránsito</div>
+                </div>
+            </div>
+            <div class="indicator" data-filter="reserve">
+                <div class="indicator-icon" style="color: var(--warning);">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="indicator-content">
+                    <div class="indicator-number" id="reserveCount">0</div>
+                    <div class="indicator-label">Para Reservar</div>
+                </div>
+            </div>
         </div>
     </section>
 
     <section class="vehicles-section" id="vehicles">
-        <h2 class="section-title">Nuestros Vehículos</h2>
+        <h2 class="section-title">Vehículos Disponibles</h2>
         <p class="section-subtitle">Selección premium de vehículos americanos importados</p>
         
         <div class="filter-controls">
@@ -98,50 +94,48 @@
         </div>
     </section>
 
-    <section class="kits-section" id="customize">
-        <h2 class="section-title">Kits Upgrade Premium</h2>
-        <p class="section-subtitle">Personaliza tu vehículo con nuestros paquetes de mejora exclusivos</p>
+    <section class="kits-section" id="customize" style="background: var(--gray-50);">
+        <h2 class="section-title">Kits Upgrade Personalizados</h2>
+        <p class="section-subtitle">Cada vehículo tiene kits de upgrade con precios específicos según modelo.</p>
         
         <div class="kits-grid">
             <div class="kit-card">
-                <div class="kit-icon" style="color: #34C759;">
-                    <i class="fas fa-check-circle"></i>
+                <div class="kit-icon">
+                    <i class="fas fa-star"></i>
                 </div>
                 <h3 class="kit-title">Standard</h3>
                 <p class="kit-description">Preparación básica incluida con cada vehículo</p>
                 <div class="kit-price">INCLUIDO</div>
                 <ul class="kit-features">
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Limpieza completa</li>
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Revisión mecánica</li>
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Documentación en regla</li>
+                    <li><i class="fas fa-check" style="color: var(--success);"></i> Limpieza completa</li>
+                    <li><i class="fas fa-check" style="color: var(--success);"></i> Revisión mecánica</li>
+                    <li><i class="fas fa-check" style="color: var(--success);"></i> Documentación en regla</li>
                 </ul>
             </div>
             <div class="kit-card">
-                <div class="kit-icon" style="color: #34C759;">
-                    <i class="fas fa-star"></i>
+                <div class="kit-icon">
+                    <i class="fas fa-medal"></i>
                 </div>
                 <h3 class="kit-title">Medium</h3>
                 <p class="kit-description">Mejoras estéticas y funcionales avanzadas</p>
                 <div class="kit-price">DESDE $1.2M</div>
                 <ul class="kit-features">
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Todo lo del Kit Standard</li>
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Llantas deportivas</li>
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Tratamiento de pintura</li>
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Audio Premium</li>
+                    <li><i class="fas fa-check" style="color: var(--success);"></i> Todo lo del Kit Standard</li>
+                    <li><i class="fas fa-check" style="color: var(--success);"></i> Llantas deportivas</li>
+                    <li><i class="fas fa-check" style="color: var(--success);"></i> Tratamiento de pintura</li>
                 </ul>
             </div>
             <div class="kit-card">
-                <div class="kit-icon" style="color: #FF9500;">
+                <div class="kit-icon">
                     <i class="fas fa-crown"></i>
                 </div>
-                <h3 class="kit-title">Full Power</h3>
-                <p class="kit-description">Transformación premium completa y de alto rendimiento</p>
+                <h3 class="kit-title">Full</h3>
+                <p class="kit-description">Transformación premium completa</p>
                 <div class="kit-price">DESDE $2.5M</div>
                 <ul class="kit-features">
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Todo lo del Kit Medium</li>
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Reprogramación de motor</li>
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Suspensión deportiva</li>
-                    <li><i class="fas fa-check" style="color: #34C759;"></i> Kit de carrocería exclusivo</li>
+                    <li><i class="fas fa-check" style="color: var(--success);"></i> Todo lo del Kit Medium</li>
+                    <li><i class="fas fa-check" style="color: var(--success);"></i> Suspensión deportiva</li>
+                    <li><i class="fas fa-check" style="color: var(--success);"></i> Kit de carrocería exclusivo</li>
                 </ul>
             </div>
         </div>
@@ -151,24 +145,27 @@
         </p>
         
         <div class="kits-cta">
-            <button class="button button-outline" id="showAllKits">
-                <i class="fas fa-search"></i> Ver Vehículos para Personalizar
+            <button class="button" id="showAllKits" style="width: auto; padding: 14px 32px;">
+                <i class="fas fa-cog"></i> Ver Kits por Vehículo
             </button>
         </div>
     </section>
 
     <section class="instagram-section" id="instagram">
-        <h2 class="section-title">Nuestro Instagram</h2>
-        <p class="section-subtitle">Sigue nuestro trabajo y los vehículos que transformamos</p>
+        <h2 class="section-title">En Instagram</h2>
+        <p class="section-subtitle">Sigue nuestro proceso de importación, vehículos en stock y transformaciones con kits upgrade</p>
         
         <div class="instagram-feed" id="instagramFeed">
             <!-- El feed de Instagram se cargará aquí dinámicamente -->
         </div>
         
         <div class="instagram-cta">
-            <a href="https://www.instagram.com/import_american_cars" target="_blank" class="button button-outline">
-                <i class="fab fa-instagram"></i> Seguir en Instagram
+            <a href="https://www.instagram.com/import_american_cars" target="_blank" class="button-instagram">
+                <i class="fab fa-instagram"></i> @import_american_cars
             </a>
+            <p style="margin-top: 16px; color: #86868b; font-size: 14px;">
+                #ImportAmericanCarsArica • #VehículosUSA • #KitsUpgrade
+            </p>
         </div>
     </section>
 
@@ -212,27 +209,18 @@
         </div>
     </footer>
 
-    <!-- Modal Detalles del Vehículo -->
+    <!-- Modales -->
     <div class="modal" id="vehicleModal">
         <div class="modal-content">
-            <button class="close-modal" id="closeVehicleModal">
-                <i class="fas fa-times"></i>
-            </button>
-            <div id="vehicleModalContent">
-                <!-- Contenido del modal se cargará aquí dinámicamente -->
-            </div>
+            <button class="close-modal" id="closeVehicleModal">×</button>
+            <div id="vehicleModalContent"></div>
         </div>
     </div>
 
-    <!-- Modal Personalización -->
     <div class="modal" id="customizationModal">
         <div class="modal-content">
-            <button class="close-modal" id="closeCustomizationModal">
-                <i class="fas fa-times"></i>
-            </button>
-            <div id="customizationContent">
-                <!-- Contenido del modal se cargará aquí dinámicamente -->
-            </div>
+            <button class="close-modal" id="closeCustomizationModal">×</button>
+            <div id="customizationContent"></div>
         </div>
     </div>
 
@@ -247,7 +235,7 @@
     <script type="module" src="js/app.js"></script>
     
     <script>
-        // Smooth scrolling para anchor links
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -257,7 +245,7 @@
                 const targetElement = document.querySelector(targetId);
                 if (targetElement) {
                     window.scrollTo({
-                        top: targetElement.offsetTop - 80,
+                        top: targetElement.offsetTop - 60,
                         behavior: 'smooth'
                     });
                     
@@ -280,3 +268,4 @@
     </script>
 </body>
 </html>
+[file content end]
