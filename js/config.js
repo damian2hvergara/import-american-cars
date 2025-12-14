@@ -32,6 +32,17 @@ export const CONFIG = {
     formatoPrecio: "CLP",
     mostrarStock: true,
     mostrarInstagram: true,
-    defaultImage: "https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    // Imágenes por defecto reales (Unsplash)
+    defaultImage: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    placeholderImages: [
+      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1555212697-194d092e3b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    ]
   }
 };
+
+console.log('⚙️ Configuración cargada correctamente');
+console.log('📡 Supabase URL:', CONFIG.supabase.url);
+console.log('☁️ Cloudinary Cloud:', CONFIG.cloudinary.cloudName);
