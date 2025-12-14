@@ -1,11 +1,10 @@
-// CONFIGURACIÓN CENTRALIZADA
-// NO modificar estos valores en otros archivos
-
+// CONFIGURACIÓN CENTRALIZADA - CON TU NUEVA API KEY
 export const CONFIG = {
   // Supabase - Credenciales PÚBLICAS
   supabase: {
     url: "https://cflpmluvhfldewiitymh.supabase.co",
-    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNmbHBtbHV2aGZsZGV3aWl0eW1oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk3MDAwODQsImV4cCI6MjAyNTI3NjA4NH0.1z3Y0YQl-13M-HZOr5AMYV3G8mggEON6wJvO_DV5_Mw"
+    // ⚠️ USA ESTA KEY QUE ENCONTRASTE
+    anonKey: "sb_publishable_lvUG-G_2bzDxyVZwAF25HA_30dFAb3K"
   },
   
   // Cloudinary - Configuración
