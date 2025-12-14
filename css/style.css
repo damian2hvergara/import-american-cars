@@ -871,3 +871,119 @@ body {
         padding: var(--space-lg);
     }
 }
+/* Añade esto al final de tu style.css */
+
+/* Mejoras para imágenes */
+.vehicle-image,
+.slider-slide img,
+.instagram-image,
+.kit-icon i {
+  transition: opacity 0.3s ease;
+}
+
+/* Efecto de carga para imágenes */
+.vehicle-image[src*="loading"],
+.slider-slide img[src*="loading"] {
+  opacity: 0.5;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Mejorar visualización de imágenes con error */
+.vehicle-image:before,
+.slider-slide img:before {
+  content: "🚗";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  opacity: 0.5;
+}
+
+/* Asegurar que las imágenes mantengan proporción */
+.vehicle-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.slider-slide img {
+  width: 100%;
+  height: 400px;
+  object-fit: contain;
+  object-position: center;
+  background-color: var(--surface-1);
+}
+
+/* Estilos para cuando no hay imágenes */
+.image-placeholder {
+  width: 100%;
+  height: 240px;
+  background: var(--surface-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  font-size: 48px;
+}
+
+/* Mejorar responsive de imágenes */
+@media (max-width: 768px) {
+  .vehicle-image {
+    height: 200px;
+  }
+  
+  .slider-slide img {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vehicle-image {
+    height: 180px;
+  }
+  
+  .slider-slide img {
+    height: 250px;
+  }
+}
+
+/* Estilos para comparación de kits */
+.comparison-panel img {
+  width: 100%;
+  height: 300px;
+  object-fit: contain;
+  background: var(--surface-1);
+  border-radius: var(--radius-md);
+  transition: transform 0.3s ease;
+}
+
+.comparison-panel img:hover {
+  transform: scale(1.02);
+}
+
+/* Estilo para imágenes personalizadas */
+#customizedVehicleImage {
+  position: relative;
+}
+
+#customizedVehicleImage:after {
+  content: "🎨 Personalizado";
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 122, 255, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+}
