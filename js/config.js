@@ -21,7 +21,7 @@ export const CONFIG = {
     instagram: "import_american_cars",
     instagramUrl: "https://www.instagram.com/import_american_cars",
     email: "contacto@importamericancars.cl",
-    ubicacion: "Arica, Chile",
+    ubicacion: "Zona Franca Arica, Chile",
     horario: "Lunes a Viernes 9:00 - 19:00"
   },
   
@@ -32,8 +32,26 @@ export const CONFIG = {
     formatoPrecio: "CLP",
     mostrarStock: true,
     mostrarInstagram: true,
+    
+    // Nueva paleta de colores profesional
+    colors: {
+      primaryDark: "#2C3E50",
+      primaryMain: "#3498DB",
+      primaryLight: "#E8F4FC",
+      secondaryDark: "#7F8C8D",
+      secondaryMain: "#95A5A6",
+      secondaryLight: "#ECF0F1",
+      accent: "#1ABC9C",       // Verde elegante para botones KITS
+      whatsappGreen: "#25D366", // Verde WhatsApp profesional
+      whatsappHover: "#128C7E",
+      success: "#27AE60",
+      warning: "#F39C12",
+      error: "#E74C3C"
+    },
+    
     // Imágenes por defecto reales (Unsplash)
     defaultImage: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    heroBackground: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
     placeholderImages: [
       "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -45,4 +63,4 @@ export const CONFIG = {
 
 console.log('⚙️ Configuración cargada correctamente');
 console.log('📡 Supabase URL:', CONFIG.supabase.url);
-console.log('☁️ Cloudinary Cloud:', CONFIG.cloudinary.cloudName);
+console.log('🎨 Nueva paleta de colores cargada');
