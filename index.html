@@ -2,15 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Import American Cars | Vehículos USA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Import American Cars | Minimalista & Profesional</title>
+    
+    <!-- Meta tags Apple -->
+    <meta name="theme-color" content="#f5f5f7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="description" content="Vehículos americanos premium importados directamente desde USA. Diseño minimalista, calidad profesional.">
+    
+    <!-- Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-<body class="modal-open">
+<body>
     <header class="header">
         <div class="header-container">
             <div class="logo">
@@ -88,14 +102,18 @@
 
     <section class="vehicles-section" id="vehicles">
         <h2 class="section-title">Nuestros Vehículos</h2>
+        <p class="section-subtitle">Selecciona entre nuestra flota de vehículos americanos premium</p>
+        
         <div class="filter-controls">
             <button class="filter-button active" data-filter="all">Todos</button>
             <button class="filter-button" data-filter="stock">Stock Arica</button>
             <button class="filter-button" data-filter="transit">En Tránsito</button>
             <button class="filter-button" data-filter="reserve">Para Reservar</button>
         </div>
+        
         <div class="vehicles-grid" id="vehiclesContainer">
-            </div>
+            <!-- Los vehículos se cargarán aquí dinámicamente -->
+        </div>
     </section>
 
     <section class="kits-section" id="customize">
@@ -103,11 +121,11 @@
         <p class="section-subtitle">Añade valor y exclusividad a tu vehículo con nuestros paquetes de mejora.</p>
         
         <div class="kits-grid">
-            <div class="kit-card gold">
+            <div class="kit-card">
                 <div class="kit-icon">
                     <i class="fas fa-medal"></i>
                 </div>
-                <h3 class="kit-title">Standar</h3>
+                <h3 class="kit-title">Standard</h3>
                 <p class="kit-description">Preparación básica incluida con cada vehículo</p>
                 <div class="kit-price">INCLUIDO</div>
                 <ul class="kit-features">
@@ -116,7 +134,7 @@
                     <li><i class="fas fa-check"></i> Documentación en regla</li>
                 </ul>
             </div>
-            <div class="kit-card silver">
+            <div class="kit-card">
                 <div class="kit-icon">
                     <i class="fas fa-medal"></i>
                 </div>
@@ -124,13 +142,13 @@
                 <p class="kit-description">Mejoras estéticas y funcionales avanzadas</p>
                 <div class="kit-price">DESDE $1.2M</div>
                 <ul class="kit-features">
-                    <li><i class="fas fa-check"></i> Todo lo del Kit Standar</li>
+                    <li><i class="fas fa-check"></i> Todo lo del Kit Standard</li>
                     <li><i class="fas fa-check"></i> Llantas deportivas</li>
                     <li><i class="fas fa-check"></i> Tratamiento de pintura</li>
                     <li><i class="fas fa-check"></i> Audio Premium</li>
                 </ul>
             </div>
-            <div class="kit-card bronze">
+            <div class="kit-card">
                 <div class="kit-icon">
                     <i class="fas fa-star"></i>
                 </div>
@@ -145,9 +163,11 @@
                 </ul>
             </div>
         </div>
+        
         <p class="kit-disclaimer">
             * Los kits varían por modelo. Puedes personalizar y cotizar el kit exacto al seleccionar un vehículo.
         </p>
+        
         <div class="instagram-cta">
             <button class="button button-outline" id="showAllKits">
                 <i class="fas fa-search"></i> Ver Vehículos para Personalizar
@@ -157,8 +177,11 @@
 
     <section class="instagram-section" id="instagram">
         <h2 class="section-title">Nuestro Feed en Instagram</h2>
-        <div class="instagram-feed" id="instagramFeedContainer">
-            </div>
+        <p class="section-subtitle">Sigue nuestro trabajo y los vehículos que transformamos</p>
+        
+        <div class="instagram-feed" id="instagramFeed">
+            <!-- El feed de Instagram se cargará aquí dinámicamente -->
+        </div>
     </section>
 
     <section class="contact-section" id="contact">
@@ -169,7 +192,7 @@
             <a href="https://wa.me/56981458545" target="_blank" class="button whatsapp-btn">
                 <i class="fab fa-whatsapp"></i> WhatsApp
             </a>
-            <a href="https://www.instagram.com/import_american_cars" target="_blank" class="button button-instagram">
+            <a href="https://www.instagram.com/import_american_cars" target="_blank" class="button button-outline">
                 <i class="fab fa-instagram"></i> Instagram
             </a>
         </div>
@@ -177,6 +200,7 @@
         <div class="contact-info">
             <p><i class="fas fa-envelope"></i> contacto@importamericancars.cl</p>
             <p><i class="fas fa-map-marker-alt"></i> Arica, Chile</p>
+            <p><i class="fas fa-clock"></i> Lunes a Viernes 9:00 - 19:00</p>
         </div>
     </section>
 
@@ -193,32 +217,38 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 Import American Cars. Todos los derechos reservados.</p>
+            <p>&copy; <span id="currentYear">2024</span> Import American Cars. Todos los derechos reservados.</p>
         </div>
     </footer>
 
+    <!-- Modal Detalles del Vehículo -->
     <div class="modal" id="vehicleModal">
         <div class="modal-content">
             <button class="close-modal" id="closeVehicleModal">
                 <i class="fas fa-times"></i>
             </button>
             <div id="vehicleModalContent">
-                </div>
+                <!-- Contenido del modal se cargará aquí dinámicamente -->
+            </div>
         </div>
     </div>
 
+    <!-- Modal Personalización -->
     <div class="modal" id="customizationModal">
         <div class="modal-content">
             <button class="close-modal" id="closeCustomizationModal">
                 <i class="fas fa-times"></i>
             </button>
             <div id="customizationContent">
-                </div>
+                <!-- Contenido del modal se cargará aquí dinámicamente -->
+            </div>
         </div>
     </div>
 
+    <!-- Contenedor de Notificaciones -->
     <div id="notificationContainer"></div>
 
+    <!-- Scripts -->
     <script type="module" src="js/config.js"></script>
     <script type="module" src="js/supabase.js"></script>
     <script type="module" src="js/productos.js"></script>
@@ -239,15 +269,28 @@
                         top: targetElement.offsetTop - 80,
                         behavior: 'smooth'
                     });
+                    
+                    // Cerrar menú móvil si está abierto
+                    const mobileMenu = document.getElementById('mobileMenu');
+                    if (mobileMenu && mobileMenu.classList.contains('active')) {
+                        mobileMenu.classList.remove('active');
+                    }
                 }
             });
         });
         
         // Actualizar año en el footer
         document.addEventListener('DOMContentLoaded', function() {
-            const yearElement = document.querySelector('.footer-bottom p');
+            const yearElement = document.getElementById('currentYear');
             if (yearElement) {
-                yearElement.innerHTML = yearElement.innerHTML.replace('2024', new Date().getFullYear());
+                yearElement.textContent = new Date().getFullYear();
+            }
+        });
+        
+        // Recargar datos
+        document.getElementById('reloadDataButton')?.addEventListener('click', function() {
+            if (window.app) {
+                window.app.reloadData();
             }
         });
     </script>
