@@ -6,18 +6,24 @@ import { UI } from './ui.js';
 export class ProductosManager {
   constructor() {
     this.vehiculos = [];
+    this.kits = []; // NUEVO: Almacenar los kits aquí
     this.currentFilter = "all";
   }
   
-  // Cargar vehículos desde Supabase
+  // Cargar vehículos y kits desde Supabase
   async cargarVehiculos() {
     try {
-      console.log('🚗 === INICIANDO CARGA DE VEHÍCULOS ===');
+      console.log('🚗 === INICIANDO CARGA DE VEHÍCULOS Y KITS ===');
       UI.showLoading();
       
+      // 1. Cargar Vehículos
       this.vehiculos = await supabaseService.getVehiculos();
       
+      // 2. Cargar Kits (NUEVO)
+      this.kits = await supabaseService.getKits();
+      
       console.log(`📦 Vehículos cargados en memoria: ${this.vehiculos.length}`);
+      console.log(`📦 Kits cargados en memoria: ${this.kits.length}`);
       
       if (!this.vehiculos || this.vehiculos.length === 0) {
         console.warn('⚠️ No se encontraron vehículos en la base de datos');
@@ -35,7 +41,7 @@ export class ProductosManager {
       this.renderVehiculos();
       UI.hideLoading();
       
-      console.log('✅ === CARGA DE VEHÍCULOS COMPLETADA ===');
+      console.log('✅ === CARGA DE VEHÍCULOS Y KITS COMPLETADA ===');
       
     } catch (error) {
       console.error('❌ Error cargando vehículos:', error);
@@ -72,183 +78,122 @@ export class ProductosManager {
   
   // Procesar datos del vehículo
   procesarVehiculo(vehiculo) {
-    console.log(`  🔧 Procesando: ${vehiculo.id} - ${vehiculo.nombre || 'Sin nombre'}`);
+    // 1. Asignar ID (si no tiene) y Precio
+    vehiculo.id = vehiculo.id || 'temp_id_' + Math.random(); 
+    vehiculo.precio = supabaseService.findVehiclePrice(vehiculo);
     
-    // 1. Procesar imágenes
-    const imagenes = this.procesarImagenes(vehiculo);
-    
-    // 2. Procesar estado
-    const estado = this.procesarEstado(vehiculo.estado);
-    
-    // 3. Procesar precio
-    const precio = this.procesarPrecio(vehiculo.precio);
-    
-    // 4. Procesar ubicación
-    const ubicacion = vehiculo.ubicacion || vehiculo.ciudad || vehiculo.location || 'Arica, Chile';
-    
-    // 5. Procesar descripción
-    const descripcion = this.procesarDescripcion(vehiculo);
-    
-    const vehiculoProcesado = {
-      id: vehiculo.id,
-      nombre: vehiculo.nombre || 'Vehículo sin nombre',
-      imagenes: imagenes,
-      precio: precio,
-      estado: estado,
-      ubicacion: ubicacion,
-      descripcion: descripcion,
-      // Mantener todos los datos originales
-      ...vehiculo
-    };
-    
-    console.log(`    ✅ Procesado: ${vehiculoProcesado.nombre} - ${estado} - $${precio}`);
-    return vehiculoProcesado;
-  }
-  
-  // Procesar imágenes
-  procesarImagenes(vehiculo) {
+    // 2. Manejar el array de imágenes (NUEVO REQUISITO)
     const imagenes = [];
     
-    // Lista de posibles columnas de imágenes
-    const posiblesColumnas = [
-      'imagen_url', 'imagen_1', 'imagen_2', 'imagen_3',
-      'foto_principal', 'foto_1', 'foto_2', 'foto_3',
-      'imagen_principal', 'url_imagen', 'url_foto',
-      'image_url', 'main_image', 'photo_url', 'img_url'
-    ];
-    
-    // Buscar en todas las columnas posibles
-    for (const columna of posiblesColumnas) {
-      if (vehiculo[columna] && typeof vehiculo[columna] === 'string' && vehiculo[columna].trim()) {
-        const url = this.getCloudinaryUrl(vehiculo[columna]);
-        if (url && !imagenes.includes(url)) {
-          imagenes.push(url);
-          console.log(`    📸 Imagen de ${columna}: ${url.substring(0, 60)}...`);
+    // Si la columna 'imagenes' (text[]) existe y es un array, úsala.
+    if (Array.isArray(vehiculo.imagenes) && vehiculo.imagenes.length > 0) {
+      imagenes.push(...vehiculo.imagenes.map(url => this.getCloudinaryUrl(url)));
+    } else {
+      // Lógica de fallback si 'imagenes' no existe o está vacía, usando las columnas viejas
+      const posiblesColumnas = [
+        'imagen_1', 'imagen_2', 'imagen_3', 'foto_principal', 'foto_1', 'foto_2', 'foto_3', 'imagen_principal', 'url_imagen', 'url_foto', 'image_url', 'main_image', 'photo_url', 'img_url'
+      ];
+      
+      // Buscar en todas las columnas posibles
+      for (const columna of posiblesColumnas) {
+        if (vehiculo[columna] && typeof vehiculo[columna] === 'string' && vehiculo[columna].trim()) {
+          const url = this.getCloudinaryUrl(vehiculo[columna]);
+          if (url && !imagenes.includes(url)) {
+            imagenes.push(url);
+            console.log(` 📸 Imagen de ${columna}: ${url.substring(0, 60)}...`);
+          }
         }
       }
     }
-    
+
     // Si no hay imágenes, usar una por defecto
     if (imagenes.length === 0) {
-      console.log(`    ⚠️ Sin imágenes, usando por defecto`);
+      console.log(` ⚠️ Sin imágenes, usando imagen por defecto para ${vehiculo.nombre}`);
       imagenes.push(CONFIG.app.defaultImage);
     }
     
-    return imagenes;
+    // Asignar el array procesado y la imagen principal (la primera del array)
+    vehiculo.imagenes = imagenes;
+    vehiculo.imagen_principal_card = imagenes[0]; // Usar la primera imagen para la tarjeta
+    
+    // Asignar estado de forma más limpia
+    vehiculo.estado = vehiculo.estado?.toLowerCase() === 'stock' ? 'stock' : 
+                      vehiculo.estado?.toLowerCase() === 'transit' ? 'transit' : 
+                      'reserve';
+
+    return vehiculo;
   }
   
-  // Procesar estado
-  procesarEstado(estadoOriginal) {
-    if (!estadoOriginal) return 'reserve';
-    
-    const estado = estadoOriginal.toString().toLowerCase();
-    
-    if (estado.includes('stock') || estado === 'en stock' || estado === 'disponible') {
-      return 'stock';
-    } else if (estado.includes('transito') || estado.includes('tránsito') || estado.includes('transit')) {
-      return 'transit';
-    } else if (estado.includes('reserva') || estado.includes('reserve')) {
-      return 'reserve';
-    }
-    
-    return 'reserve';
+  // NUEVO: Obtener los kits cargados
+  getKitsForDisplay() {
+    // Asegurar que el kit "Standar" (precio 0) siempre esté primero
+    const standarKit = this.kits.find(k => k.nivel === 'standar');
+    const otherKits = this.kits.filter(k => k.nivel !== 'standar');
+    return standarKit ? [standarKit, ...otherKits] : this.kits;
+  }
+
+  // NUEVO: Obtener la imagen de personalización desde Supabase
+  async getCustomizationImage(vehiculoId, kitId) {
+    // Llama al servicio de Supabase
+    return supabaseService.getKitImageForVehicle(vehiculoId, kitId);
   }
   
-  // Procesar precio
-  procesarPrecio(precioOriginal) {
-    if (!precioOriginal) return 0;
+  // Obtener URL de Cloudinary (se mantiene igual)
+  getCloudinaryUrl(publicId) {
+    if (!publicId || publicId.startsWith('http')) return publicId;
     
-    const precio = parseFloat(precioOriginal);
-    return isNaN(precio) ? 0 : precio;
+    // Asume que el ID ya incluye el folder si es necesario
+    const parts = publicId.split('/');
+    const cleanId = parts[parts.length - 1];
+    
+    return `https://res.cloudinary.com/${CONFIG.cloudinary.cloudName}/image/upload/v1/vehiculos/${cleanId}`;
   }
   
-  // Procesar descripción
-  procesarDescripcion(vehiculo) {
-    const descripciones = [
-      vehiculo.descripcion,
-      vehiculo.descripcion_corta,
-      vehiculo.description,
-      vehiculo.descripcion_larga,
-      'Vehículo importado desde USA. Consulta por más detalles.'
-    ];
-    
-    for (const desc of descripciones) {
-      if (desc && typeof desc === 'string' && desc.trim()) {
-        return desc;
-      }
+  // Obtener vehículo por ID (se mantiene igual)
+  getVehiculoById(id) {
+    let vehiculo = this.vehiculos.find(v => v.id === id);
+    if (vehiculo) {
+      return vehiculo;
     }
-    
-    return 'Vehículo importado desde USA. Consulta por más detalles.';
+    return null;
   }
   
-  // Generar URL de Cloudinary
-  getCloudinaryUrl(imagePath) {
-    if (!imagePath || imagePath.trim() === '') {
-      return CONFIG.app.defaultImage;
-    }
-    
-    const path = imagePath.trim();
-    
-    // Si ya es una URL completa, usarla directamente
-    if (path.startsWith('http://') || path.startsWith('https://')) {
-      return path;
-    }
-    
-    // Si ya es una URL de Cloudinary completa
-    if (path.includes('cloudinary.com')) {
-      return path;
-    }
-    
-    // Construir URL de Cloudinary
-    // Remover / al inicio si existe
-    const cleanPath = path.replace(/^\//, '');
-    
-    // URL base de Cloudinary
-    return `https://res.cloudinary.com/${CONFIG.cloudinary.cloudName}/image/upload/${CONFIG.cloudinary.folder}/${cleanPath}`;
-  }
-  
-  // Actualizar contadores de stock
+  // Actualizar contadores (se mantiene igual)
   actualizarContadores() {
-    const stock = this.vehiculos.filter(v => v.estado === 'stock').length;
-    const transit = this.vehiculos.filter(v => v.estado === 'transit').length;
-    const reserve = this.vehiculos.filter(v => v.estado === 'reserve').length;
-    
-    console.log(`📊 Contadores actualizados: Stock=${stock}, Tránsito=${transit}, Reserva=${reserve}`);
-    
-    document.getElementById('stockCount').textContent = stock;
-    document.getElementById('transitCount').textContent = transit;
-    document.getElementById('reserveCount').textContent = reserve;
+    const stockCount = this.vehiculos.filter(v => v.estado === 'stock').length;
+    const transitCount = this.vehiculos.filter(v => v.estado === 'transit').length;
+    const reserveCount = this.vehiculos.filter(v => v.estado === 'reserve').length;
+
+    UI.updateCounter('stockCount', stockCount);
+    UI.updateCounter('transitCount', transitCount);
+    UI.updateCounter('reserveCount', reserveCount);
   }
   
-  // Renderizar vehículos en la grid
-  renderVehiculos(filter = this.currentFilter) {
-    console.log(`🎨 Renderizando con filtro: ${filter}`);
+  // Renderizar vehículos (se mantiene igual)
+  renderVehiculos() {
+    this.filtrarVehiculos(this.currentFilter);
+  }
+  
+  // Filtrar vehículos (se mantiene igual)
+  filtrarVehiculos(filter) {
     this.currentFilter = filter;
-    
     let vehiculosFiltrados = this.vehiculos;
     
-    if (filter !== "all") {
+    if (filter !== 'all') {
       vehiculosFiltrados = this.vehiculos.filter(v => v.estado === filter);
-      console.log(`  🔍 Filtrados ${vehiculosFiltrados.length} vehículos`);
+      console.log(` 🔍 Filtrados ${vehiculosFiltrados.length} vehículos`);
     }
     
     UI.updateFilterButtons(filter);
     UI.renderVehiculosGrid(vehiculosFiltrados);
   }
   
-  // Filtrar vehículos
-  filtrarVehiculos(filter) {
-    console.log(`🔘 Aplicando filtro: ${filter}`);
-    this.renderVehiculos(filter);
-  }
-  
-  // Obtener vehículo por ID
-  getVehiculoById(id) {
-    return this.vehiculos.find(v => v.id === id);
-  }
-  
-  // Formatear precio
+  // Formatear precio (se mantiene igual)
   formatPrice(price) {
+    if (CONFIG.app.mostrarPrecios === false) {
+      return 'Consultar';
+    }
+    
     if (!price && price !== 0) {
       return 'Consultar';
     }
@@ -265,7 +210,7 @@ export class ProductosManager {
     return '$' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
   
-  // Obtener WhatsApp URL
+  // Obtener WhatsApp URL (se mantiene igual, pero ahora usa el objeto kit)
   getWhatsAppUrl(vehiculo, kit = null) {
     const statusText = 
       vehiculo.estado === 'stock' ? 'En Stock Arica' : 
@@ -289,15 +234,16 @@ export class ProductosManager {
         message += `*Precio Kit:* +${this.formatPrice(kit.precio)}\n`;
         const total = (vehiculo.precio || 0) + kit.precio;
         if (total > 0) {
-          message += `*Total:* ${this.formatPrice(total)}\n`;
+          message += `*Precio Total Estimado:* ${this.formatPrice(total)} ${CONFIG.app.moneda}\n`;
         }
+      } else {
+        message += `*Kit:* Básico Incluido\n`;
       }
     }
     
-    message += `\n¿Podrían darme más información?`;
+    message += `\nURL de referencia: ${window.location.href}`;
     
-    const encodedMessage = encodeURIComponent(message);
-    return `https://wa.me/${CONFIG.contacto.whatsapp}?text=${encodedMessage}`;
+    return `https://wa.me/${CONFIG.contacto.whatsapp}?text=${encodeURIComponent(message)}`;
   }
 }
 
