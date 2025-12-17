@@ -1,4 +1,4 @@
-[file name]: index (1).html
+[file name]: index.html
 [file content begin]
 <!DOCTYPE html>
 <html lang="es">
@@ -17,30 +17,32 @@
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- CSS -->
+    <!-- CSS MODULARIZADO -->
     <link rel="stylesheet" href="css/style.css">
-  
+    
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
+    <!-- Header -->
     <header class="header">
         <div class="header-container">
             <div class="logo">
                 <span class="logo-text">Import American Cars</span>
             </div>
-            <div class="nav-links">
+            <nav class="nav-links">
                 <a href="#vehicles" class="nav-link">Vehículos</a>
                 <a href="#customize" class="nav-link">Kits Upgrade</a>
                 <a href="#instagram" class="nav-link">Instagram</a>
                 <a href="#contact" class="nav-link">Contacto</a>
-            </div>
-            <button class="menu-toggle" id="menuToggle">
+            </nav>
+            <button class="menu-toggle" id="menuToggle" aria-label="Menú">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </header>
 
+    <!-- Hero Section -->
     <section class="hero" id="home">
         <h1 class="hero-title">
             <span class="hero-main">Vehículos Americanos</span>
@@ -78,6 +80,7 @@
         </div>
     </section>
 
+    <!-- Vehicles Section -->
     <section class="vehicles-section" id="vehicles">
         <h2 class="section-title">Vehículos Disponibles</h2>
         <p class="section-subtitle">Selección premium de vehículos americanos importados</p>
@@ -91,9 +94,16 @@
         
         <div class="vehicles-grid" id="vehiclesContainer">
             <!-- Los vehículos se cargarán aquí dinámicamente -->
+            <div class="loading-placeholder" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                <div style="font-size: 32px; margin-bottom: 16px; color: #86868b;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <p style="color: #86868b;">Cargando vehículos desde la base de datos...</p>
+            </div>
         </div>
     </section>
 
+    <!-- Kits Section -->
     <section class="kits-section" id="customize" style="background: var(--gray-50);">
         <h2 class="section-title">Kits Upgrade Personalizados</h2>
         <p class="section-subtitle">Cada vehículo tiene kits de upgrade con precios específicos según modelo.</p>
@@ -151,12 +161,23 @@
         </div>
     </section>
 
+    <!-- Instagram Section -->
     <section class="instagram-section" id="instagram">
         <h2 class="section-title">En Instagram</h2>
         <p class="section-subtitle">Sigue nuestro proceso de importación, vehículos en stock y transformaciones con kits upgrade</p>
         
         <div class="instagram-feed" id="instagramFeed">
             <!-- El feed de Instagram se cargará aquí dinámicamente -->
+            <div class="instagram-post loading">
+                <div class="instagram-image-placeholder" style="width: 100%; height: 280px; background: var(--gray-100); border-radius: var(--radius) var(--radius) 0 0;"></div>
+                <div class="instagram-info" style="padding: 20px;">
+                    <div class="instagram-stats">
+                        <span><i class="fas fa-heart"></i> ...</span>
+                        <span><i class="fas fa-comment"></i> ...</span>
+                    </div>
+                    <div class="instagram-caption" style="color: #86868b;">Cargando contenido de Instagram...</div>
+                </div>
+            </div>
         </div>
         
         <div class="instagram-cta">
@@ -169,6 +190,7 @@
         </div>
     </section>
 
+    <!-- Contact Section -->
     <section class="contact-section" id="contact">
         <h2 class="section-title">Contacto</h2>
         <p class="section-subtitle">Contáctanos para encontrar el vehículo americano de tus sueños</p>
@@ -192,6 +214,7 @@
         </div>
     </section>
 
+    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-logo">
@@ -206,66 +229,216 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; <span id="currentYear">2025</span> Import American Cars (IAC). Todos los derechos reservados.</p>
+            <p style="margin-top: 8px; font-size: 12px; opacity: 0.7;">Conectado a base de datos en tiempo real</p>
         </div>
     </footer>
 
     <!-- Modales -->
     <div class="modal" id="vehicleModal">
         <div class="modal-content">
-            <button class="close-modal" id="closeVehicleModal">×</button>
-            <div id="vehicleModalContent"></div>
+            <button class="close-modal" id="closeVehicleModal" aria-label="Cerrar">×</button>
+            <div id="vehicleModalContent">
+                <!-- Contenido del modal se carga dinámicamente -->
+            </div>
         </div>
     </div>
 
     <div class="modal" id="customizationModal">
         <div class="modal-content">
-            <button class="close-modal" id="closeCustomizationModal">×</button>
-            <div id="customizationContent"></div>
+            <button class="close-modal" id="closeCustomizationModal" aria-label="Cerrar">×</button>
+            <div id="customizationContent">
+                <!-- Contenido del modal se carga dinámicamente -->
+            </div>
         </div>
     </div>
 
     <!-- Contenedor de Notificaciones -->
     <div id="notificationContainer"></div>
 
-    <!-- Scripts -->
-<script type="module" src="js/config.js"></script>
-<script type="module" src="js/supabase.js"></script>
-<script type="module" src="js/productos.js"></script>
-<script type="module" src="js/ui-main.js"></script>
-<script type="module" src="js/init.js"></script>
+    <!-- Menú Móvil (se inyecta dinámicamente) -->
+    <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
+        <!-- Se llena dinámicamente -->
+    </div>
+
+    <!-- Scripts MODULARIZADOS -->
+    <script type="module" src="js/config.js"></script>
+    <script type="module" src="js/supabase.js"></script>
+    <script type="module" src="js/managers/vehiculos-manager.js"></script>
+    <script type="module" src="js/productos.js"></script>
+    <script type="module" src="js/ui/ui-utils.js"></script>
+    <script type="module" src="js/ui/ui-notifications.js"></script>
+    <script type="module" src="js/ui/ui-modals.js"></script>
+    <script type="module" src="js/ui/ui-core.js"></script>
+    <script type="module" src="js/app.js"></script>
     
+    <!-- Scripts inline para funcionalidades básicas -->
     <script>
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 60,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Cerrar menú móvil si está abierto
-                    const mobileMenu = document.getElementById('mobileMenu');
-                    if (mobileMenu && mobileMenu.classList.contains('active')) {
-                        mobileMenu.classList.remove('active');
-                    }
-                }
-            });
-        });
-        
-        // Actualizar año en el footer
-        document.addEventListener('DOMContentLoaded', function() {
+        // Función para actualizar el año en el footer
+        function updateCurrentYear() {
             const yearElement = document.getElementById('currentYear');
             if (yearElement) {
                 yearElement.textContent = new Date().getFullYear();
             }
+        }
+        
+        // Smooth scrolling mejorado
+        function initSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const headerHeight = document.querySelector('.header').offsetHeight || 60;
+                        const targetPosition = targetElement.offsetTop - headerHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Cerrar menú móvil si está abierto
+                        const mobileMenu = document.getElementById('mobileMenu');
+                        if (mobileMenu && mobileMenu.classList.contains('active')) {
+                            mobileMenu.classList.remove('active');
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Inicializar menú móvil básico
+        function initMobileMenu() {
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            if (menuToggle && mobileMenu) {
+                // Crear contenido del menú móvil si está vacío
+                if (!mobileMenu.innerHTML.trim()) {
+                    mobileMenu.innerHTML = `
+                        <a href="#vehicles" class="mobile-nav-link">Vehículos</a>
+                        <a href="#customize" class="mobile-nav-link">Kits Upgrade</a>
+                        <a href="#instagram" class="mobile-nav-link">Instagram</a>
+                        <a href="#contact" class="mobile-nav-link">Contacto</a>
+                    `;
+                    
+                    // Cerrar menú al hacer click en un link
+                    mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
+                        link.addEventListener('click', () => {
+                            mobileMenu.classList.remove('active');
+                            mobileMenu.setAttribute('aria-hidden', 'true');
+                        });
+                    });
+                }
+                
+                menuToggle.addEventListener('click', () => {
+                    const isActive = mobileMenu.classList.contains('active');
+                    mobileMenu.classList.toggle('active');
+                    mobileMenu.setAttribute('aria-hidden', !isActive);
+                });
+                
+                // Cerrar menú al hacer click fuera
+                document.addEventListener('click', (e) => {
+                    if (!menuToggle.contains(e.target) && !mobileMenu.contains(e.target) && mobileMenu.classList.contains('active')) {
+                        mobileMenu.classList.remove('active');
+                        mobileMenu.setAttribute('aria-hidden', 'true');
+                    }
+                });
+            }
+        }
+        
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentYear();
+            initSmoothScrolling();
+            initMobileMenu();
+            
+            // Añadir clases de carga inicial
+            document.body.classList.add('loaded');
+            
+            // Manejar tecla ESC para cerrar modales
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const openModals = document.querySelectorAll('.modal.active');
+                    openModals.forEach(modal => {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                }
+            });
+        });
+        
+        // Manejar recarga de página manteniendo posición
+        window.addEventListener('beforeunload', function() {
+            // Guardar posición de scroll si es necesario
+            if (window.scrollY > 0) {
+                sessionStorage.setItem('scrollPosition', window.scrollY);
+            }
+        });
+        
+        window.addEventListener('load', function() {
+            // Restaurar posición de scroll si existe
+            const savedPosition = sessionStorage.getItem('scrollPosition');
+            if (savedPosition) {
+                window.scrollTo(0, parseInt(savedPosition));
+                sessionStorage.removeItem('scrollPosition');
+            }
         });
     </script>
+    
+    <!-- Estilos adicionales para el menú móvil -->
+    <style>
+        .mobile-menu {
+            position: fixed;
+            top: 44px;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border-bottom: var(--border);
+            box-shadow: var(--shadow);
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            z-index: 999;
+        }
+        
+        .mobile-menu.active {
+            display: flex;
+        }
+        
+        .mobile-menu a {
+            padding: 16px;
+            text-decoration: none;
+            color: var(--black);
+            font-size: 16px;
+            border-bottom: var(--border);
+        }
+        
+        .mobile-menu a:last-child {
+            border-bottom: none;
+        }
+        
+        .mobile-menu a:hover {
+            background: var(--gray-50);
+        }
+        
+        /* Estado de carga */
+        body:not(.loaded) .vehicles-grid,
+        body:not(.loaded) .instagram-feed {
+            opacity: 0.5;
+        }
+        
+        .loading-placeholder {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
 </body>
 </html>
 [file content end]
