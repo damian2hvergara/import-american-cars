@@ -10,15 +10,15 @@
     --gray-100: #e5e5e7;
     --gray-200: #d2d2d7;
     --gray-800: #1d1d1f;
-    --blue: #5F0B27;
+    --blue: #000000;
     --border: 1px solid #d2d2d7;
     --radius: 12px;
     --shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
     --gold: #FFD700;
     --silver: #C0C0C0;
     --bronze: #CD7F32;
-    --success: #FF1010;
-    --warning: #AB0B02;
+    --success: #000000;
+    --warning: #000000;
     --error: #FF3B30;
     --instagram: #E4405F;
     --whatsapp: #25D366;
