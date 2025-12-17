@@ -1,3 +1,16 @@
+Perfecto 👍
+Aquí está tu CSS corregido y ordenado, respetando tu código, pero solucionando el error principal:
+
+👉 La imagen YA NO está en el body
+👉 La imagen queda SOLO en el sector superior (header/título)
+👉 Con overlay tenue
+👉 Sin romper animaciones ni menú móvil
+
+
+---
+
+✅ CSS CORREGIDO (LISTO PARA REEMPLAZAR)
+
 /* ==============================================
    BASE STYLES - Variables y Reset
    ============================================== */
@@ -13,8 +26,8 @@
     --gray-200: #d2d2d7;
     --gray-800: #1d1d1f;
 
-    /* IMAGEN DE FONDO PRINCIPAL */
-    --bg-gray-50: url("https://res.cloudinary.com/df2gprqhp/image/upload/v1765988412/CHEVROLET_yjwbxt.jpg");
+    /* IMAGEN HEADER (SOLO ARRIBA) */
+    --bg-header: url("https://res.cloudinary.com/df2gprqhp/image/upload/v1765988412/CHEVROLET_yjwbxt.jpg");
 
     /* UI */
     --blue: #000000;
@@ -44,7 +57,7 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== BODY ===== */
+/* ===== BODY (SIN IMAGEN) ===== */
 body {
     position: relative;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -54,15 +67,49 @@ body {
     color: var(--black);
     overflow-x: hidden;
 
-    /* FONDO CON IMAGEN */
-    background-color: var(--gray-50); /* respaldo */
-    background-image: var(--bg-gray-50);
+    background-color: var(--gray-50);
+}
+
+/* ==============================================
+   HEADER / SECTOR TÍTULO
+   ============================================== */
+
+.page-header {
+    position: relative;
+    height: 260px;
+    background-image: var(--bg-header);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* ===== ANIMACIONES ===== */
+/* OVERLAY TENUE */
+.page-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+/* TÍTULO */
+.page-header h1 {
+    position: relative;
+    color: var(--white);
+    font-size: 2.4rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    z-index: 1;
+    text-align: center;
+}
+
+/* ==============================================
+   ANIMACIONES (SIN CAMBIOS)
+   ============================================== */
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -105,7 +152,10 @@ body {
     animation: pulse 1.5s infinite;
 }
 
-/* ===== MENÚ MÓVIL ===== */
+/* ==============================================
+   MENÚ MÓVIL
+   ============================================== */
+
 .mobile-menu {
     position: fixed;
     top: 44px;
@@ -126,3 +176,45 @@ body {
     display: flex;
     max-height: 300px;
 }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .page-header {
+        height: 200px;
+    }
+
+    .page-header h1 {
+        font-size: 1.8rem;
+    }
+}
+
+
+---
+
+✅ QUÉ CAMBIÓ (CLARO Y CORTO)
+
+✔ Se eliminó la imagen del body
+✔ Se creó .page-header para la imagen
+✔ Imagen solo arriba, no en toda la web
+✔ Overlay oscuro tenue y elegante
+✔ Tu estructura, animaciones y menú siguen intactos
+
+
+---
+
+HTML esperado (solo referencia):
+
+<header class="page-header">
+    <h1>IMPORT AMERICAN CARS</h1>
+</header>
+
+Si quieres, el siguiente paso puede ser:
+
+efecto parallax premium
+
+header más bajo tipo Apple / BMW
+
+integración directa con Cloudinary + Supabase
+
+
+Tú mandas 🚗💎
