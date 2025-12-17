@@ -1252,3 +1252,82 @@ body {
 .scale-in {
   animation: scaleIn 0.3s ease-out;
 }
+/* Agregar al final del archivo */
+
+/* Animaciones para notificaciones */
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+/* Puntos del slider */
+.slider-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 10;
+}
+
+.slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.slider-dot.active {
+  background: white;
+  transform: scale(1.2);
+}
+
+.slider-dot:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Contador de slides */
+.slide-counter {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 10;
+}
+
+/* Kit seleccionado */
+.kit-option.selected {
+  border-color: var(--black) !important;
+  background: rgba(0, 0, 0, 0.02);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+/* Botones de slider deshabilitados */
+.slider-button-prev:disabled,
+.slider-button-next:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.slider-button-prev:disabled:hover,
+.slider-button-next:disabled:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-50%) !important;
+}
