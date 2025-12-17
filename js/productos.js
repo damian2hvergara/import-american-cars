@@ -7,6 +7,12 @@ export class ProductosManager {
     this.vehiculos = [];
     this.kits = [];
     this.currentFilter = "all";
+    this.uiManager = null;
+  }
+  
+  // Inyectar UIManager
+  setUIManager(uiManager) {
+    this.uiManager = uiManager;
   }
   
   // Cargar vehículos desde Supabase
@@ -26,14 +32,16 @@ export class ProductosManager {
         return;
       }
       
-      // 2. Cargar Kits (usar los kits por defecto)
-      this.kits = this.getKitsForDisplay();
-      console.log(`🔧 Kits cargados: ${this.kits.length}`);
-      
+      // 2. Procesar vehículos
       this.vehiculos = this.vehiculos.map(vehiculo => {
         return this.procesarVehiculo(vehiculo);
       });
       
+      // 3. Cargar Kits
+      this.kits = this.getKitsForDisplay();
+      console.log(`🔧 Kits cargados: ${this.kits.length}`);
+      
+      // 4. Actualizar UI
       this.actualizarContadores();
       this.renderVehiculos();
       this.ocultarLoading();
@@ -51,11 +59,11 @@ export class ProductosManager {
     const container = document.getElementById('vehiclesContainer');
     if (container) {
       container.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-          <div style="font-size: 32px; margin-bottom: 16px; color: #86868b;">
+        <div class="loading-placeholder">
+          <div class="loading-spinner">
             <i class="fas fa-spinner fa-spin"></i>
           </div>
-          <p style="color: #86868b;">Cargando vehículos...</p>
+          <p>Cargando vehículos desde la base de datos...</p>
         </div>
       `;
     }
@@ -69,14 +77,12 @@ export class ProductosManager {
     const container = document.getElementById('vehiclesContainer');
     if (container) {
       container.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
-          <div style="font-size: 48px; margin-bottom: 20px; color: #86868b;">
+        <div class="empty-state">
+          <div class="empty-state-icon">
             <i class="fas fa-car"></i>
           </div>
-          <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--black);">
-            No hay vehículos disponibles
-          </h3>
-          <p style="color: #86868b; margin-bottom: 20px;">
+          <h3 class="empty-state-title">No hay vehículos disponibles</h3>
+          <p class="empty-state-message">
             Contáctanos para consultar disponibilidad.
           </p>
           <a href="https://wa.me/${CONFIG.contacto.whatsapp}" target="_blank" class="button whatsapp-btn" style="width: auto; padding: 12px 24px;">
@@ -89,7 +95,9 @@ export class ProductosManager {
   
   mostrarError(mensaje) {
     // Usar UIManager si está disponible
-    if (window.UIManager && window.UIManager.showError) {
+    if (this.uiManager && this.uiManager.showError) {
+      this.uiManager.showError(mensaje);
+    } else if (window.UIManager && window.UIManager.showError) {
       window.UIManager.showError(mensaje);
     } else {
       console.error('Error:', mensaje);
@@ -99,18 +107,22 @@ export class ProductosManager {
   actualizarContadores() {
     const stockCount = this.vehiculos.filter(v => v.estado === 'stock').length;
     const transitCount = this.vehiculos.filter(v => v.estado === 'transit').length;
-    const reserveCount = this.vehiculos.filter(v => v.estado === 'reserve').length;
+    const reservedCount = this.vehiculos.filter(v => v.estado === 'reserved').length;
 
     // Usar UIManager si está disponible
-    if (window.UIManager && window.UIManager.updateCounter) {
+    if (this.uiManager && this.uiManager.updateCounter) {
+      this.uiManager.updateCounter('stockCount', stockCount);
+      this.uiManager.updateCounter('transitCount', transitCount);
+      this.uiManager.updateCounter('reservedCount', reservedCount);
+    } else if (window.UIManager && window.UIManager.updateCounter) {
       window.UIManager.updateCounter('stockCount', stockCount);
       window.UIManager.updateCounter('transitCount', transitCount);
-      window.UIManager.updateCounter('reserveCount', reserveCount);
+      window.UIManager.updateCounter('reservedCount', reservedCount);
     } else {
       // Fallback manual
       this.actualizarElemento('stockCount', stockCount);
       this.actualizarElemento('transitCount', transitCount);
-      this.actualizarElemento('reserveCount', reserveCount);
+      this.actualizarElemento('reservedCount', reservedCount);
     }
   }
   
@@ -124,9 +136,10 @@ export class ProductosManager {
     // Asegurar que imagenes sea un array
     const imagenes = Array.isArray(vehiculo.imagenes) ? vehiculo.imagenes : [];
     
-    // Determinar estado
+    // Determinar estado (usar 'reserved' en lugar de 'reserve')
     let estado = vehiculo.estado || 'stock';
-    if (!['stock', 'transit', 'reserve'].includes(estado)) {
+    if (estado === 'reserve') estado = 'reserved'; // Corregir si viene como 'reserve'
+    if (!['stock', 'transit', 'reserved'].includes(estado)) {
       estado = 'stock';
     }
     
@@ -147,7 +160,9 @@ export class ProductosManager {
       motor: vehiculo.motor || '',
       kilometraje: vehiculo.kilometraje || 0,
       modelo: vehiculo.modelo || '',
-      marca: vehiculo.marca || ''
+      marca: vehiculo.marca || '',
+      transmision: vehiculo.transmision || '',
+      combustible: vehiculo.combustible || ''
     };
   }
   
@@ -169,10 +184,16 @@ export class ProductosManager {
     }
     
     if (vehiculo.estado) {
-      const estadoText = vehiculo.estado === 'stock' ? 'En Stock Arica' : 
-                        vehiculo.estado === 'transit' ? 'En Tránsito' : 
-                        'Para Reservar';
+      const estadoText = CONFIG.app.textosEstado[vehiculo.estado] || vehiculo.estado;
       mensaje += `Disponibilidad: ${estadoText}\n`;
+    }
+    
+    if (vehiculo.ano) {
+      mensaje += `Año: ${vehiculo.ano}\n`;
+    }
+    
+    if (vehiculo.kilometraje) {
+      mensaje += `Kilometraje: ${vehiculo.kilometraje.toLocaleString()} km\n`;
     }
     
     if (kit) {
@@ -187,12 +208,20 @@ export class ProductosManager {
     return `https://wa.me/${CONFIG.contacto.whatsapp}?text=${encodeURIComponent(mensaje)}`;
   }
   
+  getEstadoTexto(estado) {
+    return CONFIG.app.textosEstado[estado] || estado;
+  }
+  
+  getEstadoColor(estado) {
+    return CONFIG.app.coloresEstado[estado] || '#86868b';
+  }
+  
   // ========== MÉTODOS DE KITS ==========
   getKitsForDisplay() {
     return [
       {
-        id: "standar",
-        nivel: "standar",
+        id: "standard",
+        nivel: "standard",
         nombre: "Standard",
         precio: 0,
         descripcion: "Preparación básica incluida",
@@ -201,7 +230,9 @@ export class ProductosManager {
           "Revisión mecánica general",
           "Documentación en regla",
           "Cambio de aceite y filtros"
-        ]
+        ],
+        color: "#CD7F32",
+        icon: "fa-star"
       },
       {
         id: "medium",
@@ -214,7 +245,9 @@ export class ProductosManager {
           "Llantas deportivas 20\"",
           "Tinte de ventanas premium",
           "Step bar laterales"
-        ]
+        ],
+        color: "#C0C0C0",
+        icon: "fa-medal"
       },
       {
         id: "full",
@@ -227,9 +260,15 @@ export class ProductosManager {
           "Suspensión deportiva 2\"",
           "Rines Fuel 22\"",
           "Neumáticos Off-Road 35\""
-        ]
+        ],
+        color: "#FFD700",
+        icon: "fa-crown"
       }
     ];
+  }
+  
+  getKitById(kitId) {
+    return this.kits.find(kit => kit.id === kitId) || null;
   }
   
   // ========== MÉTODOS DE BÚSQUEDA ==========
@@ -254,7 +293,9 @@ export class ProductosManager {
   
   actualizarBotonesFiltro(filter) {
     // Usar UIManager si está disponible
-    if (window.UIManager && window.UIManager.updateFilterButtons) {
+    if (this.uiManager && this.uiManager.updateFilterButtons) {
+      this.uiManager.updateFilterButtons(filter);
+    } else if (window.UIManager && window.UIManager.updateFilterButtons) {
       window.UIManager.updateFilterButtons(filter);
     } else {
       // Fallback manual
@@ -274,13 +315,14 @@ export class ProductosManager {
     
     if (!vehiculos || vehiculos.length === 0) {
       container.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
-          <div style="font-size: 48px; margin-bottom: 20px; color: #86868b;">
+        <div class="empty-state">
+          <div class="empty-state-icon">
             <i class="fas fa-car"></i>
           </div>
-          <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--black);">
-            No hay vehículos en esta categoría
-          </h3>
+          <h3 class="empty-state-title">No hay vehículos en esta categoría</h3>
+          <p class="empty-state-message">
+            Intenta con otro filtro o consulta disponibilidad.
+          </p>
           <button class="button" onclick="window.productosManager.filtrarVehiculos('all')" style="width: auto; padding: 10px 20px;">
             Ver todos los vehículos
           </button>
@@ -291,22 +333,23 @@ export class ProductosManager {
     
     container.innerHTML = vehiculos.map(vehiculo => {
       const primeraImagen = vehiculo.imagenes?.[0] || vehiculo.imagen_principal || CONFIG.app.defaultImage;
+      const estadoTexto = this.getEstadoTexto(vehiculo.estado);
+      const estadoColor = this.getEstadoColor(vehiculo.estado);
       
       return `
         <div class="vehicle-card" data-id="${vehiculo.id}">
           <img src="${primeraImagen}" 
                alt="${vehiculo.nombre}" 
                class="vehicle-image"
-               onerror="this.src='${CONFIG.app.defaultImage}'">
+               onerror="this.src='${CONFIG.app.defaultImage}'"
+               loading="lazy">
           <div class="vehicle-info">
-            <div class="vehicle-status">
-              ${vehiculo.estado === 'stock' ? 'En Stock Arica' : 
-                vehiculo.estado === 'transit' ? 'En Tránsito' : 
-                'Para Reservar'}
+            <div class="vehicle-status" style="background: ${estadoColor}10; color: ${estadoColor};">
+              ${estadoTexto}
             </div>
             <h3 class="vehicle-title">${vehiculo.nombre || 'Vehículo'}</h3>
             <div class="vehicle-price">${this.formatPrice(vehiculo.precio)}</div>
-            <p style="color: #86868b; font-size: 14px; margin-bottom: 16px;">
+            <p style="color: #86868b; font-size: 14px; margin-bottom: 16px; min-height: 42px;">
               ${vehiculo.descripcion ? (vehiculo.descripcion.substring(0, 80) + (vehiculo.descripcion.length > 80 ? '...' : '')) : 'Sin descripción'}
             </p>
             <div style="display: flex; gap: 8px;">
@@ -326,6 +369,3 @@ export class ProductosManager {
 
 // Instancia global
 export const productosManager = new ProductosManager();
-
-// Hacer disponible globalmente
-window.productosManager = productosManager;
