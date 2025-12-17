@@ -2,29 +2,16 @@
 [file content begin]
 /* ==============================================
    IMPORT AMERICAN CARS - ARCHIVO PRINCIPAL
-   Importa todos los módulos CSS
    ============================================== */
 
-/* 1. Base y variables */
+/* Importar todos los módulos CSS CON RUTAS CORRECTAS */
 @import 'base.css';
-
-/* 2. Layout y estructura */
 @import 'layout.css';
-
-/* 3. Componentes reutilizables */
 @import 'components.css';
-
-/* 4. Secciones específicas */
 @import 'sections.css';
-
-/* 5. Responsive y media queries */
 @import 'responsive.css';
 
-/* ==============================================
-   ESTILOS ADICIONALES ESPECÍFICOS (si los hay)
-   ============================================== */
-
-/* Estilos que no encajen en las otras categorías */
+/* Estilos adicionales específicos */
 .image-gallery-container {
     position: relative;
 }
@@ -103,5 +90,28 @@
     margin-bottom: 12px;
     background: rgba(0, 0, 0, 0.05);
     color: var(--black);
+}
+
+.footer-tagline {
+    display: block;
+    margin-top: 8px;
+    color: #86868b;
+    font-size: 14px;
+}
+
+.mobile-nav-link {
+    padding: 16px;
+    text-decoration: none;
+    color: var(--black);
+    font-size: 16px;
+    border-bottom: var(--border);
+}
+
+.mobile-nav-link:last-child {
+    border-bottom: none;
+}
+
+.mobile-nav-link:hover {
+    background: var(--gray-50);
 }
 [file content end]
