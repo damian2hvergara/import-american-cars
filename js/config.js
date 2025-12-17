@@ -5,7 +5,7 @@ export const CONFIG = {
   // SUPABASE - BASE DE DATOS
   // OBTENER EN: https://app.supabase.com → Project Settings → API
   supabase: {
-    url: "https://TU_PROYECTO.supabase.co", // ← REEMPLAZA CON TU URL
+    url: "https://cflpmluvhfldewiitymh.supabase.co", // ← REEMPLAZA CON TU URL
     anonKey: "sb_publishable_lvUG-G_2bzDxyVZwAF25HA_30dFAb3K" // ← Esta key parece correcta
   },
   
