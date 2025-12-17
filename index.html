@@ -49,8 +49,10 @@
         <a href="#contact" class="mobile-nav-link">Contacto</a>
     </div>
     
-<!-- Hero Section Mejorada -->
 <section class="hero" id="home">
+    <!-- Partículas (opcional) -->
+    <div class="hero-particles"></div>
+    
     <div class="hero-content">
         <h1 class="hero-title">
             <span class="hero-main">EL DESIERTO ES NUESTRO CIRCUITO</span>
@@ -62,37 +64,37 @@
         
         <div class="stock-indicators">
             <div class="indicator" data-filter="stock">
-                <div class="indicator-icon" style="color: #34C759;">
+                <div class="indicator-icon">
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="indicator-content">
-                    <div class="indicator-number" id="stockCount">2</div>
+                    <div class="indicator-number" data-number="2" id="stockCount">2</div>
                     <div class="indicator-label">En Stock Arica</div>
                 </div>
             </div>
             <div class="indicator" data-filter="transit">
-                <div class="indicator-icon" style="color: #FF9500;">
+                <div class="indicator-icon">
                     <i class="fas fa-shipping-fast"></i>
                 </div>
                 <div class="indicator-content">
-                    <div class="indicator-number" id="transitCount">2</div>
+                    <div class="indicator-number" data-number="2" id="transitCount">2</div>
                     <div class="indicator-label">En Tránsito</div>
                 </div>
             </div>
             <div class="indicator" data-filter="reserved">
-                <div class="indicator-icon" style="color: #0066cc;">
+                <div class="indicator-icon">
                     <i class="fas fa-calendar-check"></i>
                 </div>
                 <div class="indicator-content">
-                    <div class="indicator-number" id="reservedCount">1</div>
+                    <div class="indicator-number" data-number="1" id="reservedCount">1</div>
                     <div class="indicator-label">Para Reservar</div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Flecha para indicar scroll -->
-    <div class="scroll-indicator" onclick="document.getElementById('vehicles').scrollIntoView({behavior: 'smooth'})">
+    <!-- Flecha para explorar -->
+    <div class="explore-arrow" onclick="document.getElementById('vehicles').scrollIntoView({behavior: 'smooth'})">
         <i class="fas fa-chevron-down"></i>
     </div>
 </section>
