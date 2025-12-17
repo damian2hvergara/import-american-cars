@@ -1,10 +1,12 @@
-// CONFIGURACIÓN CENTRALIZADA
+// CONFIGURACIÓN CENTRALIZADA PARA IMPORT AMERICAN CARS
 export const CONFIG = {
+  // SUPABASE - BASE DE DATOS
   supabase: {
     url: "https://cflpmluvhfldewiitymh.supabase.co",
     anonKey: "sb_publishable_lvUG-G_2bzDxyVZwAF25HA_30dFAb3K"
   },
   
+  // CLOUDINARY - ALMACENAMIENTO DE IMÁGENES
   cloudinary: {
     cloudName: "df2gprqhp",
     folder: "vehiculos",
@@ -12,6 +14,7 @@ export const CONFIG = {
     apiSecret: "UsAsQb-Ej_Zx6LmBk-celUlTf9Q"
   },
   
+  // CONTACTO - DATOS EMPRESA
   contacto: {
     whatsapp: "56981458545",
     instagram: "import_american_cars",
@@ -21,6 +24,7 @@ export const CONFIG = {
     horario: "Lunes a Viernes 9:00 - 19:00"
   },
   
+  // CONFIGURACIÓN DE LA APLICACIÓN
   app: {
     mostrarPrecios: true,
     moneda: "CLP",
@@ -40,4 +44,4 @@ export const CONFIG = {
   }
 };
 
-console.log('⚙️ Configuración cargada');
+console.log('✅ Configuración cargada correctamente');
