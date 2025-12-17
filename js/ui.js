@@ -113,7 +113,7 @@ export class UI {
     // Se maneja en renderVehiculosGrid
   }
   
-  // Mostrar notificación - EXACTA AL PRIMER CÓDIGO
+  // Mostrar notificación
   static showNotification(message, type = 'success') {
     const container = document.getElementById('notificationContainer');
     if (!container) return;
@@ -206,7 +206,7 @@ export class UI {
     });
   }
   
-  // Renderizar grid de vehículos - EXACTO AL PRIMER CÓDIGO
+  // Renderizar grid de vehículos
   static renderVehiculosGrid(vehiculos) {
     const container = document.getElementById('vehiclesContainer');
     if (!container) return;
@@ -245,11 +245,20 @@ export class UI {
       
       return `
         <div class="vehicle-card fade-in" data-id="${vehiculo.id}">
-          <img src="${primeraImagen}" 
-               alt="${vehiculo.nombre}" 
-               class="vehicle-image"
-               onerror="this.src='${CONFIG.app.defaultImage}'"
-               loading="lazy">
+          <div style="position: relative;">
+            <img src="${primeraImagen}" 
+                 alt="${vehiculo.nombre}" 
+                 class="vehicle-image"
+                 onerror="this.src='${CONFIG.app.defaultImage}'"
+                 loading="lazy">
+            ${vehiculo.imagenes && vehiculo.imagenes.length > 1 && CONFIG.app.mostrarPuntosImagenes ? `
+              <div style="position: absolute; bottom: 12px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px;">
+                ${Array.from({length: Math.min(vehiculo.imagenes.length, 8)}).map((_, i) => `
+                  <div style="width: 6px; height: 6px; border-radius: 50%; background: ${i === 0 ? 'white' : 'rgba(255,255,255,0.3)'};"></div>
+                `).join('')}
+              </div>
+            ` : ''}
+          </div>
           <div class="vehicle-info">
             <div class="vehicle-status">
               ${vehiculo.estado === 'stock' ? 'En Stock Arica' : 
@@ -266,7 +275,7 @@ export class UI {
                 <i class="fab fa-whatsapp"></i> Consultar
               </button>
               <button class="button button-outline" data-action="kits" data-id="${vehiculo.id}" style="flex: 1;">
-                <i class="fas fa-crown"></i> Kits
+                <i class="fas fa-crown"></i> Personalizar
               </button>
             </div>
           </div>
@@ -274,7 +283,7 @@ export class UI {
       `;
     }).join('');
     
-    // Asignar eventos a las tarjetas y botones - EXACTO
+    // Asignar eventos a las tarjetas y botones
     container.querySelectorAll('.vehicle-card').forEach(card => {
       card.addEventListener('click', (e) => {
         if (!e.target.closest('button')) {
@@ -301,7 +310,10 @@ export class UI {
     });
   }
   
-  // Lógica del Slider
+  // ============================================
+  // NUEVO SLIDER CON PUNTOS DE IMÁGENES
+  // ============================================
+  
   static initImageSlider(sliderElement, images, vehiculoNombre) {
     if (!sliderElement || !images || images.length === 0) {
       console.error('❌ No hay imágenes para el slider');
@@ -311,59 +323,106 @@ export class UI {
     const wrapper = sliderElement.querySelector('.slider-wrapper');
     const prevButton = sliderElement.querySelector('.slider-button-prev');
     const nextButton = sliderElement.querySelector('.slider-button-next');
+    const dotsContainer = sliderElement.querySelector('.slider-dots');
     
     if (!wrapper || !prevButton || !nextButton) {
       console.error('❌ Elementos del slider no encontrados');
       return;
     }
     
-    const totalSlides = images.length;
+    const totalSlides = Math.min(images.length, CONFIG.app.maxImagenesVehículo || 8);
     let currentSlide = 0;
     
-    // Limpiar y re-inyectar imágenes
-    wrapper.innerHTML = images.map((url, index) => `
-      <div class="slider-slide">
-        <img src="${url}" 
-             alt="Imagen ${index + 1} de ${vehiculoNombre}" 
-             loading="lazy" 
-             onerror="this.src='${CONFIG.app.defaultImage}'
-             this.onerror=null">
+    // Crear estructura completa del slider
+    sliderElement.innerHTML = `
+      <div class="slider-wrapper">
+        ${images.slice(0, totalSlides).map((url, index) => `
+          <div class="slider-slide" data-index="${index}">
+            <img src="${url}" 
+                 alt="Imagen ${index + 1} de ${vehiculoNombre}" 
+                 loading="lazy" 
+                 onerror="this.src='${CONFIG.app.defaultImage}'
+                 this.onerror=null">
+          </div>
+        `).join('')}
       </div>
-    `).join('');
-
+      <button class="slider-button-prev"><i class="fas fa-chevron-left"></i></button>
+      <button class="slider-button-next"><i class="fas fa-chevron-right"></i></button>
+      ${CONFIG.app.mostrarPuntosImagenes ? `
+        <div class="slider-dots">
+          ${Array.from({length: totalSlides}).map((_, index) => `
+            <button class="slider-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></button>
+          `).join('')}
+        </div>
+      ` : ''}
+    `;
+    
+    // Re-asignar referencias después de re-render
+    const newWrapper = sliderElement.querySelector('.slider-wrapper');
+    const newPrevButton = sliderElement.querySelector('.slider-button-prev');
+    const newNextButton = sliderElement.querySelector('.slider-button-next');
+    const newDotsContainer = sliderElement.querySelector('.slider-dots');
+    
     // Mostrar/ocultar botones si solo hay una imagen
     if (totalSlides <= 1) {
-      prevButton.style.display = 'none';
-      nextButton.style.display = 'none';
+      newPrevButton.style.display = 'none';
+      newNextButton.style.display = 'none';
+      if (newDotsContainer) newDotsContainer.style.display = 'none';
     } else {
-      prevButton.style.display = 'flex';
-      nextButton.style.display = 'flex';
+      newPrevButton.style.display = 'flex';
+      newNextButton.style.display = 'flex';
+      if (newDotsContainer) newDotsContainer.style.display = 'flex';
     }
     
     const updateSlider = () => {
-      wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-      prevButton.disabled = currentSlide === 0;
-      nextButton.disabled = currentSlide === totalSlides - 1;
+      newWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+      
+      // Actualizar puntos
+      if (newDotsContainer) {
+        newDotsContainer.querySelectorAll('.slider-dot').forEach((dot, index) => {
+          dot.classList.toggle('active', index === currentSlide);
+        });
+      }
+      
+      // Actualizar estado de botones
+      newPrevButton.disabled = currentSlide === 0;
+      newNextButton.disabled = currentSlide === totalSlides - 1;
     };
     
-    nextButton.onclick = () => {
+    newNextButton.onclick = () => {
       if (currentSlide < totalSlides - 1) {
         currentSlide++;
         updateSlider();
       }
     };
     
-    prevButton.onclick = () => {
+    newPrevButton.onclick = () => {
       if (currentSlide > 0) {
         currentSlide--;
         updateSlider();
       }
     };
     
+    // Navegación por puntos
+    if (newDotsContainer) {
+      newDotsContainer.querySelectorAll('.slider-dot').forEach(dot => {
+        dot.addEventListener('click', (e) => {
+          const index = parseInt(e.target.dataset.index);
+          if (!isNaN(index) && index >= 0 && index < totalSlides) {
+            currentSlide = index;
+            updateSlider();
+          }
+        });
+      });
+    }
+    
     updateSlider();
   }
   
-  // Mostrar detalles del vehículo - EXACTO
+  // ============================================
+  // DETALLES DEL VEHÍCULO CON 6-8 IMÁGENES
+  // ============================================
+  
   static showVehicleDetails(vehicleId) {
     const vehiculo = productosManager.getVehiculoById(vehicleId);
     if (!vehiculo) {
@@ -373,19 +432,17 @@ export class UI {
     
     const modalContent = document.getElementById('vehicleModalContent');
     
-    // Asegurar que haya imágenes
+    // Asegurar que haya imágenes (6-8 máximo)
     const imagenes = vehiculo.imagenes && vehiculo.imagenes.length > 0 
-      ? vehiculo.imagenes 
+      ? vehiculo.imagenes.slice(0, CONFIG.app.maxImagenesVehículo || 8)
       : [CONFIG.app.defaultImage];
     
-    // Inyectar el HTML del modal con el contenedor del slider - EXACTO
+    // Inyectar el HTML del modal con el nuevo slider
     modalContent.innerHTML = `
       <div class="vehicle-details">
         <div class="image-gallery-container">
           <div id="vehicleImageSlider" class="slider-container">
-            <div class="slider-wrapper"></div>
-            <button class="slider-button-prev"><i class="fas fa-chevron-left"></i></button>
-            <button class="slider-button-next"><i class="fas fa-chevron-right"></i></button>
+            <!-- El slider se generará dinámicamente -->
           </div>
         </div>
         
@@ -400,12 +457,32 @@ export class UI {
           <p class="detail-description">${vehiculo.descripcion || 'Sin descripción disponible.'}</p>
           
           <div class="detail-features">
-            ${vehiculo.motor ? `<div><i class="fas fa-cogs"></i> Motor: ${vehiculo.motor}</div>` : ''}
-            ${vehiculo.kilometraje ? `<div><i class="fas fa-road"></i> Kilometraje: ${vehiculo.kilometraje} km</div>` : ''}
             ${vehiculo.ano ? `<div><i class="fas fa-calendar"></i> Año: ${vehiculo.ano}</div>` : ''}
             ${vehiculo.color ? `<div><i class="fas fa-palette"></i> Color: ${vehiculo.color}</div>` : ''}
+            ${vehiculo.motor ? `<div><i class="fas fa-cogs"></i> Motor: ${vehiculo.motor}</div>` : ''}
+            ${vehiculo.kilometraje ? `<div><i class="fas fa-road"></i> Kilometraje: ${vehiculo.kilometraje.toLocaleString()} km</div>` : ''}
             ${vehiculo.transmision ? `<div><i class="fas fa-exchange-alt"></i> Transmisión: ${vehiculo.transmision}</div>` : ''}
             ${vehiculo.combustible ? `<div><i class="fas fa-gas-pump"></i> Combustible: ${vehiculo.combustible}</div>` : ''}
+            ${vehiculo.marca ? `<div><i class="fas fa-tag"></i> Marca: ${vehiculo.marca}</div>` : ''}
+            ${vehiculo.modelo ? `<div><i class="fas fa-car"></i> Modelo: ${vehiculo.modelo}</div>` : ''}
+          </div>
+          
+          <div style="margin: 32px 0; padding: 20px; background: var(--gray-50); border-radius: var(--radius); border: var(--border);">
+            <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: var(--black);">
+              <i class="fas fa-images"></i> Galería de Imágenes
+            </h4>
+            <p style="color: #86868b; font-size: 14px; margin-bottom: 16px;">
+              ${imagenes.length} ${imagenes.length === 1 ? 'imagen' : 'imágenes'} disponible${imagenes.length === 1 ? '' : 's'}
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+              ${imagenes.slice(0, 4).map((url, index) => `
+                <img src="${url}" 
+                     alt="Imagen ${index + 1}" 
+                     style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; cursor: pointer;"
+                     onclick="document.querySelectorAll('.slider-dot')[${index}].click()"
+                     onerror="this.src='${CONFIG.app.defaultImage}'">
+              `).join('')}
+            </div>
           </div>
 
           <div class="modal-actions">
@@ -413,7 +490,7 @@ export class UI {
               <i class="fab fa-whatsapp"></i> Reservar Ahora 
             </button>
             <button class="button button-outline" id="customizeBtn" data-id="${vehicleId}" style="flex: 1;"> 
-              <i class="fas fa-crown"></i> Personalizar 
+              <i class="fas fa-crown"></i> Personalizar con Kits 
             </button>
           </div>
         </div>
@@ -438,8 +515,9 @@ export class UI {
   }
   
   // ============================================
-  // FUNCIÓN DE KITS UPGRADE - EXACTA AL PRIMER CÓDIGO
+  // NUEVO SISTEMA DE COMPARACIÓN CON KITS
   // ============================================
+  
   static async customizeVehicle(vehicleId) {
     const vehiculo = productosManager.getVehiculoById(vehicleId);
     if (!vehiculo) {
@@ -447,39 +525,72 @@ export class UI {
       return;
     }
     
-    const kits = productosManager.getKitsForDisplay();
+    const kits = vehiculo.kits || [];
     if (kits.length === 0) {
-      this.showNotification("No hay kits de mejora disponibles", "warning");
+      this.showNotification("No hay kits de mejora disponibles para este vehículo", "warning");
       return;
     }
     
     const modalContent = document.getElementById('customizationContent');
     
-    // Asegurar imagen principal
-    const imagenPrincipal = vehiculo.imagen_principal_card || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
+    // Kit inicial (Standard)
+    const kitInicial = kits.find(k => k.nivel === 'standar') || kits[0];
     
-    // HTML EXACTO del primer código
     modalContent.innerHTML = `
       <div class="customization-container">
-        <div style="padding: 32px; background: var(--gray-50); display: flex; align-items: center; justify-content: center;">
-          <div style="text-align: center; width: 100%;">
-            <div id="comparisonVisual" style="max-width: 100%;">
-              <img src="${imagenPrincipal}" 
-                   alt="${vehiculo.nombre}" 
-                   style="max-width: 100%; max-height: 300px; object-fit: contain; border-radius: var(--radius);"
-                   onerror="this.src='${CONFIG.app.defaultImage}'">
+        <!-- COMPARADOR VISUAL MEJORADO -->
+        <div style="padding: 32px; background: var(--gray-50);">
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 20px; text-align: center; color: var(--black);">
+            <i class="fas fa-exchange-alt"></i> Comparador Visual
+          </h3>
+          <div style="display: grid; grid-template-columns: 1fr; gap: 24px; max-width: 800px; margin: 0 auto;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+              <div style="flex: 1; text-align: center;">
+                <div style="font-size: 14px; color: #86868b; margin-bottom: 8px; font-weight: 500;">Original</div>
+                <div id="originalImageContainer" style="width: 100%; height: 250px; background: var(--white); border-radius: var(--radius); border: var(--border); display: flex; align-items: center; justify-content: center;">
+                  <img src="${vehiculo.imagenes?.[0] || CONFIG.app.defaultImage}" 
+                       alt="Vehículo Original" 
+                       style="max-width: 100%; max-height: 100%; object-fit: contain; padding: 16px;"
+                       onerror="this.src='${CONFIG.app.defaultImage}'"
+                       id="originalImage">
+                </div>
+              </div>
+              
+              <div style="width: 60px; text-align: center;">
+                <div style="font-size: 24px; color: #86868b; margin: 40px 0;">
+                  <i class="fas fa-arrow-right"></i>
+                </div>
+              </div>
+              
+              <div style="flex: 1; text-align: center;">
+                <div style="font-size: 14px; color: #86868b; margin-bottom: 8px; font-weight: 500;">
+                  Con Kit: <span id="selectedKitName">${kitInicial.nombre}</span>
+                </div>
+                <div id="kitImageContainer" style="width: 100%; height: 250px; background: var(--white); border-radius: var(--radius); border: var(--border); display: flex; align-items: center; justify-content: center;">
+                  <img src="${vehiculo.imagenes?.[0] || CONFIG.app.defaultImage}" 
+                       alt="Con Kit ${kitInicial.nombre}" 
+                       style="max-width: 100%; max-height: 100%; object-fit: contain; padding: 16px;"
+                       onerror="this.src='${CONFIG.app.defaultImage}'"
+                       id="kitImage">
+                </div>
+              </div>
             </div>
-            <div style="margin-top: 20px; font-size: 14px; color: #86868b;">
-              Selecciona un kit para ver la comparación
+            
+            <div style="text-align: center;">
+              <div style="font-size: 12px; color: #86868b; margin-top: 8px;">
+                Selecciona un kit para ver la transformación
+              </div>
             </div>
           </div>
         </div>
-        <div style="padding: 32px; overflow-y: auto; max-height: 80vh;">
-          <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Kits Upgrade para ${vehiculo.nombre}</h2>
-          <p style="color: #86868b; margin-bottom: 32px; font-size: 14px;">Precios específicos para este modelo</p>
+        
+        <!-- SELECCIÓN DE KITS -->
+        <div style="padding: 32px; overflow-y: auto; max-height: 70vh;">
+          <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Personaliza tu ${vehiculo.nombre}</h2>
+          <p style="color: #86868b; margin-bottom: 32px; font-size: 14px;">Precios específicos para este modelo. Selecciona un kit para ver la comparación.</p>
           
           <div class="option-group">
-            <h3 class="option-title">Nivel de Upgrade</h3>
+            <h3 class="option-title">Niveles de Upgrade Disponibles</h3>
             <div class="option-items" id="kitsOptions">
               ${kits.map(kit => {
                 const badgeColor = kit.nivel === 'full' ? 'var(--gold)' : 
@@ -487,10 +598,12 @@ export class UI {
                 const textColor = kit.nivel === 'full' ? 'black' : 'white';
                 const icon = kit.nivel === 'full' ? 'fa-crown' : 
                             kit.nivel === 'medium' ? 'fa-medal' : 'fa-star';
+                const isSelected = kit.nivel === 'standar';
                 
                 return `
-                  <div class="option-item ${kit.nivel === 'standar' ? 'selected' : ''}" 
-                       onclick="UI.selectKit('${kit.id}', '${kit.nivel}', '${kit.nombre}', ${kit.precio}, ${vehiculo.id})">
+                  <div class="option-item ${isSelected ? 'selected' : ''}" 
+                       onclick="UI.selectKit('${kit.id}', '${kit.nivel}', '${kit.nombre}', ${kit.precio}, ${vehiculo.id}, '${vehiculo.nombre}', ${vehiculo.precio})"
+                       data-kit-id="${kit.id}">
                     <div style="width: 60px; height: 60px; background: ${badgeColor}; 
                          border-radius: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: ${textColor};">
                       <i class="fas ${icon}"></i>
@@ -505,73 +618,105 @@ export class UI {
               }).join('')}
             </div>
             
-            <div id="kitDetails" style="margin-top: 24px; padding: 20px; background: var(--gray-50); border-radius: var(--radius); border: var(--border);">
-              <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--black); display: flex; align-items: center; gap: 8px;">
+            <!-- DETALLES DEL KIT -->
+            <div id="kitDetails" style="margin-top: 24px; padding: 24px; background: var(--gray-50); border-radius: var(--radius); border: var(--border);">
+              <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--black); display: flex; align-items: center; gap: 8px;">
                 <i class="fas fa-clipboard-list"></i> Este kit incluye:
               </h4>
-              <div id="kitIncludesList">
-                ${kits[0].includes ? kits[0].includes.map(item => `
-                  <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px;">
-                    <div style="color: var(--success); font-size: 12px; margin-top: 2px;">
+              <div id="kitIncludesList" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                ${kitInicial.includes ? kitInicial.includes.map(item => `
+                  <div style="display: flex; align-items: flex-start; gap: 12px; padding: 10px; background: var(--white); border-radius: 8px;">
+                    <div style="color: var(--success); font-size: 14px; margin-top: 2px; min-width: 20px;">
                       <i class="fas fa-check-circle"></i>
                     </div>
-                    <div style="font-size: 13px; color: #86868b; line-height: 1.4; flex: 1;">${item}</div>
+                    <div style="font-size: 14px; color: #86868b; line-height: 1.4; flex: 1;">${item}</div>
                   </div>
-                `).join('') : '<div style="color: #86868b; font-size: 13px;">Sin detalles disponibles.</div>'}
+                `).join('') : '<div style="color: #86868b; font-size: 14px; padding: 20px; text-align: center;">Sin detalles disponibles.</div>'}
               </div>
             </div>
           </div>
           
+          <!-- RESUMEN Y COTIZACIÓN -->
           <div style="margin-top: 32px; padding: 24px; background: var(--gray-50); border-radius: var(--radius); border: var(--border);">
-            <div style="margin-bottom: 16px;">
-              <div style="font-size: 13px; color: #86868b; margin-bottom: 8px;">Vehículo base</div>
-              <div style="font-weight: 500; margin-bottom: 4px;">${vehiculo.nombre}</div>
-              <div style="font-size: 24px; font-weight: 700;">${productosManager.formatPrice(vehiculo.precio)} CLP</div>
-            </div>
-            
-            <div id="selectedOptionsList" style="margin-bottom: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 15px; 
-                   background: var(--white); padding: 16px; border-radius: 8px; border-left: 4px solid var(--bronze);">
-                <div>
-                  <div style="font-weight: 700; color: var(--black); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; 
-                          background: var(--bronze); color: white; border-radius: 12px; font-size: 12px;">
-                      <i class="fas fa-star"></i>
-                    </span>
-                    Kit ${kits[0].nombre}
-                  </div>
-                  <div style="font-size: 13px; color: #86868b;">${kits[0].descripcion || ''}</div>
+            <div style="margin-bottom: 24px;">
+              <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--black);">
+                <i class="fas fa-file-invoice-dollar"></i> Resumen de Cotización
+              </h4>
+              
+              <div style="margin-bottom: 16px; padding: 16px; background: var(--white); border-radius: 8px; border-left: 4px solid var(--blue);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <div style="font-weight: 600; color: var(--black);">${vehiculo.nombre}</div>
+                  <div style="font-weight: 600; color: var(--black);">${productosManager.formatPrice(vehiculo.precio)}</div>
                 </div>
-                <div style="font-weight: 700; color: var(--success); font-size: 16px;">
-                  INCLUIDO
+                <div style="font-size: 13px; color: #86868b;">
+                  ${vehiculo.estado === 'stock' ? 'En Stock Arica' : vehiculo.estado === 'transit' ? 'En Tránsito' : 'Para Reservar'}
+                </div>
+              </div>
+              
+              <div id="selectedOptionsList">
+                <div style="padding: 16px; background: var(--white); border-radius: 8px; border-left: 4px solid var(--bronze);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <div style="font-weight: 600; color: var(--black); display: flex; align-items: center; gap: 8px;">
+                      <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; 
+                            background: var(--bronze); color: white; border-radius: 12px; font-size: 12px;">
+                        <i class="fas fa-star"></i>
+                      </span>
+                      Kit ${kitInicial.nombre}
+                    </div>
+                    <div style="font-weight: 600; color: var(--success); font-size: 16px;">
+                      INCLUIDO
+                    </div>
+                  </div>
+                  <div style="font-size: 13px; color: #86868b; margin-top: 4px;">
+                    ${kitInicial.descripcion || ''}
+                  </div>
                 </div>
               </div>
             </div>
             
+            <!-- TOTAL -->
             <div style="border-top: var(--border); padding-top: 20px;">
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="font-weight: 600;">Total con Upgrade</div>
-                <div style="font-size: 28px; font-weight: 700;" id="totalPrice">${productosManager.formatPrice(vehiculo.precio)} CLP</div>
+                <div style="font-size: 17px; font-weight: 600;">Total con Upgrade</div>
+                <div style="font-size: 28px; font-weight: 700;" id="totalPrice">
+                  ${productosManager.formatPrice(vehiculo.precio)} CLP
+                </div>
               </div>
             </div>
             
-            <button class="button" onclick="UI.requestCustomization(${vehiculo.id})" style="margin-top: 24px;">
-              <i class="fab fa-whatsapp"></i> Solicitar Cotización
-            </button>
+            <!-- ACCIONES -->
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+              <button class="button" onclick="UI.requestCustomization(${vehiculo.id})" style="flex: 2;">
+                <i class="fab fa-whatsapp"></i> Solicitar Cotización Completa
+              </button>
+              <button class="button button-outline" onclick="UI.closeModal('customizationModal')" style="flex: 1;">
+                Volver
+              </button>
+            </div>
+            
+            <p style="font-size: 12px; color: #86868b; margin-top: 16px; text-align: center;">
+              <i class="fas fa-info-circle"></i> Los precios son estimados y pueden variar según disponibilidad.
+            </p>
           </div>
         </div>
       </div>
     `;
     
+    // Cargar imagen del kit inicial
+    this.loadKitImage(vehiculo.id, kitInicial.id);
+    
     this.showModal('customizationModal');
   }
   
-  // Seleccionar kit - EXACTO
-  static async selectKit(kitId, kitNivel, kitNombre, kitPrecio, vehicleId) {
+  // ============================================
+  // FUNCIONES DE COMPARACIÓN
+  // ============================================
+  
+  static async selectKit(kitId, kitNivel, kitNombre, kitPrecio, vehicleId, vehiculoNombre, basePrice) {
     const vehiculo = productosManager.getVehiculoById(vehicleId);
     if (!vehiculo) return;
     
-    const kits = productosManager.getKitsForDisplay();
+    const kits = vehiculo.kits || [];
     const kit = kits.find(k => k.id === kitId);
     if (!kit) return;
     
@@ -585,15 +730,21 @@ export class UI {
       clickedElement.classList.add('selected');
     }
     
+    // Actualizar nombre del kit en el comparador
+    const selectedKitName = document.getElementById('selectedKitName');
+    if (selectedKitName) {
+      selectedKitName.textContent = kitNombre;
+    }
+    
     // Actualizar detalles del kit
     const includesList = document.getElementById('kitIncludesList');
     if (includesList && kit.includes) {
       includesList.innerHTML = kit.includes.map(item => `
-        <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px;">
-          <div style="color: var(--success); font-size: 12px; margin-top: 2px;">
+        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 10px; background: var(--white); border-radius: 8px;">
+          <div style="color: var(--success); font-size: 14px; margin-top: 2px; min-width: 20px;">
             <i class="fas fa-check-circle"></i>
           </div>
-          <div style="font-size: 13px; color: #86868b; line-height: 1.4; flex: 1;">${item}</div>
+          <div style="font-size: 14px; color: #86868b; line-height: 1.4; flex: 1;">${item}</div>
         </div>
       `).join('');
     }
@@ -608,20 +759,21 @@ export class UI {
     const selectedOptionsList = document.getElementById('selectedOptionsList');
     if (selectedOptionsList) {
       selectedOptionsList.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 15px; 
-             background: var(--white); padding: 16px; border-radius: 8px; border-left: 4px solid ${badgeColor};">
-          <div>
-            <div style="font-weight: 700; color: var(--black); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+        <div style="padding: 16px; background: var(--white); border-radius: 8px; border-left: 4px solid ${badgeColor};">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <div style="font-weight: 600; color: var(--black); display: flex; align-items: center; gap: 8px;">
               <span style="display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; 
                     background: ${badgeColor}; color: ${textColor}; border-radius: 12px; font-size: 12px;">
                 <i class="fas ${icon}"></i>
               </span>
-              Kit ${kit.nombre}
+              Kit ${kitNombre}
             </div>
-            <div style="font-size: 13px; color: #86868b;">${kit.descripcion || ''}</div>
+            <div style="font-weight: 600; color: var(--black); font-size: 16px;">
+              ${kit.precio > 0 ? `+${productosManager.formatPrice(kit.precio)}` : '<span style="color: var(--success);">INCLUIDO</span>'}
+            </div>
           </div>
-          <div style="font-weight: 700; color: var(--black); font-size: 16px;">
-            ${kit.precio > 0 ? `+${productosManager.formatPrice(kit.precio)}` : '<span style="color: var(--success);">INCLUIDO</span>'}
+          <div style="font-size: 13px; color: #86868b; margin-top: 4px;">
+            ${kit.descripcion || ''}
           </div>
         </div>
       `;
@@ -645,27 +797,34 @@ export class UI {
       }
     }
     
-    // Actualizar imagen de comparación
-    const comparisonVisual = document.getElementById('comparisonVisual');
-    if (comparisonVisual) {
-      // Intentar obtener imagen personalizada
-      let imageUrl = await productosManager.getCustomizationImage(vehiculo.id, kit.id);
+    // Cargar imagen del kit para comparación
+    await this.loadKitImage(vehicleId, kitId);
+  }
+  
+  // Cargar imagen del kit para el comparador
+  static async loadKitImage(vehicleId, kitId) {
+    try {
+      const imagenKit = await productosManager.getCustomizationImage(vehicleId, kitId);
+      const kitImageElement = document.getElementById('kitImage');
       
-      if (!imageUrl) {
-        // Si no hay imagen personalizada, usar la imagen base
-        imageUrl = vehiculo.imagen_principal_card || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
+      if (kitImageElement) {
+        if (imagenKit) {
+          kitImageElement.src = imagenKit;
+          kitImageElement.onerror = function() {
+            const vehiculo = productosManager.getVehiculoById(vehicleId);
+            this.src = vehiculo?.imagenes?.[0] || CONFIG.app.defaultImage;
+          };
+        } else {
+          const vehiculo = productosManager.getVehiculoById(vehicleId);
+          kitImageElement.src = vehiculo?.imagenes?.[0] || CONFIG.app.defaultImage;
+        }
       }
-      
-      comparisonVisual.innerHTML = `
-        <img src="${imageUrl}" 
-             alt="${vehiculo.nombre} - ${kit.nombre}" 
-             style="max-width: 100%; max-height: 300px; object-fit: contain; border-radius: var(--radius);"
-             onerror="this.src='${vehiculo.imagenes?.[0] || CONFIG.app.defaultImage}'">
-      `;
+    } catch (error) {
+      console.error('Error cargando imagen del kit:', error);
     }
   }
   
-  // Solicitar cotización - EXACTO
+  // Solicitar cotización
   static requestCustomization(vehicleId) {
     const vehiculo = productosManager.getVehiculoById(vehicleId);
     if (!vehiculo) {
@@ -680,6 +839,7 @@ export class UI {
       return;
     }
     
+    const kitId = selectedElement.dataset.kitId;
     const kitNombre = selectedElement.querySelector('div:nth-child(2)').textContent;
     const kitPriceText = selectedElement.querySelector('div:nth-child(3)').textContent;
     const kitPrice = kitPriceText.includes('+') ? 
@@ -688,13 +848,31 @@ export class UI {
     const basePrice = vehiculo.precio || 0;
     const total = basePrice + kitPrice;
     
-    let message = `🚗 *COTIZACIÓN KIT UPGRADE*\n\n`;
+    let message = `🚗 *COTIZACIÓN KIT UPGRADE - IMPORT AMERICAN CARS*\n\n`;
     message += `*Vehículo:* ${vehiculo.nombre}\n`;
+    message += `*Estado:* ${vehiculo.estado === 'stock' ? 'En Stock Arica' : vehiculo.estado === 'transit' ? 'En Tránsito' : 'Para Reservar'}\n`;
     message += `*Precio base:* ${productosManager.formatPrice(basePrice)} CLP\n\n`;
+    
     message += `*Kit Upgrade seleccionado:*\n`;
     message += `*Kit ${kitNombre}:* ${kitPrice > 0 ? `+${productosManager.formatPrice(kitPrice)}` : 'INCLUIDO'}\n\n`;
+    
+    // Especificaciones del vehículo
+    if (vehiculo.ano || vehiculo.color || vehiculo.motor) {
+      message += `*Especificaciones:*\n`;
+      if (vehiculo.ano) message += `• Año: ${vehiculo.ano}\n`;
+      if (vehiculo.color) message += `• Color: ${vehiculo.color}\n`;
+      if (vehiculo.motor) message += `• Motor: ${vehiculo.motor}\n`;
+      if (vehiculo.kilometraje) message += `• Kilometraje: ${vehiculo.kilometraje.toLocaleString()} km\n`;
+      if (vehiculo.transmision) message += `• Transmisión: ${vehiculo.transmision}\n`;
+      message += `\n`;
+    }
+    
     message += `💰 *TOTAL ESTIMADO:* ${productosManager.formatPrice(total)} CLP\n\n`;
-    message += `¿Podemos proceder con esta configuración?`;
+    message += `¿Podemos proceder con esta configuración? Necesito:\n`;
+    message += `✅ Confirmar disponibilidad\n`;
+    message += `✅ Coordinar visita en Zona Franca Arica\n`;
+    message += `✅ Programar instalación del kit\n\n`;
+    message += `¡Gracias por tu interés en Import American Cars!`;
     
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${CONFIG.contacto.whatsapp}?text=${encodedMessage}`;
@@ -712,7 +890,6 @@ export class UI {
     
     const modalContent = document.getElementById('customizationContent');
     
-    // HTML EXACTO del primer código
     modalContent.innerHTML = `
       <div class="customization-container">
         <div style="padding: 32px; background: var(--gray-50); display: flex; align-items: center; justify-content: center;">
@@ -730,14 +907,14 @@ export class UI {
           <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Selecciona un Vehículo</h2>
           <p style="color: #86868b; margin-bottom: 32px; font-size: 14px;">Elige un vehículo para ver sus kits de upgrade personalizados</p>
           
-          <div style="display: grid; grid-template-columns: 1fr; gap: 16px; max-height: 400px; overflow-y: auto; padding-right: 8px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; max-height: 400px; overflow-y: auto; padding-right: 8px;">
             ${vehiculos.map(vehicle => `
               <div onclick="UI.customizeVehicle('${vehicle.id}')" 
-                   style="cursor: pointer; border: var(--border); border-radius: var(--radius); padding: 20px; text-align: center; transition: all 0.3s; background: var(--white);" 
+                   style="cursor: pointer; border: var(--border); border-radius: var(--radius); padding: 20px; transition: all 0.3s; background: var(--white); text-align: center;" 
                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow)';" 
                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
                 <img src="${vehicle.imagenes?.[0] || CONFIG.app.defaultImage}" 
-                     style="width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 12px;"
+                     style="width: 100%; height: 140px; object-fit: cover; border-radius: 6px; margin-bottom: 12px;"
                      onerror="this.src='${CONFIG.app.defaultImage}'">
                 <div style="font-weight: 500; margin-bottom: 4px; font-size: 15px; color: var(--black);">${vehicle.nombre}</div>
                 <div style="font-size: 13px; color: #86868b; margin-bottom: 8px;">
