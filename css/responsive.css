@@ -13,15 +13,101 @@
         display: flex;
     }
     
-    /* Hero */
+   /* Hero Responsive */
+@media (max-width: 1024px) {
     .hero-title {
-        font-size: 32px;
+        font-size: 3.5rem;
+    }
+    
+    .hero-main {
+        font-size: 3.5rem;
     }
     
     .hero-subtitle {
-        font-size: 17px;
-        padding: 0 16px;
+        font-size: 1.3rem;
+        padding: 0 20px;
     }
+    
+    .stock-indicators {
+        gap: 20px;
+    }
+    
+    .indicator {
+        min-width: 160px;
+        padding: 20px 25px;
+    }
+    
+    .indicator-number {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: 90vh;
+        padding: 100px 16px;
+    }
+    
+    .hero-title {
+        font-size: 2.8rem;
+    }
+    
+    .hero-main {
+        font-size: 2.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+    }
+    
+    .stock-indicators {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .indicator {
+        width: 100%;
+        max-width: 280px;
+        padding: 20px;
+    }
+    
+    .indicator-number {
+        font-size: 2.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-main {
+        font-size: 2.2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+    
+    .indicator {
+        max-width: 100%;
+    }
+}
+
+/* Soporte para dispositivos con poca RAM */
+@media (prefers-reduced-motion: reduce) {
+    .hero::before,
+    .indicator,
+    .hero-title,
+    .hero-subtitle,
+    .stock-indicators {
+        animation: none;
+        transition: none;
+    }
+}
     
     .stock-indicators {
         flex-direction: column;
