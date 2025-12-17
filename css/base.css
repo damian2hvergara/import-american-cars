@@ -1,11 +1,9 @@
-[file name]: css/base.css
-[file content begin]
 /* ==============================================
    BASE STYLES - Variables y Reset
    ============================================== */
 
 :root {
-    /* COLORES IDÉNTICOS AL PRIMER CÓDIGO */
+    /* COLORES */
     --white: #ffffff;
     --black: #000000;
     --gray-50: #f5f5f7;
@@ -41,6 +39,11 @@ body {
     background: var(--white);
     font-weight: 400;
     letter-spacing: -0.022em;
+    overflow-x: hidden;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 /* ===== ANIMACIONES ===== */
@@ -54,6 +57,11 @@ body {
     to { transform: translateX(0); opacity: 1; }
 }
 
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
 @keyframes modalAppear {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -64,6 +72,11 @@ body {
     to { transform: rotate(360deg); }
 }
 
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
 .fade-in {
     animation: fadeIn 0.5s ease-out;
 }
@@ -71,12 +84,12 @@ body {
 .loading-spinner {
     animation: spin 1s linear infinite;
 }
-[file content end]
-[file name]: css/base.css
-[file content begin]
-/* (Tu contenido actual de base.css) */
 
-/* AÑADIR AL FINAL: Estilos para menú móvil */
+.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+/* ===== MENÚ MÓVIL ===== */
 .mobile-menu {
     position: fixed;
     top: 44px;
@@ -87,42 +100,13 @@ body {
     box-shadow: var(--shadow);
     display: none;
     flex-direction: column;
-    padding: 20px;
     z-index: 999;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
 }
 
 .mobile-menu.active {
     display: flex;
+    max-height: 300px;
 }
-
-.mobile-menu a {
-    padding: 16px;
-    text-decoration: none;
-    color: var(--black);
-    font-size: 16px;
-    border-bottom: var(--border);
-}
-
-.mobile-menu a:last-child {
-    border-bottom: none;
-}
-
-.mobile-menu a:hover {
-    background: var(--gray-50);
-}
-
-/* Estados de carga */
-body:not(.loaded) .vehicles-grid,
-body:not(.loaded) .instagram-feed {
-    opacity: 0.5;
-}
-
-.loading-placeholder {
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-[file content end]
