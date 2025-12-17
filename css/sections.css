@@ -6,6 +6,7 @@
    HERO SECTION - Imagen Visible con Efecto Nocturno
    ============================================== */
 
+/* ===== HERO SECTION MEJORADA ===== */
 .hero {
     position: relative;
     min-height: 100vh;
@@ -13,13 +14,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 100px 24px;
+    padding: 120px 22px;
     text-align: center;
     overflow: hidden;
-    background: #000000;
 }
 
-/* Imagen principal - Ajustada para que se vea mejor */
+/* Fondo con imagen overlay */
 .hero::before {
     content: '';
     position: absolute;
@@ -31,15 +31,12 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed; /* Efecto parallax sutil */
     z-index: -2;
-    
-    /* AJUSTES PARA VISIBILIDAD - MENOS OSCURO */
-    filter: brightness(0.6) contrast(1.1) saturate(1.2);
-    transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: brightness(0.7) contrast(1.1);
+    transition: filter 0.8s ease;
 }
 
-/* Overlay más sutil para efecto nocturno */
+/* Overlay tenue gradiente */
 .hero::after {
     content: '';
     position: absolute;
@@ -47,126 +44,237 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
-        linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0.2) 0%,
-            rgba(0, 0, 0, 0.4) 50%,
-            rgba(0, 0, 0, 0.6) 100%
-        );
-    z-index: -1;
-    pointer-events: none;
-}
-
-/* Efecto de luz focal que NO tapa la imagen */
-.hero-bg-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(
-            ellipse at 50% 40%,
-            rgba(255, 255, 255, 0.15) 0%,
-            rgba(255, 255, 255, 0.05) 25%,
-            transparent 70%
-        ),
-        radial-gradient(
-            circle at 20% 80%,
-            rgba(255, 255, 255, 0.08) 0%,
-            transparent 40%
-        );
-    z-index: -1;
-    mix-blend-mode: screen; /* Mezcla que ilumina en lugar de oscurecer */
-    pointer-events: none;
-    opacity: 0.8;
-}
-
-/* Efecto de viñeta sutil en los bordes */
-.hero-vignette {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-        ellipse at center,
-        transparent 40%,
-        rgba(0, 0, 0, 0.3) 100%
+    background: linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.4) 0%,
+        rgba(0, 0, 0, 0.2) 50%,
+        rgba(0, 0, 0, 0.4) 100%
     );
-    z-index: 0;
+    z-index: -1;
     pointer-events: none;
 }
 
-/* Mejoramos el efecto hover */
+/* Efecto sutil de movimiento en hover */
 .hero:hover::before {
-    filter: brightness(0.7) contrast(1.15) saturate(1.3);
-    transform: scale(1.02); /* Sutil zoom */
+    filter: brightness(0.75) contrast(1.15);
 }
 
-.hero:hover .hero-bg-overlay {
-    opacity: 0.9;
-    transform: scale(1.05);
-}
-
-/* Contenido sobre la imagen */
 .hero-content {
     position: relative;
-    z-index: 2; /* Aseguramos que esté sobre todo */
-    max-width: 780px;
+    z-index: 1;
+    max-width: 800px;
     margin: 0 auto;
-    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+    animation: fadeInUp 1s ease-out 0.3s both;
 }
 
-/* Títulos con mejor contraste */
 .hero-title {
-    font-size: 4rem;
-    font-weight: 700;
+    font-size: 4.5rem;
+    font-weight: 800;
     margin-bottom: 24px;
-    color: #FFFFFF;
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    color: var(--white);
     text-shadow: 
-        0 4px 12px rgba(0, 0, 0, 0.6),
-        0 0 2px rgba(0, 0, 0, 0.3),
-        0 1px 0 rgba(0, 0, 0, 0.2);
+        2px 2px 8px rgba(10, 10, 10, 0.6),
+        0 0 30px rgba(255, 255, 255, 0.1);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
 }
 
 .hero-main {
     display: block;
-    font-size: 4rem;
+    font-size: 4.5rem;
     background: linear-gradient(
-        135deg,
-        #FFFFFF 0%,
-        #F0F0F0 50%,
-        #FFFFFF 100%
+        to right,
+        #ffffff 20%,
+        #f5f5f7 40%,
+        #e5e5e7 60%,
+        #ffffff 80%
     );
     background-size: 200% auto;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: subtleShimmer 8s ease-in-out infinite;
-    text-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.5),
-        0 0 20px rgba(255, 255, 255, 0.1);
+    animation: shimmer 3s ease-in-out infinite;
 }
 
 .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     line-height: 1.6;
-    margin-bottom: 64px;
+    margin-bottom: 60px;
     color: rgba(255, 255, 255, 0.95);
-    max-width: 640px;
+    max-width: 700px;
     margin-left: auto;
     margin-right: auto;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
     font-weight: 400;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
-    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
-    text-shadow: 
-        0 2px 4px rgba(0, 0, 0, 0.4),
-        0 1px 0 rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+/* Indicadores sobre la imagen */
+.stock-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    animation: fadeInUp 1s ease-out 0.7s both;
+}
+
+.indicator {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 25px 35px;
+    min-width: 180px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.indicator::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: left 0.7s ease;
+}
+
+.indicator:hover {
+    transform: translateY(-8px) scale(1.05);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.indicator:hover::before {
+    left: 100%;
+}
+
+.indicator-icon {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.indicator-content {
+    color: var(--white);
+}
+
+.indicator-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(to bottom, #ffffff, #e5e5e7);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.indicator-label {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* Flecha indicadora */
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 2s infinite;
+    z-index: 2;
+}
+
+.scroll-indicator i {
+    font-size: 2rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ANIMACIONES NUEVAS */
+@keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    40% {
+        transform: translateX(-50%) translateY(-20px);
+    }
+    60% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+}
+/* ===== STOCK INDICATORS ===== */
+.stock-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.indicator {
+    text-align: center;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    padding: 16px;
+    min-width: 120px;
+}
+
+.indicator:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+.indicator-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.indicator-number {
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--black);
+}
+
+.indicator-label {
+    font-size: 12px;
+    color: #86868b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 /* Indicadores mejorados */
