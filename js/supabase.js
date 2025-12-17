@@ -5,13 +5,20 @@ console.log('🔧 Iniciando conexión a Supabase...');
 // SERVICIO PARA CONECTAR CON SUPABASE
 export const supabaseService = {
   
-  // OBTENER TODOS LOS VEHÍCULOS
+  // OBTENER TODOS LOS VEHÍCULOS CON SUS IMÁGENES
   async getVehiculos() {
     console.log('🚗 Solicitando vehículos desde Supabase...');
     
     try {
-      // Construir URL de la API
-      const url = `${CONFIG.supabase.url}/rest/v1/vehiculos?select=*&order=orden.asc`;
+      // Verificar configuración
+      if (!CONFIG.supabase.url || CONFIG.supabase.url.includes("TU_PROYECTO")) {
+        console.error('❌ URL de Supabase no configurada');
+        return [];
+      }
+      
+      // Construir URL para obtener vehículos con imágenes
+      // IMPORTANTE: Esto asume que tienes una vista o función que une las tablas
+      const url = `${CONFIG.supabase.url}/rest/v1/vehiculos?select=*&order=orden.asc,created_at.desc`;
       console.log('📡 URL:', url);
       
       // Hacer la petición a Supabase
@@ -20,7 +27,8 @@ export const supabaseService = {
         headers: {
           'apikey': CONFIG.supabase.anonKey,
           'Authorization': `Bearer ${CONFIG.supabase.anonKey}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
         }
       });
       
@@ -47,21 +55,51 @@ export const supabaseService = {
       console.log(`✅ ${vehiculos.length} vehículos obtenidos`);
       
       // Procesar datos para asegurar formato correcto
-      const vehiculosProcesados = vehiculos.map(vehiculo => {
-        return {
-          ...vehiculo,
-          // Asegurar que imagenes sea un array
-          imagenes: Array.isArray(vehiculo.imagenes) ? vehiculo.imagenes : [],
-          // Definir imagen principal para mostrar en cards
-          imagen_principal_card: vehiculo.imagen_principal || 
-            (Array.isArray(vehiculo.imagenes) && vehiculo.imagenes.length > 0 ? vehiculo.imagenes[0] : CONFIG.app.defaultImage)
-        };
-      });
+      const vehiculosProcesados = await Promise.all(
+        vehiculos.map(async vehiculo => {
+          // Obtener imágenes para este vehículo
+          const imagenes = await this.getImagenesVehiculo(vehiculo.id);
+          
+          return {
+            ...vehiculo,
+            imagenes: imagenes,
+            imagen_principal: imagenes.length > 0 ? imagenes[0] : CONFIG.app.defaultImage
+          };
+        })
+      );
       
       return vehiculosProcesados;
       
     } catch (error) {
       console.error('❌ Error de conexión:', error);
+      return [];
+    }
+  },
+  
+  // OBTENER IMÁGENES DE UN VEHÍCULO
+  async getImagenesVehiculo(vehiculoId) {
+    try {
+      const url = `${CONFIG.supabase.url}/rest/v1/vehiculo_imagenes?vehiculo_id=eq.${vehiculoId}&select=url,orden&order=orden.asc`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'apikey': CONFIG.supabase.anonKey,
+          'Authorization': `Bearer ${CONFIG.supabase.anonKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        console.error(`❌ Error obteniendo imágenes para vehículo ${vehiculoId}`);
+        return [];
+      }
+      
+      const data = await response.json();
+      return data.map(img => img.url);
+      
+    } catch (error) {
+      console.error(`❌ Error en getImagenesVehiculo:`, error);
       return [];
     }
   },
@@ -93,17 +131,46 @@ export const supabaseService = {
         return null;
       }
       
+      // Obtener imágenes del vehículo
+      const imagenes = await this.getImagenesVehiculo(id);
+      
       // Procesar datos del vehículo
       return {
         ...vehiculo,
-        imagenes: Array.isArray(vehiculo.imagenes) ? vehiculo.imagenes : [],
-        imagen_principal_card: vehiculo.imagen_principal || 
-          (Array.isArray(vehiculo.imagenes) && vehiculo.imagenes.length > 0 ? vehiculo.imagenes[0] : CONFIG.app.defaultImage)
+        imagenes: imagenes,
+        imagen_principal: imagenes.length > 0 ? imagenes[0] : CONFIG.app.defaultImage
       };
       
     } catch (error) {
       console.error(`❌ Error en getVehiculoById:`, error);
       return null;
+    }
+  },
+  
+  // OBTENER KITS PARA UN VEHÍCULO
+  async getKitsVehiculo(vehiculoId) {
+    try {
+      const url = `${CONFIG.supabase.url}/rest/v1/vehiculo_kits?vehiculo_id=eq.${vehiculoId}&select=*,kits_upgrade(*)`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'apikey': CONFIG.supabase.anonKey,
+          'Authorization': `Bearer ${CONFIG.supabase.anonKey}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        console.error(`❌ Error obteniendo kits para vehículo ${vehiculoId}`);
+        return [];
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error(`❌ Error en getKitsVehiculo:`, error);
+      return [];
     }
   },
   
@@ -115,16 +182,22 @@ export const supabaseService = {
 
 // PRUEBA AUTOMÁTICA DE CONEXIÓN AL CARGAR
 console.log('🔄 Probando conexión con Supabase...');
-supabaseService.getVehiculos()
-  .then(data => {
-    if (data.length > 0) {
-      console.log('🎉 ¡CONEXIÓN EXITOSA!');
-      console.log(`📊 ${data.length} vehículos cargados`);
-    } else {
-      console.log('ℹ️ Conexión exitosa, pero no hay vehículos en la tabla');
-      console.log('   Verifica que hayas insertado datos en Supabase');
-    }
-  })
-  .catch(error => {
-    console.error('❌ FALLO LA CONEXIÓN:', error);
-  });
+
+// Solo probar si la URL está configurada
+if (CONFIG.supabase.url && !CONFIG.supabase.url.includes("TU_PROYECTO")) {
+  supabaseService.getVehiculos()
+    .then(data => {
+      if (data.length > 0) {
+        console.log('🎉 ¡CONEXIÓN EXITOSA!');
+        console.log(`📊 ${data.length} vehículos cargados`);
+      } else {
+        console.log('ℹ️ Conexión exitosa, pero no hay vehículos en la tabla');
+        console.log('   Verifica que hayas insertado datos en Supabase');
+      }
+    })
+    .catch(error => {
+      console.error('❌ FALLO LA CONEXIÓN:', error);
+    });
+} else {
+  console.log('⚠️  URL de Supabase no configurada. Ve a config.js para corregir.');
+}
