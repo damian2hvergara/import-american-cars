@@ -1,6 +1,9 @@
-css
 /* ==============================================
-   HERO SECTION - CORREGIDO PARA VISIBILIDAD
+   SECCIONES - Diseño Apple Minimalista
+   ============================================== */
+
+/* ==============================================
+   HERO SECTION - Imagen Visible con Efecto Nocturno
    ============================================== */
 
 .hero {
@@ -16,7 +19,7 @@ css
     background: #000000;
 }
 
-/* IMAGEN PRINCIPAL - MÁS VISIBLE */
+/* Imagen principal - Ajustada para que se vea mejor */
 .hero::before {
     content: '';
     position: absolute;
@@ -28,15 +31,15 @@ css
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
-    z-index: 1;
+    background-attachment: fixed; /* Efecto parallax sutil */
+    z-index: -2;
     
-    /* AJUSTES CRÍTICOS - MÁS BRILLO Y CONTRASTE */
-    filter: brightness(0.8) contrast(1.2) saturate(1.3);
+    /* AJUSTES PARA VISIBILIDAD - MENOS OSCURO */
+    filter: brightness(0.6) contrast(1.1) saturate(1.2);
     transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* OVERLAY MÁS TRANSPARENTE */
+/* Overlay más sutil para efecto nocturno */
 .hero::after {
     content: '';
     position: absolute;
@@ -44,103 +47,40 @@ css
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.3) 0%,
-        rgba(0, 0, 0, 0.2) 50%,
-        rgba(0, 0, 0, 0.4) 100%
-    );
-    z-index: 2;
+    background: 
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.2) 0%,
+            rgba(0, 0, 0, 0.4) 50%,
+            rgba(0, 0, 0, 0.6) 100%
+        );
+    z-index: -1;
     pointer-events: none;
 }
 
-/* ELIMINAR O SIMPLIFICAR LAS CAPAS EXTRA */
-/* Si necesitas el efecto de luz focal, hazlo muy sutil */
+/* Efecto de luz focal que NO tapa la imagen */
 .hero-bg-overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(
-        ellipse at 50% 40%,
-        rgba(255, 255, 255, 0.08) 0%,
-        transparent 60%
-    );
-    z-index: 3;
-    mix-blend-mode: soft-light;
-    pointer-events: none;
-    opacity: 0.4;
-}
-
-/* VIÑETA MUY SUTIL */
-.hero-vignette {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-        ellipse at center,
-        transparent 60%,
-        rgba(0, 0, 0, 0.2) 100%
-    );
-    z-index: 3;
-    pointer-events: none;
-}
-
-/* HOVER - MÁS VISIBLE */
-.hero:hover::before {
-    filter: brightness(0.9) contrast(1.25) saturate(1.4);
-    transform: scale(1.02);
-}
-
-/* CONTENIDO - ASEGURAR QUE ESTÉ POR ENCIMA */
-.hero-content {
-    position: relative;
-    z-index: 10; /* NÚMERO ALTO PARA ASEGURAR VISIBILIDAD */
-    max-width: 780px;
-    margin: 0 auto;
-    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
-}
-
-/* ANIMACIÓN MÁS SUAVE */
-@keyframes lightPulse {
-    0%, 100% {
-        filter: brightness(0.8) contrast(1.2) saturate(1.3);
-    }
-    50% {
-        filter: brightness(0.85) contrast(1.25) saturate(1.35);
-    }
-}
-
-.hero::before {
-    animation: lightPulse 15s ease-in-out infinite;
-}
-
-/* RESPONSIVE - MÁS VISIBLE EN MÓVIL */
-@media (max-width: 768px) {
-    .hero {
-        padding: 80px 20px;
-    }
-    
-    .hero::before {
-        background-attachment: scroll;
-        filter: brightness(0.85) contrast(1.25) saturate(1.4);
-    }
-    
-    .hero::after {
-        background: linear-gradient(
-            to bottom,
-            rgba(0, 0, 0, 0.2) 0%,
-            rgba(0, 0, 0, 0.1) 50%,
-            rgba(0, 0, 0, 0.3) 100%
+    background: 
+        radial-gradient(
+            ellipse at 50% 40%,
+            rgba(255, 255, 255, 0.15) 0%,
+            rgba(255, 255, 255, 0.05) 25%,
+            transparent 70%
+        ),
+        radial-gradient(
+            circle at 20% 80%,
+            rgba(255, 255, 255, 0.08) 0%,
+            transparent 40%
         );
-    }
-    
-    .hero-bg-overlay {
-        opacity: 0.3;
-    }
+    z-index: -1;
+    mix-blend-mode: screen; /* Mezcla que ilumina en lugar de oscurecer */
+    pointer-events: none;
+    opacity: 0.8;
 }
 
 /* Efecto de viñeta sutil en los bordes */
