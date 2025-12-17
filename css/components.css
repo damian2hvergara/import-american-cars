@@ -1,0 +1,258 @@
+[file name]: css/components.css
+[file content begin]
+/* ==============================================
+   COMPONENTS - Botones, cards, modals
+   ============================================== */
+
+/* ===== BUTTONS IDÉNTICOS ===== */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 22px;
+    background: var(--black);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.button:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+.button-outline {
+    background: transparent;
+    color: var(--black);
+    border: var(--border);
+}
+
+.button-outline:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.whatsapp-btn {
+    background: var(--whatsapp);
+}
+
+.kit-button {
+    width: auto !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+}
+
+.kit-button.active {
+    background: var(--black) !important;
+    color: var(--white) !important;
+    border-color: var(--black) !important;
+}
+
+.filter-button {
+    padding: 8px 16px;
+    background: transparent;
+    border: var(--border);
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-button.active {
+    background: var(--black);
+    color: var(--white);
+    border-color: var(--black);
+}
+
+.button-instagram {
+    background: linear-gradient(45deg, #405DE6, #833AB4, #E1306C);
+    color: white;
+    padding: 14px 32px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+}
+
+.button-instagram:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== CARDS ===== */
+.vehicle-card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+
+.kit-card {
+    text-align: center;
+    padding: 32px;
+    background: var(--white);
+    border-radius: var(--radius);
+    border: var(--border);
+}
+
+.instagram-post {
+    background: var(--white);
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: var(--border);
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.instagram-post:hover {
+    transform: translateY(-4px);
+}
+
+/* ===== MODALS IDÉNTICOS ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    overflow-y: auto;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--white);
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    border-radius: var(--radius);
+    position: relative;
+    overflow-y: auto;
+    animation: modalAppear 0.3s ease-out;
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #86868b;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 22px;
+    transition: all 0.3s;
+}
+
+.close-modal:hover {
+    background: var(--gray-100);
+    color: var(--black);
+}
+
+/* ===== SLIDER IDÉNTICO ===== */
+.slider-container {
+    position: relative;
+    overflow: hidden;
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+}
+
+.slider-wrapper {
+    display: flex;
+    transition: transform 0.3s ease-out;
+}
+
+.slider-slide {
+    flex: 0 0 100%;
+    width: 100%;
+}
+
+.slider-slide img {
+    width: 100%;
+    height: 400px;
+    object-fit: contain;
+    padding: 20px;
+}
+
+.slider-button-prev,
+.slider-button-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: var(--border);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--black);
+    transition: all 0.3s;
+    font-size: 18px;
+}
+
+.slider-button-prev:hover,
+.slider-button-next:hover {
+    background: var(--white);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.slider-button-prev {
+    left: 16px;
+}
+
+.slider-button-next {
+    right: 16px;
+}
+
+/* ===== NOTIFICATIONS IDÉNTICAS ===== */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--success);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 400px;
+    animation: slideIn 0.3s ease-out;
+}
+[file content end]
