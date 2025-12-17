@@ -4,76 +4,7 @@
 
 /* Tablet y móvil grande (768px hacia abajo) */
 @media (max-width: 768px) {
-        /* HEADER APPLE EN MÓVIL */
-    .header {
-        background: rgba(255, 255, 255, 0.92) !important;
-        backdrop-filter: saturate(180%) blur(20px) !important;
-        -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    .logo {
-        font-size: 18px !important;
-    }
-    
-    .nav-links {
-        display: none !important;
-    }
-    
-    .menu-toggle {
-        display: flex !important;
-    }
-    
-    /* Menú móvil estilo Apple */
-    .mobile-menu {
-        position: fixed !important;
-        top: 44px !important;
-        left: 0 !important;
-        right: 0 !important;
-        background: rgba(255, 255, 255, 0.98) !important;
-        backdrop-filter: saturate(180%) blur(20px) !important;
-        -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-        display: none !important;
-        flex-direction: column !important;
-        z-index: 999 !important;
-    }
-    
-    .mobile-menu.active {
-        display: flex !important;
-        animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    }
-    
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .mobile-nav-link {
-        padding: 18px 24px !important;
-        text-decoration: none !important;
-        color: #1d1d1f !important;
-        font-size: 17px !important;
-        font-weight: 400 !important;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
-        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
-        transition: background-color 0.3s !important;
-    }
-    
-    .mobile-nav-link:last-child {
-        border-bottom: none !important;
-    }
-    
-    .mobile-nav-link:hover {
-        background-color: rgba(0, 0, 0, 0.03) !important;
-    }
-   /* Header */
+    /* Header */
     .nav-links {
         display: none;
     }
