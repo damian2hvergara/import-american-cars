@@ -1,8 +1,9 @@
 /* ==============================================
    SECTIONS - Secciones específicas
+   FORD RAPTOR x APPLE MINIMALISM
    ============================================== */
 
-/* ===== HERO SECTION PREMIUM ===== */
+/* ===== HERO SECTION - BRUTAL ELEGANCE ===== */
 .hero {
     position: relative;
     min-height: 100vh;
@@ -13,10 +14,10 @@
     padding: 120px 22px;
     text-align: center;
     overflow: hidden;
-    cursor: default;
+    background: #000000;
 }
 
-/* Fondo con imagen overlay MÁS TRANSPARENTE */
+/* Fondo Ford Raptor Style - MÁS OSCURO, MÁS DRAMÁTICO */
 .hero::before {
     content: '';
     position: absolute;
@@ -26,15 +27,14 @@
     bottom: 0;
     background-image: url('https://res.cloudinary.com/df2gprqhp/image/upload/v1765988412/CHEVROLET_yjwbxt.jpg');
     background-size: cover;
-    background-position: center 30%;
+    background-position: center 35%;
     background-repeat: no-repeat;
-    z-index: -2;
-    filter: brightness(0.6) contrast(1.2) saturate(1.1);
-    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0.85;
+    z-index: 1;
+    filter: brightness(0.4) contrast(1.3) saturate(1.1);
+    opacity: 0.9;
 }
 
-/* Overlay tenue gradiente MEJORADO */
+/* Overlay Apple Minimalism - NEGRO PURO CON DEGRADÉ */
 .hero::after {
     content: '';
     position: absolute;
@@ -43,540 +43,570 @@
     right: 0;
     bottom: 0;
     background: linear-gradient(
-        135deg,
-        rgba(0, 0, 0, 0.5) 0%,
-        rgba(0, 0, 0, 0.25) 50%,
-        rgba(0, 0, 0, 0.5) 100%
+        180deg,
+        rgba(0, 0, 0, 0.8) 0%,
+        rgba(0, 0, 0, 0.6) 30%,
+        rgba(0, 0, 0, 0.4) 70%,
+        rgba(0, 0, 0, 0.8) 100%
     );
-    z-index: -1;
+    z-index: 2;
     pointer-events: none;
-}
-
-/* Efecto sutil de movimiento en hover */
-.hero:hover::before {
-    filter: brightness(0.65) contrast(1.25);
-    transform: scale(1.01);
 }
 
 .hero-content {
     position: relative;
-    z-index: 1;
+    z-index: 3;
     max-width: 900px;
     margin: 0 auto;
-    animation: fadeInUp 1s ease-out 0.3s both;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
-/* ========== TÍTULO METÁLICO BRILLANTE ========== */
+/* ========== TÍTULO - IMPACTO RAPTOR + TIPOGRAFÍA APPLE ========== */
 .hero-title {
-    font-size: clamp(3rem, 8vw, 5rem);
-    font-weight: 900;
-    margin-bottom: 30px;
-    background: linear-gradient(
-        to bottom,
-        #FFFFFF 0%,
-        #F8F8F8 30%,
-        #E8E8E8 70%,
-        #FFFFFF 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: clamp(2.8rem, 7vw, 4.5rem);
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: #FFFFFF;
     text-shadow: 
-        0 2px 10px rgba(0, 0, 0, 0.5),
-        0 0 40px rgba(255, 255, 255, 0.3),
-        0 0 80px rgba(255, 255, 255, 0.1);
+        0 2px 4px rgba(0, 0, 0, 0.5),
+        0 0 60px rgba(255, 255, 255, 0.1);
     letter-spacing: -0.5px;
     line-height: 1.05;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .hero-main {
     display: block;
     font-size: inherit;
-    background: linear-gradient(
-        45deg,
-        #FFFFFF 0%,
-        #F0F0F0 25%,
-        #E0E0E0 50%,
-        #F0F0F0 75%,
-        #FFFFFF 100%
-    );
-    background-size: 200% 200%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: metallicShine 4s ease-in-out infinite;
     position: relative;
 }
 
-/* ========== SUBTÍTULO METÁLICO CLARO ========== */
+/* Efecto sutil de brillo tipo Raptor */
+.hero-main::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.03),
+        transparent
+    );
+    animation: lightSweep 6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+/* ========== SUBTÍTULO - CLARIDAD APPLE ========== */
 .hero-subtitle {
-    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
     line-height: 1.6;
     margin-bottom: 60px;
-    color: rgba(255, 255, 255, 0.95);
-    max-width: 800px;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 700px;
     margin-left: auto;
     margin-right: auto;
-    text-shadow: 
-        0 1px 3px rgba(0, 0, 0, 0.8),
-        0 0 20px rgba(255, 255, 255, 0.2);
     font-weight: 400;
-    animation: fadeInUp 1s ease-out 0.5s both;
-    letter-spacing: 0.3px;
-    background: linear-gradient(
-        to bottom,
-        #FFFFFF,
-        #F5F5F7
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.2px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
     padding: 0 20px;
 }
 
-/* Indicadores sobre la imagen - PREMIUM */
+/* ========== INDICADORES - BRUTALIDAD CONTROLADA ========== */
 .stock-indicators {
     display: flex;
     justify-content: center;
-    gap: clamp(20px, 4vw, 50px);
+    gap: 24px;
     flex-wrap: wrap;
     margin-top: 60px;
-    animation: fadeInUp 1s ease-out 0.7s both;
+    animation: fadeInUp 0.8s ease-out 0.6s both;
 }
 
 .indicator {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(25px) saturate(180%);
-    -webkit-backdrop-filter: blur(25px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 24px;
-    padding: clamp(20px, 4vw, 30px) clamp(25px, 5vw, 40px);
-    min-width: min(200px, 80vw);
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 24px 32px;
+    min-width: 160px;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* Efecto de luz interior */
-.indicator::after {
+/* Efecto de borde sutil al hover - estilo Apple */
+.indicator::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(
-        circle,
-        rgba(255, 255, 255, 0.1) 0%,
-        transparent 70%
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 18px;
+    padding: 1px;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0.1)
     );
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.3s ease;
 }
 
 .indicator:hover {
-    transform: translateY(-12px) scale(1.05);
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-    box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.3),
-        0 0 0 2px rgba(255, 255, 255, 0.2),
-        inset 0 2px 0 rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-4px);
 }
 
-.indicator:hover::after {
+.indicator:hover::before {
     opacity: 1;
 }
 
-.indicator:hover .indicator-icon {
-    transform: scale(1.1) rotate(5deg);
-    filter: drop-shadow(0 0 10px currentColor);
-}
-
-/* ========== ICONOS METÁLICOS DIFERENCIADOS ========== */
+/* ========== ICONOS - SOBRIOS PERO EFECTIVOS ========== */
 .indicator-icon {
-    font-size: clamp(2rem, 5vw, 2.8rem);
-    margin-bottom: 20px;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    display: inline-block;
+    font-size: clamp(1.8rem, 4vw, 2.2rem);
+    margin-bottom: 16px;
+    color: #FFFFFF;
+    opacity: 0.9;
+    transition: all 0.3s ease;
 }
 
-/* Verde metálico para Stock */
+.indicator:hover .indicator-icon {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+/* Colores sutiles tipo Ford Performance */
 .indicator[data-filter="stock"] .indicator-icon {
-    color: #34C759;
-    text-shadow: 
-        0 0 10px rgba(52, 199, 89, 0.5),
-        0 0 20px rgba(52, 199, 89, 0.3);
+    color: #34C759; /* Verde Apple éxito - Stock disponible */
 }
 
-/* Naranja metálico para Tránsito */
 .indicator[data-filter="transit"] .indicator-icon {
-    color: #FF9500;
-    text-shadow: 
-        0 0 10px rgba(255, 149, 0, 0.5),
-        0 0 20px rgba(255, 149, 0, 0.3);
+    color: #FF9500; /* Naranja atención - En camino */
 }
 
-/* Azul metálico para Reservar */
 .indicator[data-filter="reserved"] .indicator-icon {
-    color: #007AFF;
-    text-shadow: 
-        0 0 10px rgba(0, 122, 255, 0.5),
-        0 0 20px rgba(0, 122, 255, 0.3);
+    color: #007AFF; /* Azul Apple - Para reservar */
 }
 
 .indicator-content {
     color: #FFFFFF;
-    position: relative;
-    z-index: 2;
 }
 
-/* ========== NÚMEROS METÁLICOS BRILLANTES ========== */
+/* ========== NÚMEROS - IMPACTO RAPTOR, TIPOGRAFÍA APPLE ========== */
 .indicator-number {
-    font-size: clamp(2.5rem, 6vw, 4rem);
-    font-weight: 900;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
     line-height: 1;
-    margin-bottom: 8px;
-    background: linear-gradient(
-        to bottom,
-        #FFFFFF,
-        #E0E0E0,
-        #FFFFFF
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 
-        0 2px 8px rgba(0, 0, 0, 0.6),
-        0 0 30px rgba(255, 255, 255, 0.4);
-    letter-spacing: -1px;
-    position: relative;
-    display: inline-block;
-    animation: pulseGlow 3s infinite alternate;
+    margin-bottom: 4px;
+    color: #FFFFFF;
+    letter-spacing: -0.5px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .indicator-label {
-    font-size: clamp(0.9rem, 2vw, 1.1rem);
-    color: rgba(255, 255, 255, 0.95);
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    margin-top: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
 }
 
-/* Flecha para explorar */
+/* ========== FLECHA APPLE - DISCRETA PERO VISIBLE ========== */
 .explore-arrow {
     position: absolute;
     bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 2rem;
-    animation: bounceArrow 2s infinite;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.5rem;
+    animation: bounceSubtle 2s infinite;
     cursor: pointer;
-    z-index: 10;
-    padding: 15px;
+    z-index: 3;
+    padding: 12px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
-    transition: all 0.3s;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .explore-arrow:hover {
     color: #FFFFFF;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateX(-50%) scale(1.1);
-    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* ===== ANIMACIONES NUEVAS ===== */
-@keyframes metallicShine {
+/* ===== ANIMACIONES SOBRIAS ===== */
+@keyframes lightSweep {
     0%, 100% {
-        background-position: 0% 50%;
+        transform: translateX(-100%);
     }
     50% {
-        background-position: 100% 50%;
+        transform: translateX(100%);
     }
 }
 
-@keyframes pulseGlow {
-    0% {
-        text-shadow: 
-            0 2px 8px rgba(0, 0, 0, 0.6),
-            0 0 20px rgba(255, 255, 255, 0.3);
-    }
-    100% {
-        text-shadow: 
-            0 2px 8px rgba(0, 0, 0, 0.6),
-            0 0 40px rgba(255, 255, 255, 0.6),
-            0 0 60px rgba(255, 255, 255, 0.3);
-    }
-}
-
-@keyframes bounceArrow {
+@keyframes bounceSubtle {
     0%, 20%, 50%, 80%, 100% {
         transform: translateX(-50%) translateY(0);
     }
     40% {
-        transform: translateX(-50%) translateY(-10px);
+        transform: translateX(-50%) translateY(-8px);
     }
     60% {
-        transform: translateX(-50%) translateY(-5px);
+        transform: translateX(-50%) translateY(-4px);
     }
 }
 
-/* ===== SECCIONES GENERALES ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== SECCIONES GENERALES - APPLE STYLE ===== */
 .vehicles-section,
 .kits-section,
 .instagram-section,
 .contact-section {
-    max-width: min(980px, 90vw);
+    max-width: 980px;
     margin: 0 auto;
-    padding: 80px 22px;
+    padding: 100px 22px;
     scroll-margin-top: 80px;
 }
 
 .section-title {
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    font-weight: 800;
-    margin-bottom: 20px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
     letter-spacing: -0.5px;
     text-align: center;
-    background: linear-gradient(135deg, #000000 0%, #333333 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .section-subtitle {
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    color: #666666;
-    max-width: 700px;
-    margin: 0 auto 50px;
+    font-size: 1.2rem;
+    color: #86868b;
+    max-width: 600px;
+    margin: 0 auto 60px;
     text-align: center;
-    line-height: 1.6;
-    padding: 0 20px;
+    line-height: 1.5;
+    font-weight: 400;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
 }
 
-/* ===== KITS SECTION MEJORADA ===== */
+/* ===== VEHICLES SECTION - GALERÍA APPLE ===== */
+.vehicles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+}
+
+.vehicle-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E7;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    cursor: pointer;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-8px);
+    border-color: #000000;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+.vehicle-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #F5F5F7;
+}
+
+.vehicle-info {
+    padding: 24px;
+}
+
+.vehicle-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+.vehicle-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #000000;
+}
+
+/* ===== KITS SECTION - JERARQUÍA CLARA ===== */
+.kits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
 .kit-card {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
-    background: linear-gradient(white, white) padding-box,
-                linear-gradient(135deg, #E5E5E7, #FFFFFF) border-box;
+    padding: 32px;
+    background: #FFFFFF;
+    border: 1px solid #E5E5E7;
+    border-radius: 18px;
+    text-align: center;
+    transition: all 0.3s ease;
 }
 
 .kit-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     border-color: #000000;
+    transform: translateY(-4px);
 }
 
 .kit-icon {
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, var(--bronze), #CD7F32);
-    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 25px;
-    color: white;
-    font-size: 28px;
-    box-shadow: 0 8px 20px rgba(205, 127, 50, 0.3);
+    margin: 0 auto 24px;
+    color: #FFFFFF;
+    font-size: 24px;
+    background: #000000;
 }
 
 .kit-card:nth-child(2) .kit-icon {
-    background: linear-gradient(135deg, var(--silver), #C0C0C0);
-    color: var(--black);
-    box-shadow: 0 8px 20px rgba(192, 192, 192, 0.3);
+    background: linear-gradient(135deg, #8E8E93, #AEAEB2);
 }
 
 .kit-card:nth-child(3) .kit-icon {
-    background: linear-gradient(135deg, var(--gold), #FFD700);
-    color: var(--black);
-    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+    background: linear-gradient(135deg, #FFD700, #FF9500);
 }
 
 .kit-title {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: 12px;
     color: #000000;
 }
 
 .kit-description {
-    color: #666666;
+    color: #86868b;
     font-size: 1rem;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     line-height: 1.5;
-    min-height: 60px;
 }
 
 .kit-price {
-    margin-top: 15px;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    margin-bottom: 25px;
+    margin-bottom: 24px;
+    color: #000000;
 }
 
-/* ===== INSTAGRAM SECTION MEJORADA ===== */
+/* ===== INSTAGRAM SECTION - LIMPIO ===== */
 .instagram-post {
-    transition: all 0.3s ease;
+    background: #FFFFFF;
     border: 1px solid #E5E5E7;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
 .instagram-post:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     border-color: #000000;
+    transform: translateY(-4px);
 }
 
 .instagram-image {
     width: 100%;
     height: 280px;
     object-fit: cover;
-    display: block;
-    transition: transform 0.5s ease;
 }
 
-.instagram-post:hover .instagram-image {
-    transform: scale(1.05);
+/* ===== CONTACT SECTION - DIRECTA ===== */
+.contact-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
 }
 
-.instagram-link {
+.button {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    color: #000000;
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 600;
-    padding: 10px 20px;
-    background: #F5F5F7;
-    border-radius: 25px;
-    transition: all 0.3s;
-    border: 1px solid transparent;
-}
-
-.instagram-link:hover {
+    padding: 14px 28px;
     background: #000000;
     color: #FFFFFF;
-    border-color: #000000;
-}
-
-/* ===== CONTACT SECTION MEJORADA ===== */
-.contact-buttons .button {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 1rem;
     font-weight: 600;
-}
-
-.whatsapp-btn {
-    background: linear-gradient(135deg, #25D366, #128C7E);
+    transition: all 0.3s ease;
     border: none;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
 }
 
-.whatsapp-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+.button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
 }
 
 .button-outline {
-    border: 2px solid #000000;
-    color: #000000;
     background: transparent;
+    color: #000000;
+    border: 1px solid #000000;
 }
 
 .button-outline:hover {
     background: #000000;
     color: #FFFFFF;
-    transform: translateY(-3px);
+}
+
+.whatsapp-btn {
+    background: #25D366;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    color: #86868b;
+    font-size: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .contact-info p {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    color: #666666;
-    font-size: 1rem;
-    margin: 8px 0;
+    gap: 8px;
 }
 
-.contact-info i {
+/* ===== FILTER CONTROLS - APPLE STYLE ===== */
+.filter-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-button {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid #E5E5E7;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
     color: #000000;
-    font-size: 1.1rem;
 }
 
-/* ===== RESPONSIVE ADJUSTMENTS ===== */
-@media (max-width: 768px) {
+.filter-button:hover {
+    border-color: #000000;
+}
+
+.filter-button.active {
+    background: #000000;
+    color: #FFFFFF;
+    border-color: #000000;
+}
+
+/* ===== RESPONSIVE - APPLE ADAPTIVE ===== */
+@media (max-width: 834px) {
     .hero {
-        padding: 100px 16px;
-        min-height: 90vh;
+        padding: 100px 20px;
     }
     
     .hero-title {
-        margin-bottom: 20px;
+        font-size: clamp(2.2rem, 5vw, 3rem);
     }
     
     .hero-subtitle {
+        font-size: 1.1rem;
         margin-bottom: 40px;
-        padding: 0 10px;
     }
     
     .stock-indicators {
-        gap: 20px;
+        gap: 16px;
         margin-top: 40px;
     }
     
     .indicator {
-        padding: 20px 25px;
-        min-width: 150px;
+        padding: 20px 24px;
+        min-width: 140px;
     }
     
-    .explore-arrow {
-        bottom: 30px;
-        font-size: 1.5rem;
-        padding: 12px;
+    .indicator-number {
+        font-size: 2.5rem;
     }
     
     .vehicles-section,
     .kits-section,
     .instagram-section,
     .contact-section {
-        padding: 60px 16px;
-    }
-    
-    .section-subtitle {
-        margin-bottom: 40px;
+        padding: 80px 20px;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 428px) {
     .hero {
-        padding: 80px 12px;
+        padding: 80px 16px;
     }
     
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
     
     .hero-subtitle {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        padding: 0 10px;
     }
     
     .stock-indicators {
         flex-direction: column;
         align-items: center;
+        gap: 12px;
     }
     
     .indicator {
@@ -586,16 +616,11 @@
     
     .kits-grid {
         grid-template-columns: 1fr;
-        gap: 30px;
-    }
-    
-    .instagram-feed {
-        grid-template-columns: 1fr;
+        gap: 20px;
     }
     
     .contact-buttons {
         flex-direction: column;
-        gap: 12px;
     }
     
     .contact-buttons .button {
@@ -603,23 +628,20 @@
     }
 }
 
-/* ===== ANIMACIONES GLOBALES ===== */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ===== UTILITIES ===== */
+.text-center {
+    text-align: center;
 }
 
-.fade-in {
-    animation: fadeInUp 0.6s ease-out;
+.mt-40 {
+    margin-top: 40px;
 }
 
-/* ===== MEJORAS DE PERFORMANCE ===== */
+.mb-40 {
+    margin-bottom: 40px;
+}
+
+/* ===== PREFERS-REDUCED-MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -630,26 +652,43 @@
     }
 }
 
-/* ===== EFECTO DE FOCO MEJORADO ===== */
-:focus-visible {
-    outline: 2px solid #000000;
-    outline-offset: 3px;
-    border-radius: 4px;
-}
-
-/* ===== SCROLL SMOOTH ===== */
-html {
-    scroll-behavior: smooth;
-}
-
-/* ===== MEJORAS DE ACCESIBILIDAD ===== */
-@media (prefers-contrast: high) {
-    .hero-title,
-    .hero-subtitle,
-    .indicator-content,
-    .indicator-label {
-        color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
-        text-shadow: 0 2px 4px #000000 !important;
+/* ===== DARK MODE SUPPORT ===== */
+@media (prefers-color-scheme: dark) {
+    .section-title,
+    .vehicle-title,
+    .vehicle-price,
+    .kit-title,
+    .kit-price,
+    .button-outline {
+        color: #FFFFFF;
+    }
+    
+    .section-subtitle,
+    .kit-description,
+    .contact-info {
+        color: #8E8E93;
+    }
+    
+    .vehicle-card,
+    .kit-card,
+    .instagram-post {
+        background: #1C1C1E;
+        border-color: #2C2C2E;
+    }
+    
+    .vehicle-card:hover,
+    .kit-card:hover,
+    .instagram-post:hover {
+        border-color: #FFFFFF;
+    }
+    
+    .filter-button {
+        color: #FFFFFF;
+        border-color: #2C2C2E;
+    }
+    
+    .filter-button.active {
+        background: #FFFFFF;
+        color: #000000;
     }
 }
