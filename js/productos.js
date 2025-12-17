@@ -4,42 +4,35 @@ import { CONFIG } from './config.js';
 import { supabaseService } from './supabase.js';
 import { UI } from './ui.js';
 
-// Gestión de productos/vehículos
 export class ProductosManager {
   constructor() {
     this.vehiculos = [];
-    this.kits = [];
     this.currentFilter = "all";
   }
   
-  // Cargar vehículos y kits desde Supabase
   async cargarVehiculos() {
     try {
       console.log('🚗 === INICIANDO CARGA DE VEHÍCULOS ===');
       UI.showLoading();
       
-      // 1. Cargar Vehículos con imágenes y kits
       this.vehiculos = await supabaseService.getVehiculos();
       
-      console.log(`📦 Vehículos cargados en memoria: ${this.vehiculos.length}`);
+      console.log(`📦 Vehículos cargados: ${this.vehiculos.length}`);
       
       if (!this.vehiculos || this.vehiculos.length === 0) {
-        console.warn('⚠️ No se encontraron vehículos en la base de datos');
         this.mostrarMensajeSinVehiculos();
         UI.hideLoading();
         return;
       }
       
-      console.log('🖼️ Procesando datos de vehículos...');
-      this.vehiculos = this.vehiculos.map(vehiculo => {
-        return this.procesarVehiculo(vehiculo);
-      });
+      // Procesar cada vehículo
+      this.vehiculos = this.vehiculos.map(vehiculo => this.procesarVehiculo(vehiculo));
       
       this.actualizarContadores();
       this.renderVehiculos();
       UI.hideLoading();
       
-      console.log('✅ === CARGA DE VEHÍCULOS COMPLETADA ===');
+      console.log('✅ === CARGA COMPLETADA ===');
       
     } catch (error) {
       console.error('❌ Error cargando vehículos:', error);
@@ -48,38 +41,11 @@ export class ProductosManager {
     }
   }
   
-  // Mostrar mensaje cuando no hay vehículos
-  mostrarMensajeSinVehiculos() {
-    UI.showNotification('No hay vehículos disponibles en este momento. Puedes contactarnos directamente.', 'info');
-    
-    const container = document.getElementById('vehiclesContainer');
-    if (container) {
-      container.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
-          <div style="font-size: 48px; margin-bottom: 20px; color: #86868b;">
-            <i class="fas fa-car"></i>
-          </div>
-          <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--black);">
-            Inventario en actualización
-          </h3>
-          <p style="color: #86868b; margin-bottom: 20px;">
-            Estamos actualizando nuestro inventario.<br>
-            Contáctanos para conocer disponibilidad inmediata.
-          </p>
-          <a href="https://wa.me/${CONFIG.contacto.whatsapp}" target="_blank" class="button whatsapp-btn" style="width: auto; padding: 12px 24px;">
-            <i class="fab fa-whatsapp"></i> Consultar Stock Disponible
-          </a>
-        </div>
-      `;
-    }
-  }
-  
-  // Procesar datos del vehículo
   procesarVehiculo(vehiculo) {
-    // 1. Asegurar ID
+    // Asegurar ID
     vehiculo.id = vehiculo.id || 'temp_id_' + Math.random();
     
-    // 2. Manejar imágenes (6-8 imágenes)
+    // Asegurar que imagenes sea un array válido (6-8 imágenes)
     if (!vehiculo.imagenes || !Array.isArray(vehiculo.imagenes)) {
       vehiculo.imagenes = [];
     }
@@ -88,97 +54,44 @@ export class ProductosManager {
     const maxImagenes = CONFIG.app.maxImagenesVehículo || 8;
     vehiculo.imagenes = vehiculo.imagenes.slice(0, maxImagenes);
     
-    // 3. Si no hay imágenes, usar imágenes por defecto
+    // Si no hay imágenes, usar imágenes por defecto
     if (vehiculo.imagenes.length === 0) {
       vehiculo.imagenes = CONFIG.app.placeholderImages.slice(0, 4);
     }
     
-    // 4. Imagen principal para cards
-    vehiculo.imagen_principal_card = vehiculo.imagenes[0] || CONFIG.app.defaultImage;
+    // Imagen principal
+    vehiculo.imagen_principal_card = vehiculo.imagen_principal || vehiculo.imagenes[0] || CONFIG.app.defaultImage;
     
-    // 5. Asignar estado
+    // Estado
     vehiculo.estado = vehiculo.estado?.toLowerCase() === 'stock' ? 'stock' : 
                       vehiculo.estado?.toLowerCase() === 'transit' ? 'transit' : 
                       'reserve';
-
-    // 6. Procesar kits (ya vienen procesados desde Supabase)
-    if (!vehiculo.kits || !Array.isArray(vehiculo.kits)) {
-      vehiculo.kits = this.getDefaultKitsForVehicle(vehiculo);
-    }
-
-    // 7. Asegurar que el kit Standard esté primero
-    vehiculo.kits.sort((a, b) => {
-      if (a.nivel === 'standar') return -1;
-      if (b.nivel === 'standar') return 1;
-      return (a.precio || 0) - (b.precio || 0);
-    });
-
+    
+    // Kits (ahora vienen en la misma tabla)
+    vehiculo.kits = supabaseService.getKitsForVehicle(vehiculo);
+    
     return vehiculo;
   }
   
-  // Obtener kits por defecto para un vehículo
-  getDefaultKitsForVehicle(vehiculo) {
-    const defaultKits = supabaseService.getDefaultKits();
-    
-    return defaultKits.map(kit => {
-      // Asignar includes si no existen
-      if (!kit.includes) {
-        kit.includes = supabaseService.getDefaultIncludesForKit(kit.nivel);
-      }
-      
-      // Asignar imagen si no hay
-      if (!kit.imagen_kit) {
-        kit.imagen_kit = vehiculo.imagen_principal_card;
-      }
-      
-      return { ...kit };
-    });
+  mostrarMensajeSinVehiculos() {
+    const container = document.getElementById('vehiclesContainer');
+    if (container) {
+      container.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+          <div style="font-size: 48px; margin-bottom: 20px; color: #86868b;">
+            <i class="fas fa-car"></i>
+          </div>
+          <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--black);">
+            No hay vehículos disponibles
+          </h3>
+          <a href="https://wa.me/${CONFIG.contacto.whatsapp}" target="_blank" class="button whatsapp-btn" style="width: auto; padding: 12px 24px;">
+            <i class="fab fa-whatsapp"></i> Consultar Disponibilidad
+          </a>
+        </div>
+      `;
+    }
   }
   
-  // Obtener los kits cargados
-  getKitsForDisplay() {
-    return this.kits;
-  }
-
-  // Obtener la imagen de personalización desde Supabase
-  async getCustomizationImage(vehiculoId, kitId) {
-    // Intentar obtener imagen específica de Supabase
-    const imagenEspecifica = await supabaseService.getKitImageForVehicle(vehiculoId, kitId);
-    
-    if (imagenEspecifica) {
-      return imagenEspecifica;
-    }
-    
-    // Si no hay imagen específica, buscar en los kits del vehículo
-    const vehiculo = this.getVehiculoById(vehiculoId);
-    if (vehiculo && vehiculo.kits) {
-      const kitVehiculo = vehiculo.kits.find(k => k.id === kitId);
-      if (kitVehiculo && kitVehiculo.imagen_kit) {
-        return kitVehiculo.imagen_kit;
-      }
-    }
-    
-    // Si no hay imagen del kit, usar la imagen del vehículo
-    if (vehiculo) {
-      return vehiculo.imagen_principal_card || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
-    }
-    
-    return null;
-  }
-  
-  // Obtener vehículo por ID
-  getVehiculoById(id) {
-    let vehiculo = this.vehiculos.find(v => v.id === id);
-    if (vehiculo) {
-      return vehiculo;
-    }
-    
-    // Intentar buscar por ID como número
-    vehiculo = this.vehiculos.find(v => String(v.id) === String(id));
-    return vehiculo || null;
-  }
-  
-  // Actualizar contadores
   actualizarContadores() {
     const stockCount = this.vehiculos.filter(v => v.estado === 'stock').length;
     const transitCount = this.vehiculos.filter(v => v.estado === 'transit').length;
@@ -189,12 +102,10 @@ export class ProductosManager {
     UI.updateCounter('reserveCount', reserveCount);
   }
   
-  // Renderizar vehículos
   renderVehiculos() {
     this.filtrarVehiculos(this.currentFilter);
   }
   
-  // Filtrar vehículos
   filtrarVehiculos(filter) {
     this.currentFilter = filter;
     let vehiculosFiltrados = this.vehiculos;
@@ -207,7 +118,6 @@ export class ProductosManager {
     UI.renderVehiculosGrid(vehiculosFiltrados);
   }
   
-  // Formatear precio
   formatPrice(price) {
     if (CONFIG.app.mostrarPrecios === false) {
       return 'Consultar';
@@ -229,7 +139,10 @@ export class ProductosManager {
     return '$' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
   
-  // Obtener WhatsApp URL
+  getVehiculoById(id) {
+    return this.vehiculos.find(v => v.id === id) || null;
+  }
+  
   getWhatsAppUrl(vehiculo, kit = null) {
     const statusText = 
       vehiculo.estado === 'stock' ? 'En Stock Arica' : 
@@ -238,16 +151,9 @@ export class ProductosManager {
     
     let message = `Hola, estoy interesado en el vehículo:\n\n`;
     message += `*${vehiculo.nombre}*\n`;
-    
-    if (vehiculo.precio > 0) {
-      message += `*Precio:* ${this.formatPrice(vehiculo.precio)} ${CONFIG.app.moneda}\n`;
-    } else {
-      message += `*Precio:* Consultar\n`;
-    }
-    
+    message += `*Precio:* ${this.formatPrice(vehiculo.precio)} ${CONFIG.app.moneda}\n`;
     message += `*Estado:* ${statusText}\n`;
     
-    // Agregar especificaciones si existen
     if (vehiculo.ano) message += `*Año:* ${vehiculo.ano}\n`;
     if (vehiculo.motor) message += `*Motor:* ${vehiculo.motor}\n`;
     if (vehiculo.color) message += `*Color:* ${vehiculo.color}\n`;
@@ -265,7 +171,6 @@ export class ProductosManager {
         message += `*Kit:* Básico Incluido\n`;
       }
       
-      // Agregar detalles del kit si existen
       if (kit.includes && kit.includes.length > 0) {
         message += `\n*Incluye:*\n`;
         kit.includes.forEach(item => {
@@ -279,17 +184,6 @@ export class ProductosManager {
     return `https://wa.me/${CONFIG.contacto.whatsapp}?text=${encodeURIComponent(message)}`;
   }
   
-  // Obtener kit por ID
-  getKitById(kitId) {
-    return this.kits.find(k => k.id === kitId) || null;
-  }
-  
-  // Obtener todos los vehículos
-  getVehiculos() {
-    return this.vehiculos;
-  }
-  
-  // Obtener kits de un vehículo específico
   getKitsForVehicle(vehicleId) {
     const vehiculo = this.getVehiculoById(vehicleId);
     if (!vehiculo) return [];
@@ -298,6 +192,5 @@ export class ProductosManager {
   }
 }
 
-// Instancia global
 export const productosManager = new ProductosManager();
 [file content end]
