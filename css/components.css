@@ -40,7 +40,13 @@
 }
 
 .whatsapp-btn {
-    background: var(--whatsapp);
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.whatsapp-btn:hover {
+    background: #128C7E; /* Mantiene el transform */
 }
 
 .whatsapp-btn:hover {
