@@ -1,9 +1,12 @@
 // CONFIGURACIÓN CENTRALIZADA PARA IMPORT AMERICAN CARS
+// IMPORTANTE: Actualiza la URL de Supabase con tu proyecto real
+
 export const CONFIG = {
   // SUPABASE - BASE DE DATOS
+  // OBTENER EN: https://app.supabase.com → Project Settings → API
   supabase: {
-    url: "https://cflpmluvhfldewiitymh.supabase.co",
-    anonKey: "sb_publishable_lvUG-G_2bzDxyVZwAF25HA_30dFAb3K"
+    url: "https://TU_PROYECTO.supabase.co", // ← REEMPLAZA CON TU URL
+    anonKey: "sb_publishable_lvUG-G_2bzDxyVZwAF25HA_30dFAb3K" // ← Esta key parece correcta
   },
   
   // CLOUDINARY - ALMACENAMIENTO DE IMÁGENES
@@ -21,7 +24,8 @@ export const CONFIG = {
     instagramUrl: "https://www.instagram.com/import_american_cars",
     email: "contacto@importamericancars.cl",
     ubicacion: "Zona Franca Arica, Chile",
-    horario: "Lunes a Viernes 9:00 - 19:00"
+    horario: "Lunes a Viernes 9:00 - 19:00",
+    telefono: "+56 9 8145 8545"
   },
   
   // CONFIGURACIÓN DE LA APLICACIÓN
@@ -34,14 +38,46 @@ export const CONFIG = {
     maxImagenesVehículo: 8,
     mostrarPuntosImagenes: true,
     comparadorActivo: true,
+    
+    // Imágenes por defecto
     defaultImage: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    placeholderImages: [
-      "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1555212697-194d092e3b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    ]
+    
+    // Estados posibles (deben coincidir con la base de datos)
+    estados: {
+      stock: "stock",
+      transit: "transit",
+      reserved: "reserved" // Nota: 'reserved' no 'reserve'
+    },
+    
+    // Textos para estados
+    textosEstado: {
+      stock: "En Stock Arica",
+      transit: "En Tránsito",
+      reserved: "Para Reservar"
+    },
+    
+    // Colores para estados
+    coloresEstado: {
+      stock: "#34C759", // success
+      transit: "#FF9500", // warning
+      reserved: "#0066cc" // blue
+    }
   }
 };
 
-console.log('✅ Configuración cargada correctamente');
+// Validación de configuración
+(function validateConfig() {
+  console.log('🔧 Validando configuración...');
+  
+  if (!CONFIG.supabase.url || CONFIG.supabase.url.includes("TU_PROYECTO")) {
+    console.error('❌ ERROR: URL de Supabase no configurada');
+    console.log('   Ve a https://app.supabase.com → Project Settings → API');
+    console.log('   Copia "Project URL" y reemplaza en config.js');
+  }
+  
+  if (!CONFIG.supabase.anonKey) {
+    console.error('❌ ERROR: API Key de Supabase no configurada');
+  }
+  
+  console.log('✅ Configuración cargada');
+})();
