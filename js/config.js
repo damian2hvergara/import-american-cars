@@ -19,13 +19,13 @@ export const CONFIG = {
   
   // CONTACTO - DATOS EMPRESA
   contacto: {
-    whatsapp: "56981458545",
+    whatsapp: "56938654827",
     instagram: "import_american_cars",
     instagramUrl: "https://www.instagram.com/import_american_cars",
     email: "contacto@importamericancars.cl",
     ubicacion: "Zona Franca Arica, Chile",
     horario: "Lunes a Viernes 9:00 - 19:00",
-    telefono: "+56 9 8145 8545"
+    telefono: "+569 38654827"
   },
   
   // CONFIGURACIÓN DE LA APLICACIÓN
