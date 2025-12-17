@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crear Favicon</title>
+</head>
+<body>
+    <h1>Crear Favicon para Import American Cars</h1>
+    
+    <!-- Opción 1: Usar un emoji como favicon -->
+    <p><strong>Opción 1:</strong> Guarda esta imagen como favicon.ico</p>
+    <canvas id="faviconCanvas" width="64" height="64"></canvas>
+    <br>
+    <button onclick="downloadFavicon()">Descargar Favicon</button>
+    
+    <!-- Opción 2: Icono simple -->
+    <p><strong>Opción 2:</strong> Usa este SVG como favicon.svg</p>
+    <svg width="64" height="64" viewBox="0 0 64 64">
+        <rect width="64" height="64" fill="#000000" rx="12"/>
+        <text x="32" y="40" font-family="Arial" font-size="24" font-weight="bold" 
+              fill="#ffffff" text-anchor="middle">IAC</text>
+    </svg>
+    
+    <!-- Opción 3: Usar una imagen existente -->
+    <p><strong>Opción 3:</strong> Usa esta imagen de Unsplash</p>
+    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=64&h=64&fit=crop" alt="Car Icon">
+    
+    <script>
+        function downloadFavicon() {
+            const canvas = document.getElementById('faviconCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Fondo negro
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, 64, 64);
+            
+            // Texto IAC
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('IAC', 32, 32);
+            
+            // Crear enlace de descarga
+            const link = document.createElement('a');
+            link.download = 'favicon.ico';
+            link.href = canvas.toDataURL('image/x-icon');
+            link.click();
+        }
+        
+        // Dibujar en canvas al cargar
+        window.onload = function() {
+            downloadFavicon();
+        };
+    </script>
+</body>
+</html>
