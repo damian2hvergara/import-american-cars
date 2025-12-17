@@ -1,58 +1,254 @@
-[file name]: css/responsive.css
-[file content begin]
 /* ==============================================
    RESPONSIVE - Media queries
    ============================================== */
 
+/* Tablet y móvil grande (768px hacia abajo) */
 @media (max-width: 768px) {
+    /* Header */
     .nav-links {
         display: none;
     }
     
     .menu-toggle {
-        display: block;
+        display: flex;
     }
     
+    /* Hero */
     .hero-title {
         font-size: 32px;
     }
     
     .hero-subtitle {
         font-size: 17px;
+        padding: 0 16px;
     }
     
     .stock-indicators {
         flex-direction: column;
         gap: 20px;
+        padding: 0 20px;
     }
     
+    .indicator {
+        min-width: auto;
+        padding: 12px;
+    }
+    
+    /* Vehicles */
     .vehicles-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
     
+    .filter-controls {
+        gap: 6px;
+        padding: 0 16px;
+    }
+    
+    .filter-button {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    /* Kits */
     .kits-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 16px;
     }
     
+    .kit-card {
+        padding: 24px;
+    }
+    
+    /* Instagram */
     .instagram-feed {
         grid-template-columns: 1fr;
+        padding: 0 16px;
     }
     
+    /* Contact */
     .contact-buttons {
         flex-direction: column;
+        padding: 0 16px;
     }
     
+    .contact-buttons .button {
+        width: 100%;
+    }
+    
+    /* Modales */
     .modal-content {
-        margin: 20px;
-        width: calc(100% - 40px);
+        margin: 10px;
+        width: calc(100% - 20px);
+        max-height: calc(100vh - 20px);
     }
     
-    .kit-selection-controls {
-        flex-direction: column;
+    .details-content {
+        padding: 20px;
     }
     
     .modal-actions {
         flex-direction: column;
+    }
+    
+    .modal-actions .button {
+        width: 100%;
+    }
+    
+    /* Slider */
+    .slider-slide img {
+        height: 300px;
+        padding: 10px;
+    }
+    
+    .slider-button-prev,
+    .slider-button-next {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    /* Vehicle details */
+    .detail-features {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .detail-title {
+        font-size: 24px;
+    }
+    
+    /* Sections */
+    .vehicles-section,
+    .kits-section,
+    .instagram-section,
+    .contact-section {
+        padding: 60px 16px;
+    }
+    
+    .section-title {
+        font-size: 24px;
+    }
+    
+    .section-subtitle {
+        font-size: 16px;
+        padding: 0 16px;
+    }
+}
+
+/* Móvil pequeño (480px hacia abajo) */
+@media (max-width: 480px) {
+    .hero {
+        padding: 60px 16px;
+    }
+    
+    .hero-title {
+        font-size: 28px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .indicator-number {
+        font-size: 32px;
+    }
+    
+    .vehicle-title {
+        font-size: 16px;
+    }
+    
+    .vehicle-price {
+        font-size: 18px;
+    }
+    
+    .kit-title {
+        font-size: 16px;
+    }
+    
+    .kit-description {
+        font-size: 13px;
+    }
+    
+    .slider-slide img {
+        height: 250px;
+    }
+    
+    .details-content {
+        padding: 16px;
+    }
+    
+    .detail-title {
+        font-size: 20px;
+    }
+    
+    .detail-price {
+        font-size: 18px;
+    }
+}
+
+/* Tablet horizontal (769px a 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .vehicles-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .kits-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .instagram-feed {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stock-indicators {
+        gap: 40px;
+    }
+}
+
+/* Desktop grande (1025px hacia arriba) */
+@media (min-width: 1025px) {
+    .vehicles-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .instagram-feed {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Ajustes específicos para customization */
+@media (min-width: 768px) {
+    .customization-container {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .kits-options-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .option-items {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .kits-options-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+/* Ajustes para altura */
+@media (max-height: 700px) {
+    .modal-content {
+        max-height: 85vh;
     }
     
     .slider-slide img {
@@ -60,90 +256,54 @@
     }
 }
 
-/* ===== RESPONSIVE PARA CUSTOMIZATION ===== */
-@media (min-width: 768px) {
-    .customization-container {
-        grid-template-columns: 1fr 1fr;
+/* Orientación landscape en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        padding: 40px 22px;
+    }
+    
+    .stock-indicators {
+        margin-top: 20px;
+    }
+    
+    .slider-slide img {
+        height: 200px;
+    }
+    
+    .modal-content {
+        max-height: 80vh;
     }
 }
 
-@media (max-width: 768px) {
-    .option-items {
-        grid-template-columns: 1fr;
-        gap: 8px;
+/* Soporte para dispositivos con notch */
+@supports (padding: max(0px)) {
+    .header {
+        padding-top: env(safe-area-inset-top);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    .hero {
+        padding-top: calc(80px + env(safe-area-inset-top));
     }
 }
 
-/* ===== ESTILOS ESPECÍFICOS PARA CUSTOMIZATION ===== */
-.customization-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
+/* Mejoras para touch */
+@media (hover: none) and (pointer: coarse) {
+    .button,
+    .filter-button,
+    .nav-link,
+    .indicator {
+        min-height: 44px; /* Tamaño mínimo para touch */
+    }
+    
+    .slider-dot {
+        width: 10px;
+        height: 10px;
+    }
+    
+    .close-modal {
+        min-width: 44px;
+        min-height: 44px;
+    }
 }
-
-.comparison-container {
-    padding: 32px;
-    background: var(--gray-50);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.comparison-panel {
-    text-align: center;
-    width: 100%;
-}
-
-.comparison-panel h3 {
-    font-size: 14px;
-    color: #86868b;
-    margin-bottom: 12px;
-    font-weight: 500;
-}
-
-.comparison-panel img {
-    max-width: 100%;
-    max-height: 300px;
-    object-fit: contain;
-    border-radius: var(--radius);
-}
-
-.kit-price {
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-.customization-summary {
-    padding: 24px;
-    background: var(--gray-50);
-    border-radius: var(--radius);
-    border: var(--border);
-    margin: 24px 32px;
-}
-
-.summary-line {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    font-size: 15px;
-    color: var(--black);
-}
-
-.summary-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: var(--border);
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--black);
-}
-
-.price-value {
-    font-weight: 600;
-    color: var(--black);
-}
-[file content end]
