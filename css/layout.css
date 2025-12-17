@@ -2,7 +2,7 @@
    LAYOUT - Grid y estructura general
    ============================================== */
 
-/* ===== HEADER ===== */
+/* ===== HEADER APPLE MINIMALISTA ===== */
 .header {
     position: fixed;
     top: 0;
@@ -11,7 +11,13 @@
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     z-index: 1000;
-    border-bottom: var(--border);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
 }
 
 .header-container {
@@ -24,18 +30,26 @@
     justify-content: space-between;
 }
 
+/* Logo estilo Apple */
 .logo {
     font-size: 21px;
     font-weight: 600;
-    color: var(--black);
+    color: #1d1d1f;
     letter-spacing: -0.5px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
 }
 
 .logo-text {
-    color: var(--black);
+    color: #1d1d1f;
     text-decoration: none;
+    transition: opacity 0.3s ease;
 }
 
+.logo-text:hover {
+    opacity: 0.7;
+}
+
+/* Navegación estilo Apple */
 .nav-links {
     display: flex;
     gap: 32px;
@@ -43,33 +57,56 @@
 
 .nav-link {
     text-decoration: none;
-    color: var(--black);
+    color: #1d1d1f;
     font-size: 14px;
-    transition: opacity 0.3s;
-    font-weight: 500;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    padding: 8px 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: #1d1d1f;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link:hover::after {
+    width: 100%;
 }
 
 .nav-link:hover {
-    opacity: 0.7;
+    opacity: 0.8;
 }
 
+/* Menú hamburguesa - solo visible en móvil */
 .menu-toggle {
     display: none;
     background: none;
     border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: var(--black);
     width: 44px;
     height: 44px;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    color: #1d1d1f;
     border-radius: 50%;
-    transition: background 0.3s;
+    transition: background-color 0.3s;
 }
 
 .menu-toggle:hover {
-    background: var(--gray-100);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.menu-toggle i {
+    font-size: 20px;
 }
 
 /* ===== FOOTER ===== */
