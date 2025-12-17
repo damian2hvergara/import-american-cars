@@ -5,7 +5,7 @@ export const CONFIG = {
   // Supabase - Credenciales PÚBLICAS
   supabase: {
     url: "https://cflpmluvhfldewiitymh.supabase.co",
-    anonKey: "sb_publishable_lvUG-G_2bzDxyVZwAF25HA_30dFAb3K"
+    anonKey: "sb_secret_su3AIpWkxPUYW1HLzT1NOw_ssNlHwwT"
   },
   
   // Cloudinary - Configuración
@@ -18,7 +18,7 @@ export const CONFIG = {
   
   // Contacto - Datos desde un solo lugar
   contacto: {
-    whatsapp: "56981458545",
+    whatsapp: "56938654927",
     instagram: "import_american_cars",
     instagramUrl: "https://www.instagram.com/import_american_cars",
     email: "contacto@importamericancars.cl",
