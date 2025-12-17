@@ -1,8 +1,8 @@
 /* ==============================================
-   SECTIONS - Minimalismo & Orden
+   SECCIONES - Diseño Apple Minimalista
    ============================================== */
 
-/* ===== HERO SECTION - ESTÉTICA APPLE ===== */
+/* ===== HERO SECTION - Efecto Nocturno con Luz Focal ===== */
 .hero {
     position: relative;
     min-height: 100vh;
@@ -16,7 +16,7 @@
     background: #000000;
 }
 
-/* Fondo con sutil desenfoque */
+/* Fondo con efecto "noche con luz focal" */
 .hero::before {
     content: '';
     position: absolute;
@@ -29,11 +29,12 @@
     background-position: center;
     background-repeat: no-repeat;
     z-index: -2;
-    filter: brightness(0.4) blur(0px);
-    transition: filter 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: brightness(0.3) contrast(0.9) saturate(0.8);
+    transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: lightPulse 8s ease-in-out infinite;
 }
 
-/* Overlay minimalista */
+/* Overlay de gradiente circular para efecto de luz focal */
 .hero::after {
     content: '';
     position: absolute;
@@ -41,19 +42,45 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.2) 0%,
-        rgba(0, 0, 0, 0.4) 100%
+    background: radial-gradient(
+        circle at 50% 40%,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 20%,
+        rgba(0, 0, 0, 0.4) 50%,
+        rgba(0, 0, 0, 0.7) 100%
     );
     z-index: -1;
+    mix-blend-mode: overlay;
+    pointer-events: none;
 }
 
-/* Efecto sutil al hacer hover */
+/* Efecto de luz móvil sutil al hacer hover */
 .hero:hover::before {
-    filter: brightness(0.45) blur(1px);
+    filter: brightness(0.35) contrast(0.95) saturate(0.85);
 }
 
+/* Capa adicional para profundizar el efecto nocturno */
+.hero-bg-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(to bottom, 
+            rgba(0, 0, 0, 0.3) 0%,
+            rgba(0, 0, 0, 0.5) 100%
+        ),
+        radial-gradient(
+            ellipse at 50% 20%,
+            rgba(255, 255, 255, 0.05) 0%,
+            transparent 60%
+        );
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Contenido del Hero */
 .hero-content {
     position: relative;
     z-index: 1;
@@ -62,7 +89,6 @@
     animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
 }
 
-/* ========== TÍTULO - TIPOGRAFÍA CLARA ========== */
 .hero-title {
     font-size: 4rem;
     font-weight: 700;
@@ -71,6 +97,9 @@
     letter-spacing: -0.03em;
     line-height: 1.05;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    text-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.4),
+        0 0 1px rgba(0, 0, 0, 0.3);
 }
 
 .hero-main {
@@ -89,7 +118,6 @@
     animation: subtleShimmer 8s ease-in-out infinite;
 }
 
-/* ========== SUBTÍTULO - GRIS CLARO ========== */
 .hero-subtitle {
     font-size: 1.25rem;
     line-height: 1.6;
@@ -101,9 +129,10 @@
     font-weight: 400;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
     animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* ========== INDICADORES - DISEÑO ORDENADO ========== */
+/* Indicadores sobre la imagen */
 .stock-indicators {
     display: flex;
     justify-content: center;
@@ -127,7 +156,7 @@
     overflow: hidden;
 }
 
-/* Efecto de brillo sutil */
+/* Efecto de brillo sutil que simula reflejo de luz */
 .indicator::after {
     content: '';
     position: absolute;
@@ -138,7 +167,7 @@
     background: linear-gradient(
         90deg,
         transparent,
-        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.06),
         transparent
     );
     transition: left 0.8s ease;
@@ -149,28 +178,25 @@
     background: rgba(255, 255, 255, 0.12);
     border-color: rgba(255, 255, 255, 0.18);
     box-shadow: 
-        0 12px 32px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        0 12px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .indicator:hover::after {
     left: 100%;
 }
 
-/* Iconos pequeños y ordenados */
 .indicator-icon {
     font-size: 1.5rem;
     margin-bottom: 16px;
     color: #FFFFFF;
     opacity: 0.9;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    filter: 
+        drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))
+        brightness(1.1);
 }
 
-.indicator-content {
-    color: #FFFFFF;
-}
-
-/* Números - Tipografía precisa */
 .indicator-number {
     font-size: 2.75rem;
     font-weight: 700;
@@ -179,9 +205,9 @@
     color: #FFFFFF;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
     letter-spacing: -0.01em;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Etiquetas - Gris suave */
 .indicator-label {
     font-size: 0.875rem;
     color: #C8C8D2;
@@ -192,7 +218,560 @@
     text-transform: uppercase;
 }
 
-/* ========== ANIMACIONES SUAVES ========== */
+/* ===== SECCIONES GENERALES ===== */
+.vehicles-section,
+.kits-section,
+.instagram-section,
+.contact-section {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 100px 24px;
+    position: relative;
+    animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.kits-section { animation-delay: 0.1s; }
+.instagram-section { animation-delay: 0.2s; }
+.contact-section { animation-delay: 0.3s; }
+
+.section-header {
+    text-align: center;
+    margin-bottom: 64px;
+}
+
+.section-title {
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+    color: #1D1D1F;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    line-height: 1.1;
+}
+
+.section-subtitle {
+    font-size: 17px;
+    color: #86868B;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.47059;
+    font-weight: 400;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+/* ===== KITS SECTION - Refinado ===== */
+.kits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 48px;
+}
+
+.kit-card {
+    background: #FFFFFF;
+    border: 1px solid #E8E8ED;
+    border-radius: 18px;
+    padding: 32px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.kit-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #007AFF, transparent);
+    transition: left 0.6s ease;
+}
+
+.kit-card:hover {
+    transform: translateY(-4px);
+    border-color: #D2D2D7;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.kit-card:hover::before {
+    left: 100%;
+}
+
+.kit-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 24px;
+    background: #F5F5F7;
+    color: #1D1D1F;
+    transition: all 0.3s ease;
+}
+
+.kit-card:nth-child(1) .kit-icon {
+    background: linear-gradient(135deg, #CD7F32 0%, #E39E5A 100%);
+    color: #FFFFFF;
+}
+
+.kit-card:nth-child(2) .kit-icon {
+    background: linear-gradient(135deg, #C0C0C0 0%, #E8E8E8 100%);
+    color: #1D1D1F;
+}
+
+.kit-card:nth-child(3) .kit-icon {
+    background: linear-gradient(135deg, #FFD700 0%, #FFE55C 100%);
+    color: #1D1D1F;
+}
+
+.kit-card:hover .kit-icon {
+    transform: scale(1.05);
+}
+
+.kit-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #F5F5F7;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #86868B;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.kit-title {
+    font-size: 21px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #1D1D1F;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
+
+.kit-description {
+    color: #515154;
+    font-size: 14px;
+    line-height: 1.42859;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.kit-price {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 24px 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
+
+.kit-card:nth-child(1) .kit-price {
+    color: #CD7F32;
+}
+
+.kit-card:nth-child(2) .kit-price {
+    color: #8E8E93;
+}
+
+.kit-card:nth-child(3) .kit-price {
+    color: #FFD700;
+}
+
+.kit-features {
+    list-style: none;
+    margin: 24px 0;
+    padding: 0;
+    text-align: left;
+}
+
+.kit-features li {
+    padding: 10px 0;
+    font-size: 14px;
+    color: #515154;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #F5F5F7;
+}
+
+.kit-features li:last-child {
+    border-bottom: none;
+}
+
+.kit-features i {
+    min-width: 16px;
+    color: #007AFF;
+    font-size: 12px;
+}
+
+.kit-disclaimer {
+    color: #86868B;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 32px;
+    line-height: 1.33337;
+    font-weight: 400;
+    font-style: normal;
+    padding: 0 20px;
+}
+
+/* ===== INSTAGRAM SECTION - Elegante ===== */
+.instagram-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 48px;
+}
+
+.instagram-card {
+    background: #FFFFFF;
+    border: 1px solid #E8E8ED;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.instagram-card:hover {
+    transform: translateY(-4px);
+    border-color: #D2D2D7;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.instagram-image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.instagram-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s ease;
+}
+
+.instagram-card:hover .instagram-image {
+    transform: scale(1.03);
+}
+
+.instagram-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 70%, rgba(0, 0, 0, 0.3) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.instagram-card:hover .instagram-overlay {
+    opacity: 1;
+}
+
+.instagram-info {
+    padding: 24px;
+}
+
+.instagram-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #86868B;
+    font-weight: 500;
+}
+
+.instagram-stats span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.instagram-stats i {
+    font-size: 14px;
+}
+
+.instagram-caption {
+    font-size: 14px;
+    line-height: 1.42859;
+    color: #1D1D1F;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+.instagram-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #007AFF;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    background: #F5F5F7;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.instagram-link:hover {
+    background: #007AFF;
+    color: #FFFFFF;
+    transform: scale(1.05);
+}
+
+.instagram-cta {
+    margin-top: 48px;
+    text-align: center;
+}
+
+/* ===== CONTACT SECTION - Minimalista ===== */
+.contact-container {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border: 1px solid #E8E8ED;
+    border-radius: 18px;
+    padding: 48px 32px;
+    text-align: center;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 17px;
+    color: #1D1D1F;
+}
+
+.contact-info p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 12px;
+    transition: all 0.3s ease;
+}
+
+.contact-info p:hover {
+    background: #F5F5F7;
+    border-radius: 12px;
+    transform: translateX(4px);
+}
+
+.contact-info i {
+    color: #007AFF;
+    min-width: 20px;
+    font-size: 18px;
+}
+
+.contact-info a {
+    color: #007AFF;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+    color: #0056CC;
+    text-decoration: underline;
+}
+
+/* ===== VEHICLE DETAILS - Refinado ===== */
+.vehicle-details {
+    background: #FFFFFF;
+    border: 1px solid #E8E8ED;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-top: 48px;
+}
+
+.details-header {
+    padding: 40px 40px 0;
+}
+
+.detail-title {
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #1D1D1F;
+    line-height: 1.1;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
+
+.detail-price {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #1D1D1F;
+}
+
+.detail-description {
+    color: #515154;
+    font-size: 17px;
+    line-height: 1.47059;
+    margin-bottom: 32px;
+    font-weight: 400;
+}
+
+.details-content {
+    padding: 40px;
+}
+
+.detail-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 32px 0;
+    border-top: 1px solid #E8E8ED;
+    border-bottom: 1px solid #E8E8ED;
+}
+
+.detail-features div {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 15px;
+    color: #1D1D1F;
+    font-weight: 500;
+}
+
+.detail-features i {
+    color: #007AFF;
+    min-width: 20px;
+    font-size: 18px;
+}
+
+/* ===== CUSTOMIZATION SECTION - Elegante ===== */
+.customization-section {
+    background: #F5F5F7;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-top: 48px;
+}
+
+.customization-header {
+    padding: 40px 40px 32px;
+    text-align: center;
+    background: #FFFFFF;
+}
+
+.customization-body {
+    padding: 40px;
+}
+
+.kit-comparison {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin: 40px 0;
+}
+
+.kit-comparison-item {
+    background: #FFFFFF;
+    border: 1px solid #E8E8ED;
+    border-radius: 18px;
+    padding: 32px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.kit-comparison-item.selected {
+    border-color: #007AFF;
+    background: #F5F5F7;
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.12);
+}
+
+.kit-comparison-item.selected::after {
+    content: '✓';
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    background: #007AFF;
+    color: #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* ===== EMPTY STATES - Minimalista ===== */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 40px;
+    background: #F5F5F7;
+    border-radius: 18px;
+    border: 1px solid #E8E8ED;
+}
+
+.empty-state-icon {
+    font-size: 56px;
+    margin-bottom: 24px;
+    color: #86868B;
+    opacity: 0.6;
+}
+
+.empty-state-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #1D1D1F;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
+
+.empty-state-message {
+    color: #86868B;
+    font-size: 17px;
+    line-height: 1.47059;
+    max-width: 400px;
+    margin: 0 auto 32px;
+    font-weight: 400;
+}
+
+/* ===== BOTONES - Estilo Apple ===== */
+.btn-apple {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: #007AFF;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 980px;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+.btn-apple:hover {
+    background: #0056CC;
+    transform: scale(1.04);
+}
+
+.btn-apple.secondary {
+    background: transparent;
+    color: #007AFF;
+    border: 1px solid #D2D2D7;
+}
+
+.btn-apple.secondary:hover {
+    background: #F5F5F7;
+    border-color: #007AFF;
+}
+
+/* ===== ANIMACIONES ===== */
 @keyframes subtleShimmer {
     0%, 100% {
         background-position: 0% 50%;
@@ -213,20 +792,42 @@
     }
 }
 
-/* ========== PALETA DE COLORES APPLE ========== */
-/* 
-  Blanco principal: #FFFFFF
-  Gris claro: #F5F5F7
-  Gris medio: #E8E8ED
-  Gris suave: #C8C8D2
-  Fondo oscuro: #000000
-  Overlays: rgba(255, 255, 255, 0.08 - 0.18)
-*/
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-/* ========== RESPONSIVE ========== */
+@keyframes lightPulse {
+    0%, 100% {
+        opacity: 0.4;
+        filter: brightness(0.3) contrast(0.9) saturate(0.8);
+    }
+    50% {
+        opacity: 0.5;
+        filter: brightness(0.32) contrast(0.92) saturate(0.82);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
     .hero {
         padding: 80px 20px;
+    }
+    
+    .hero::after {
+        background: radial-gradient(
+            circle at 50% 30%,
+            rgba(255, 255, 255, 0.12) 0%,
+            rgba(255, 255, 255, 0.06) 15%,
+            rgba(0, 0, 0, 0.4) 40%,
+            rgba(0, 0, 0, 0.7) 100%
+        );
     }
     
     .hero-title,
@@ -250,5 +851,39 @@
     
     .indicator-number {
         font-size: 2.25rem;
+    }
+    
+    .vehicles-section,
+    .kits-section,
+    .instagram-section,
+    .contact-section {
+        padding: 60px 20px;
+    }
+    
+    .section-title {
+        font-size: 32px;
+    }
+    
+    .section-subtitle {
+        font-size: 15px;
+        padding: 0 20px;
+    }
+    
+    .kits-grid,
+    .instagram-grid,
+    .kit-comparison {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .detail-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .details-header,
+    .details-content,
+    .customization-header,
+    .customization-body {
+        padding: 32px 24px;
     }
 }
