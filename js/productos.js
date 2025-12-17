@@ -8,24 +8,20 @@ import { UI } from './ui.js';
 export class ProductosManager {
   constructor() {
     this.vehiculos = [];
-    this.kits = []; // Almacenar los kits aquí
+    this.kits = [];
     this.currentFilter = "all";
   }
   
   // Cargar vehículos y kits desde Supabase
   async cargarVehiculos() {
     try {
-      console.log('🚗 === INICIANDO CARGA DE VEHÍCULOS Y KITS ===');
+      console.log('🚗 === INICIANDO CARGA DE VEHÍCULOS ===');
       UI.showLoading();
       
-      // 1. Cargar Vehículos
+      // 1. Cargar Vehículos con imágenes y kits
       this.vehiculos = await supabaseService.getVehiculos();
       
-      // 2. Cargar Kits
-      this.kits = await supabaseService.getKits();
-      
       console.log(`📦 Vehículos cargados en memoria: ${this.vehiculos.length}`);
-      console.log(`📦 Kits cargados en memoria: ${this.kits.length}`);
       
       if (!this.vehiculos || this.vehiculos.length === 0) {
         console.warn('⚠️ No se encontraron vehículos en la base de datos');
@@ -34,7 +30,7 @@ export class ProductosManager {
         return;
       }
       
-      console.log('🖼️ Procesando imágenes y datos de vehículos...');
+      console.log('🖼️ Procesando datos de vehículos...');
       this.vehiculos = this.vehiculos.map(vehiculo => {
         return this.procesarVehiculo(vehiculo);
       });
@@ -43,7 +39,7 @@ export class ProductosManager {
       this.renderVehiculos();
       UI.hideLoading();
       
-      console.log('✅ === CARGA DE VEHÍCULOS Y KITS COMPLETADA ===');
+      console.log('✅ === CARGA DE VEHÍCULOS COMPLETADA ===');
       
     } catch (error) {
       console.error('❌ Error cargando vehículos:', error);
@@ -64,14 +60,14 @@ export class ProductosManager {
             <i class="fas fa-car"></i>
           </div>
           <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--black);">
-            No hay vehículos disponibles
+            Inventario en actualización
           </h3>
           <p style="color: #86868b; margin-bottom: 20px;">
-            Por el momento no tenemos vehículos en stock.<br>
-            Contáctanos para consultar por próximos arribos.
+            Estamos actualizando nuestro inventario.<br>
+            Contáctanos para conocer disponibilidad inmediata.
           </p>
           <a href="https://wa.me/${CONFIG.contacto.whatsapp}" target="_blank" class="button whatsapp-btn" style="width: auto; padding: 12px 24px;">
-            <i class="fab fa-whatsapp"></i> Consultar Disponibilidad
+            <i class="fab fa-whatsapp"></i> Consultar Stock Disponible
           </a>
         </div>
       `;
@@ -80,126 +76,68 @@ export class ProductosManager {
   
   // Procesar datos del vehículo
   procesarVehiculo(vehiculo) {
-    // 1. Asignar ID (si no tiene) y Precio
-    vehiculo.id = vehiculo.id || 'temp_id_' + Math.random(); 
-    vehiculo.precio = supabaseService.findVehiclePrice(vehiculo);
+    // 1. Asegurar ID
+    vehiculo.id = vehiculo.id || 'temp_id_' + Math.random();
     
-    // 2. Manejar el array de imágenes
-    const imagenes = [];
-    
-    // Si la columna 'imagenes' (text[]) existe y es un array, úsala.
-    if (Array.isArray(vehiculo.imagenes) && vehiculo.imagenes.length > 0) {
-      // Filtrar URLs inválidas
-      const imagenesValidas = vehiculo.imagenes
-        .map(url => this.getCloudinaryUrl(url))
-        .filter(url => url && !url.includes('ejemplo-imagen.com'));
-      
-      imagenes.push(...imagenesValidas);
-      console.log(` 📸 ${imagenesValidas.length} imágenes válidas del array`);
-    } 
-    
-    // 3. Fallback a columnas individuales si el array está vacío
-    if (imagenes.length === 0) {
-      const posiblesColumnas = [
-        'imagen_1', 'imagen_2', 'imagen_3', 'imagen_4', 'imagen_5',
-        'foto_principal', 'foto_1', 'foto_2', 'foto_3',
-        'imagen_principal', 'url_imagen', 'url_foto', 
-        'image_url', 'main_image', 'photo_url', 'img_url'
-      ];
-      
-      // Buscar en todas las columnas posibles
-      for (const columna of posiblesColumnas) {
-        if (vehiculo[columna] && typeof vehiculo[columna] === 'string' && vehiculo[columna].trim()) {
-          const url = this.getCloudinaryUrl(vehiculo[columna]);
-          if (url && !url.includes('ejemplo-imagen.com') && !imagenes.includes(url)) {
-            imagenes.push(url);
-          }
-        }
-      }
-    }
-
-    // 4. Si no hay imágenes válidas, usar imágenes por defecto
-    if (imagenes.length === 0) {
-      imagenes.push(
-        'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        'https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        'https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-      );
+    // 2. Manejar imágenes (6-8 imágenes)
+    if (!vehiculo.imagenes || !Array.isArray(vehiculo.imagenes)) {
+      vehiculo.imagenes = [];
     }
     
-    // 5. Asignar el array procesado y la imagen principal
-    vehiculo.imagenes = imagenes;
-    vehiculo.imagen_principal_card = imagenes[0];
+    // Limitar a máximo 8 imágenes
+    const maxImagenes = CONFIG.app.maxImagenesVehículo || 8;
+    vehiculo.imagenes = vehiculo.imagenes.slice(0, maxImagenes);
     
-    // 6. Asignar estado
+    // 3. Si no hay imágenes, usar imágenes por defecto
+    if (vehiculo.imagenes.length === 0) {
+      vehiculo.imagenes = CONFIG.app.placeholderImages.slice(0, 4);
+    }
+    
+    // 4. Imagen principal para cards
+    vehiculo.imagen_principal_card = vehiculo.imagenes[0] || CONFIG.app.defaultImage;
+    
+    // 5. Asignar estado
     vehiculo.estado = vehiculo.estado?.toLowerCase() === 'stock' ? 'stock' : 
                       vehiculo.estado?.toLowerCase() === 'transit' ? 'transit' : 
                       'reserve';
 
-    // 7. Procesar kits para este vehículo
-    this.procesarKitsParaVehiculo(vehiculo);
+    // 6. Procesar kits (ya vienen procesados desde Supabase)
+    if (!vehiculo.kits || !Array.isArray(vehiculo.kits)) {
+      vehiculo.kits = this.getDefaultKitsForVehicle(vehiculo);
+    }
+
+    // 7. Asegurar que el kit Standard esté primero
+    vehiculo.kits.sort((a, b) => {
+      if (a.nivel === 'standar') return -1;
+      if (b.nivel === 'standar') return 1;
+      return (a.precio || 0) - (b.precio || 0);
+    });
 
     return vehiculo;
   }
   
-  // Procesar kits para cada vehículo - NUEVO
-  procesarKitsParaVehiculo(vehiculo) {
-    // Si el vehículo ya tiene kits definidos en la base de datos, usarlos
-    if (vehiculo.kits && Array.isArray(vehiculo.kits)) {
-      return;
-    }
+  // Obtener kits por defecto para un vehículo
+  getDefaultKitsForVehicle(vehiculo) {
+    const defaultKits = supabaseService.getDefaultKits();
     
-    // Si no, crear kits basados en los kits generales
-    vehiculo.kits = this.kits.map(kit => {
-      // Clonar el kit para evitar mutaciones
-      const kitVehiculo = { ...kit };
-      
-      // Asignar includes por defecto si no existen
-      if (!kitVehiculo.includes) {
-        kitVehiculo.includes = this.getDefaultIncludesForKit(kitVehiculo.nivel);
+    return defaultKits.map(kit => {
+      // Asignar includes si no existen
+      if (!kit.includes) {
+        kit.includes = supabaseService.getDefaultIncludesForKit(kit.nivel);
       }
       
-      // Asignar imagen específica si no hay
-      if (!kitVehiculo.imagen_kit) {
-        kitVehiculo.imagen_kit = vehiculo.imagen_principal_card;
+      // Asignar imagen si no hay
+      if (!kit.imagen_kit) {
+        kit.imagen_kit = vehiculo.imagen_principal_card;
       }
       
-      return kitVehiculo;
+      return { ...kit };
     });
-  }
-  
-  // Obtener includes por defecto para cada nivel de kit - NUEVO
-  getDefaultIncludesForKit(nivel) {
-    const includesMap = {
-      'standar': [
-        "Lavado y encerado exterior completo",
-        "Limpieza interior profunda",
-        "Revisión mecánica básica",
-        "Cambio de aceite y filtros"
-      ],
-      'medium': [
-        "Todo lo del kit Standar",
-        "Llantas deportivas 20\"",
-        "Tinte de ventanas premium",
-        "Step bar laterales"
-      ],
-      'full': [
-        "Todo lo del kit Medium",
-        "Lift kit suspensión 2\"",
-        "Rines Fuel de 22\"",
-        "Neumáticos Off-Road 35\""
-      ]
-    };
-    
-    return includesMap[nivel] || includesMap['standar'];
   }
   
   // Obtener los kits cargados
   getKitsForDisplay() {
-    // Asegurar que el kit "Standar" (precio 0) siempre esté primero
-    const standarKit = this.kits.find(k => k.nivel === 'standar');
-    const otherKits = this.kits.filter(k => k.nivel !== 'standar');
-    return standarKit ? [standarKit, ...otherKits] : this.kits;
+    return this.kits;
   }
 
   // Obtener la imagen de personalización desde Supabase
@@ -226,41 +164,6 @@ export class ProductosManager {
     }
     
     return null;
-  }
-  
-  // Obtener URL de Cloudinary
-  getCloudinaryUrl(publicId) {
-    if (!publicId) return null;
-    
-    // 1. Si ya es una URL completa válida, la devolvemos
-    if (publicId.startsWith('http')) {
-      if (publicId.includes('ejemplo-imagen.com')) {
-        return null;
-      }
-      return publicId;
-    }
-    
-    // 2. Limpiar el publicId
-    let cleanId = publicId.trim();
-    
-    // 3. Si tiene extensión, quitarla (Cloudinary lo maneja mejor)
-    const extensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
-    for (const ext of extensions) {
-      if (cleanId.toLowerCase().endsWith(ext)) {
-        cleanId = cleanId.substring(0, cleanId.length - ext.length);
-        break;
-      }
-    }
-    
-    // 4. Si ya tiene el folder incluido
-    if (cleanId.includes('/')) {
-      const parts = cleanId.split('/');
-      const filename = parts[parts.length - 1];
-      return `https://res.cloudinary.com/${CONFIG.cloudinary.cloudName}/image/upload/v1/vehiculos/${filename}`;
-    }
-    
-    // 5. URL estándar de Cloudinary
-    return `https://res.cloudinary.com/${CONFIG.cloudinary.cloudName}/image/upload/v1/vehiculos/${cleanId}`;
   }
   
   // Obtener vehículo por ID
@@ -344,6 +247,12 @@ export class ProductosManager {
     
     message += `*Estado:* ${statusText}\n`;
     
+    // Agregar especificaciones si existen
+    if (vehiculo.ano) message += `*Año:* ${vehiculo.ano}\n`;
+    if (vehiculo.motor) message += `*Motor:* ${vehiculo.motor}\n`;
+    if (vehiculo.color) message += `*Color:* ${vehiculo.color}\n`;
+    if (vehiculo.kilometraje) message += `*Kilometraje:* ${vehiculo.kilometraje.toLocaleString()} km\n`;
+    
     if (kit) {
       message += `\n*Kit Upgrade seleccionado:* ${kit.nombre}\n`;
       if (kit.precio > 0) {
@@ -385,7 +294,7 @@ export class ProductosManager {
     const vehiculo = this.getVehiculoById(vehicleId);
     if (!vehiculo) return [];
     
-    return vehiculo.kits || this.kits;
+    return vehiculo.kits || [];
   }
 }
 
