@@ -72,3 +72,57 @@ body {
     animation: spin 1s linear infinite;
 }
 [file content end]
+[file name]: css/base.css
+[file content begin]
+/* (Tu contenido actual de base.css) */
+
+/* AÑADIR AL FINAL: Estilos para menú móvil */
+.mobile-menu {
+    position: fixed;
+    top: 44px;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    border-bottom: var(--border);
+    box-shadow: var(--shadow);
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+    z-index: 999;
+}
+
+.mobile-menu.active {
+    display: flex;
+}
+
+.mobile-menu a {
+    padding: 16px;
+    text-decoration: none;
+    color: var(--black);
+    font-size: 16px;
+    border-bottom: var(--border);
+}
+
+.mobile-menu a:last-child {
+    border-bottom: none;
+}
+
+.mobile-menu a:hover {
+    background: var(--gray-50);
+}
+
+/* Estados de carga */
+body:not(.loaded) .vehicles-grid,
+body:not(.loaded) .instagram-feed {
+    opacity: 0.5;
+}
+
+.loading-placeholder {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+[file content end]
