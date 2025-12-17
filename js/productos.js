@@ -1,5 +1,3 @@
-[file name]: productos.js
-[file content begin]
 import { CONFIG } from './config.js';
 import { supabaseService } from './supabase.js';
 import { UI } from './ui.js';
@@ -12,7 +10,7 @@ export class ProductosManager {
   
   async cargarVehiculos() {
     try {
-      console.log('🚗 === INICIANDO CARGA DE VEHÍCULOS ===');
+      console.log('🚗 === INICIANDO CARGA ===');
       UI.showLoading();
       
       this.vehiculos = await supabaseService.getVehiculos();
@@ -25,7 +23,6 @@ export class ProductosManager {
         return;
       }
       
-      // Procesar cada vehículo
       this.vehiculos = this.vehiculos.map(vehiculo => this.procesarVehiculo(vehiculo));
       
       this.actualizarContadores();
@@ -36,41 +33,79 @@ export class ProductosManager {
       
     } catch (error) {
       console.error('❌ Error cargando vehículos:', error);
-      UI.showError('Error al cargar los vehículos. Por favor, intenta nuevamente.');
+      UI.showError('Error al cargar los vehículos.');
       UI.hideLoading();
     }
   }
   
   procesarVehiculo(vehiculo) {
-    // Asegurar ID
     vehiculo.id = vehiculo.id || 'temp_id_' + Math.random();
     
-    // Asegurar que imagenes sea un array válido (6-8 imágenes)
     if (!vehiculo.imagenes || !Array.isArray(vehiculo.imagenes)) {
       vehiculo.imagenes = [];
     }
     
-    // Limitar a máximo 8 imágenes
     const maxImagenes = CONFIG.app.maxImagenesVehículo || 8;
     vehiculo.imagenes = vehiculo.imagenes.slice(0, maxImagenes);
     
-    // Si no hay imágenes, usar imágenes por defecto
     if (vehiculo.imagenes.length === 0) {
       vehiculo.imagenes = CONFIG.app.placeholderImages.slice(0, 4);
     }
     
-    // Imagen principal
     vehiculo.imagen_principal_card = vehiculo.imagen_principal || vehiculo.imagenes[0] || CONFIG.app.defaultImage;
     
-    // Estado
     vehiculo.estado = vehiculo.estado?.toLowerCase() === 'stock' ? 'stock' : 
                       vehiculo.estado?.toLowerCase() === 'transit' ? 'transit' : 
                       'reserve';
     
-    // Kits (ahora vienen en la misma tabla)
-    vehiculo.kits = supabaseService.getKitsForVehicle(vehiculo);
+    // Crear kits desde los precios en la tabla
+    vehiculo.kits = this.crearKitsDesdeVehiculo(vehiculo);
     
     return vehiculo;
+  }
+  
+  crearKitsDesdeVehiculo(vehiculo) {
+    return [
+      {
+        id: "standar",
+        nombre: "Standard",
+        precio: vehiculo.kit_standar_precio || 0,
+        descripcion: "Preparación básica incluida",
+        nivel: "standar",
+        includes: [
+          "Limpieza completa exterior e interior",
+          "Revisión mecánica general",
+          "Documentación en regla Zona Franca",
+          "Cambio de aceite y filtros básicos"
+        ]
+      },
+      {
+        id: "medium",
+        nombre: "Medium",
+        precio: vehiculo.kit_medium_precio || 1200000,
+        descripcion: "Mejoras estéticas y funcionales",
+        nivel: "medium",
+        includes: [
+          "Todo lo del Kit Standard",
+          "Llantas deportivas 20\" nuevas",
+          "Tinte de ventanas premium",
+          "Step bar laterales cromados"
+        ]
+      },
+      {
+        id: "full",
+        nombre: "Full",
+        precio: vehiculo.kit_full_precio || 2500000,
+        descripcion: "Transformación premium completa",
+        nivel: "full",
+        includes: [
+          "Todo lo del Kit Medium",
+          "Suspensión deportiva nivelada 2\"",
+          "Rines Fuel Off-Road 22\"",
+          "Neumáticos todo terreno 35\""
+        ]
+      }
+    ];
   }
   
   mostrarMensajeSinVehiculos() {
@@ -167,8 +202,6 @@ export class ProductosManager {
         if (total > 0) {
           message += `*Precio Total Estimado:* ${this.formatPrice(total)} ${CONFIG.app.moneda}\n`;
         }
-      } else {
-        message += `*Kit:* Básico Incluido\n`;
       }
       
       if (kit.includes && kit.includes.length > 0) {
@@ -193,4 +226,3 @@ export class ProductosManager {
 }
 
 export const productosManager = new ProductosManager();
-[file content end]
