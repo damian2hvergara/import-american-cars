@@ -7,17 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Import American Cars | IAC - Vehículos USA</title>
     
-    <!-- Meta tags Apple -->
+    <!-- Meta tags -->
     <meta name="theme-color" content="#f5f5f7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
-    <meta name="description" content="Importación de vehículos seleccionados desde EE.UU. a Zona Franca Arica. Calidad premium y personalización.">
     
     <!-- Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- CSS MODULARIZADO -->
+    <!-- CSS MODULAR (SÓLO ESTE) -->
     <link rel="stylesheet" href="css/style.css">
     
     <!-- Favicon -->
@@ -93,7 +92,6 @@
         </div>
         
         <div class="vehicles-grid" id="vehiclesContainer">
-            <!-- Los vehículos se cargarán aquí dinámicamente -->
             <div class="loading-placeholder" style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
                 <div style="font-size: 32px; margin-bottom: 16px; color: #86868b;">
                     <i class="fas fa-spinner fa-spin"></i>
@@ -167,7 +165,6 @@
         <p class="section-subtitle">Sigue nuestro proceso de importación, vehículos en stock y transformaciones con kits upgrade</p>
         
         <div class="instagram-feed" id="instagramFeed">
-            <!-- El feed de Instagram se cargará aquí dinámicamente -->
             <div class="instagram-post loading">
                 <div class="instagram-image-placeholder" style="width: 100%; height: 280px; background: var(--gray-100); border-radius: var(--radius) var(--radius) 0 0;"></div>
                 <div class="instagram-info" style="padding: 20px;">
@@ -229,7 +226,6 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; <span id="currentYear">2025</span> Import American Cars (IAC). Todos los derechos reservados.</p>
-            <p style="margin-top: 8px; font-size: 12px; opacity: 0.7;">Conectado a base de datos en tiempo real</p>
         </div>
     </footer>
 
@@ -237,30 +233,21 @@
     <div class="modal" id="vehicleModal">
         <div class="modal-content">
             <button class="close-modal" id="closeVehicleModal" aria-label="Cerrar">×</button>
-            <div id="vehicleModalContent">
-                <!-- Contenido del modal se carga dinámicamente -->
-            </div>
+            <div id="vehicleModalContent"></div>
         </div>
     </div>
 
     <div class="modal" id="customizationModal">
         <div class="modal-content">
             <button class="close-modal" id="closeCustomizationModal" aria-label="Cerrar">×</button>
-            <div id="customizationContent">
-                <!-- Contenido del modal se carga dinámicamente -->
-            </div>
+            <div id="customizationContent"></div>
         </div>
     </div>
 
     <!-- Contenedor de Notificaciones -->
     <div id="notificationContainer"></div>
 
-    <!-- Menú Móvil (se inyecta dinámicamente) -->
-    <div id="mobileMenu" class="mobile-menu" aria-hidden="true">
-        <!-- Se llena dinámicamente -->
-    </div>
-
-    <!-- Scripts MODULARIZADOS -->
+    <!-- Scripts -->
     <script type="module" src="js/config.js"></script>
     <script type="module" src="js/supabase.js"></script>
     <script type="module" src="js/managers/vehiculos-manager.js"></script>
@@ -271,20 +258,19 @@
     <script type="module" src="js/ui/ui-core.js"></script>
     <script type="module" src="js/app.js"></script>
     
-    <!-- Scripts inline para funcionalidades básicas -->
+    <!-- Scripts inline -->
     <script>
-        // Función para actualizar el año en el footer
-        function updateCurrentYear() {
+        // Funcionalidades básicas
+        document.addEventListener('DOMContentLoaded', function() {
+            // Año actual
             const yearElement = document.getElementById('currentYear');
             if (yearElement) {
                 yearElement.textContent = new Date().getFullYear();
             }
-        }
-        
-        // Smooth scrolling mejorado
-        function initSmoothScrolling() {
+            
+            // Smooth scrolling
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
+                anchor.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href');
                     if (targetId === '#') return;
@@ -299,7 +285,7 @@
                             behavior: 'smooth'
                         });
                         
-                        // Cerrar menú móvil si está abierto
+                        // Cerrar menú móvil
                         const mobileMenu = document.getElementById('mobileMenu');
                         if (mobileMenu && mobileMenu.classList.contains('active')) {
                             mobileMenu.classList.remove('active');
@@ -307,138 +293,31 @@
                     }
                 });
             });
-        }
-        
-        // Inicializar menú móvil básico
-        function initMobileMenu() {
+            
+            // Menú móvil
             const menuToggle = document.getElementById('menuToggle');
-            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenu = document.createElement('div');
+            mobileMenu.className = 'mobile-menu';
+            mobileMenu.id = 'mobileMenu';
+            mobileMenu.innerHTML = `
+                <a href="#vehicles" class="mobile-nav-link">Vehículos</a>
+                <a href="#customize" class="mobile-nav-link">Kits Upgrade</a>
+                <a href="#instagram" class="mobile-nav-link">Instagram</a>
+                <a href="#contact" class="mobile-nav-link">Contacto</a>
+            `;
+            document.body.appendChild(mobileMenu);
             
-            if (menuToggle && mobileMenu) {
-                // Crear contenido del menú móvil si está vacío
-                if (!mobileMenu.innerHTML.trim()) {
-                    mobileMenu.innerHTML = `
-                        <a href="#vehicles" class="mobile-nav-link">Vehículos</a>
-                        <a href="#customize" class="mobile-nav-link">Kits Upgrade</a>
-                        <a href="#instagram" class="mobile-nav-link">Instagram</a>
-                        <a href="#contact" class="mobile-nav-link">Contacto</a>
-                    `;
-                    
-                    // Cerrar menú al hacer click en un link
-                    mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
-                        link.addEventListener('click', () => {
-                            mobileMenu.classList.remove('active');
-                            mobileMenu.setAttribute('aria-hidden', 'true');
-                        });
-                    });
-                }
-                
-                menuToggle.addEventListener('click', () => {
-                    const isActive = mobileMenu.classList.contains('active');
-                    mobileMenu.classList.toggle('active');
-                    mobileMenu.setAttribute('aria-hidden', !isActive);
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+            });
+            
+            mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
                 });
-                
-                // Cerrar menú al hacer click fuera
-                document.addEventListener('click', (e) => {
-                    if (!menuToggle.contains(e.target) && !mobileMenu.contains(e.target) && mobileMenu.classList.contains('active')) {
-                        mobileMenu.classList.remove('active');
-                        mobileMenu.setAttribute('aria-hidden', 'true');
-                    }
-                });
-            }
-        }
-        
-        // Inicializar cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCurrentYear();
-            initSmoothScrolling();
-            initMobileMenu();
-            
-            // Añadir clases de carga inicial
-            document.body.classList.add('loaded');
-            
-            // Manejar tecla ESC para cerrar modales
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    const openModals = document.querySelectorAll('.modal.active');
-                    openModals.forEach(modal => {
-                        modal.classList.remove('active');
-                        document.body.style.overflow = '';
-                    });
-                }
             });
         });
-        
-        // Manejar recarga de página manteniendo posición
-        window.addEventListener('beforeunload', function() {
-            // Guardar posición de scroll si es necesario
-            if (window.scrollY > 0) {
-                sessionStorage.setItem('scrollPosition', window.scrollY);
-            }
-        });
-        
-        window.addEventListener('load', function() {
-            // Restaurar posición de scroll si existe
-            const savedPosition = sessionStorage.getItem('scrollPosition');
-            if (savedPosition) {
-                window.scrollTo(0, parseInt(savedPosition));
-                sessionStorage.removeItem('scrollPosition');
-            }
-        });
     </script>
-    
-    <!-- Estilos adicionales para el menú móvil -->
-    <style>
-        .mobile-menu {
-            position: fixed;
-            top: 44px;
-            left: 0;
-            right: 0;
-            background: var(--white);
-            border-bottom: var(--border);
-            box-shadow: var(--shadow);
-            display: none;
-            flex-direction: column;
-            padding: 20px;
-            z-index: 999;
-        }
-        
-        .mobile-menu.active {
-            display: flex;
-        }
-        
-        .mobile-menu a {
-            padding: 16px;
-            text-decoration: none;
-            color: var(--black);
-            font-size: 16px;
-            border-bottom: var(--border);
-        }
-        
-        .mobile-menu a:last-child {
-            border-bottom: none;
-        }
-        
-        .mobile-menu a:hover {
-            background: var(--gray-50);
-        }
-        
-        /* Estado de carga */
-        body:not(.loaded) .vehicles-grid,
-        body:not(.loaded) .instagram-feed {
-            opacity: 0.5;
-        }
-        
-        .loading-placeholder {
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-    </style>
 </body>
 </html>
 [file content end]
