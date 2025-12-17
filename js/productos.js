@@ -7,27 +7,18 @@ export class ProductosManager {
     this.vehiculos = [];
     this.kits = [];
     this.currentFilter = "all";
-    this.UI = null; // Referencia a UI (se asignará después)
-  }
-  
-  // Método para asignar UI después de cargada
-  setUI(uiInstance) {
-    this.UI = uiInstance;
   }
   
   // Cargar vehículos y kits desde Supabase
   async cargarVehiculos() {
     try {
-      console.log('🚗 === INICIANDO CARGA DE VEHÍCULOS Y KITS ===');
+      console.log('🚗 === INICIANDO CARGA DE VEHÍCULOS ===');
       this.mostrarLoading();
       
       // 1. Cargar Vehículos
       this.vehiculos = await supabaseService.getVehiculos();
       
-      // 2. Cargar Kits
-      this.kits = await supabaseService.getKits();
-      
-      console.log(`📦 Vehículos: ${this.vehiculos.length}, Kits: ${this.kits.length}`);
+      console.log(`📦 Vehículos cargados: ${this.vehiculos.length}`);
       
       if (!this.vehiculos || this.vehiculos.length === 0) {
         this.mostrarMensajeSinVehiculos();
@@ -51,7 +42,7 @@ export class ProductosManager {
     }
   }
   
-  // ========== MÉTODOS DE UI SIMPLIFICADOS ==========
+  // ========== MÉTODOS DE UI ==========
   mostrarLoading() {
     const container = document.getElementById('vehiclesContainer');
     if (container) {
@@ -93,35 +84,12 @@ export class ProductosManager {
   }
   
   mostrarError(mensaje) {
-    this.mostrarNotificacion(mensaje, 'error');
-  }
-  
-  mostrarNotificacion(mensaje, tipo = 'info') {
-    const container = document.getElementById('notificationContainer');
-    if (!container) return;
-    
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: ${tipo === 'error' ? '#FF3B30' : tipo === 'success' ? '#34C759' : '#007AFF'};
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      z-index: 9999;
-      animation: slideIn 0.3s ease-out;
-    `;
-    
-    notification.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <i class="fas ${tipo === 'error' ? 'fa-exclamation-circle' : tipo === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
-        <span>${mensaje}</span>
-      </div>
-    `;
-    
-    container.appendChild(notification);
-    setTimeout(() => notification.remove(), 5000);
+    // Usar UIManager si está disponible
+    if (window.UIManager && window.UIManager.showError) {
+      window.UIManager.showError(mensaje);
+    } else {
+      console.error('Error:', mensaje);
+    }
   }
   
   actualizarContadores() {
@@ -129,9 +97,17 @@ export class ProductosManager {
     const transitCount = this.vehiculos.filter(v => v.estado === 'transit').length;
     const reserveCount = this.vehiculos.filter(v => v.estado === 'reserve').length;
 
-    this.actualizarElemento('stockCount', stockCount);
-    this.actualizarElemento('transitCount', transitCount);
-    this.actualizarElemento('reserveCount', reserveCount);
+    // Usar UIManager si está disponible
+    if (window.UIManager && window.UIManager.updateCounter) {
+      window.UIManager.updateCounter('stockCount', stockCount);
+      window.UIManager.updateCounter('transitCount', transitCount);
+      window.UIManager.updateCounter('reserveCount', reserveCount);
+    } else {
+      // Fallback manual
+      this.actualizarElemento('stockCount', stockCount);
+      this.actualizarElemento('transitCount', transitCount);
+      this.actualizarElemento('reserveCount', reserveCount);
+    }
   }
   
   actualizarElemento(id, valor) {
@@ -139,12 +115,39 @@ export class ProductosManager {
     if (element) element.textContent = valor;
   }
   
-  // Resto de métodos (procesarVehiculo, formatPrice, etc.) se mantienen igual...
+  // ========== MÉTODOS DE PROCESAMIENTO ==========
   procesarVehiculo(vehiculo) {
-    // Tu código existente aquí...
-    return vehiculo;
+    // Asegurar que imagenes sea un array
+    const imagenes = Array.isArray(vehiculo.imagenes) ? vehiculo.imagenes : [];
+    
+    // Determinar estado
+    let estado = vehiculo.estado || 'stock';
+    if (!['stock', 'transit', 'reserve'].includes(estado)) {
+      estado = 'stock';
+    }
+    
+    // Determinar imagen principal
+    const imagenPrincipal = vehiculo.imagen_principal || 
+      (imagenes.length > 0 ? imagenes[0] : CONFIG.app.defaultImage);
+    
+    return {
+      id: vehiculo.id || Date.now().toString(),
+      nombre: vehiculo.nombre || 'Vehículo',
+      descripcion: vehiculo.descripcion || 'Vehículo americano importado',
+      precio: vehiculo.precio || 0,
+      estado: estado,
+      imagenes: imagenes,
+      imagen_principal: imagenPrincipal,
+      ano: vehiculo.ano || '',
+      color: vehiculo.color || '',
+      motor: vehiculo.motor || '',
+      kilometraje: vehiculo.kilometraje || 0,
+      modelo: vehiculo.modelo || '',
+      marca: vehiculo.marca || ''
+    };
   }
   
+  // ========== MÉTODOS DE FORMATO ==========
   formatPrice(price) {
     if (CONFIG.app.mostrarPrecios === false) return 'Consultar';
     if (!price && price !== 0) return 'Consultar';
@@ -154,13 +157,34 @@ export class ProductosManager {
   }
   
   getWhatsAppUrl(vehiculo, kit = null) {
-    // Tu código existente aquí...
+    let mensaje = `Hola, estoy interesado en el vehículo:\n\n`;
+    mensaje += `*${vehiculo.nombre || 'Vehículo'}*\n`;
+    
+    if (vehiculo.precio) {
+      mensaje += `Precio: ${this.formatPrice(vehiculo.precio)}\n`;
+    }
+    
+    if (vehiculo.estado) {
+      const estadoText = vehiculo.estado === 'stock' ? 'En Stock Arica' : 
+                        vehiculo.estado === 'transit' ? 'En Tránsito' : 
+                        'Para Reservar';
+      mensaje += `Disponibilidad: ${estadoText}\n`;
+    }
+    
+    if (kit) {
+      mensaje += `\nKit seleccionado: ${kit.nombre}\n`;
+      if (kit.precio > 0) {
+        mensaje += `Precio kit: +${this.formatPrice(kit.precio)}\n`;
+      }
+    }
+    
+    mensaje += `\nMe gustaría obtener más información.`;
+    
     return `https://wa.me/${CONFIG.contacto.whatsapp}?text=${encodeURIComponent(mensaje)}`;
   }
   
-  // ========== NUEVOS MÉTODOS FALTANTES ==========
+  // ========== MÉTODOS DE KITS ==========
   getKitsForDisplay() {
-    // Kits por defecto si no hay en Supabase
     return [
       {
         id: "standar",
@@ -204,12 +228,7 @@ export class ProductosManager {
     ];
   }
   
-  async getCustomizationImage(vehicleId, kitId) {
-    // Por ahora devolver null (usará imagen por defecto)
-    return null;
-  }
-  
-  // Resto de métodos...
+  // ========== MÉTODOS DE BÚSQUEDA ==========
   getVehiculoById(id) {
     return this.vehiculos.find(v => v.id === id) || null;
   }
@@ -222,19 +241,29 @@ export class ProductosManager {
       vehiculosFiltrados = this.vehiculos.filter(v => v.estado === filter);
     }
     
+    // Actualizar botones de filtro
     this.actualizarBotonesFiltro(filter);
+    
+    // Renderizar vehículos filtrados
     this.renderVehiculos(vehiculosFiltrados);
   }
   
   actualizarBotonesFiltro(filter) {
-    document.querySelectorAll('.filter-button').forEach(btn => {
-      btn.classList.remove('active');
-      if (btn.dataset.filter === filter) {
-        btn.classList.add('active');
-      }
-    });
+    // Usar UIManager si está disponible
+    if (window.UIManager && window.UIManager.updateFilterButtons) {
+      window.UIManager.updateFilterButtons(filter);
+    } else {
+      // Fallback manual
+      document.querySelectorAll('.filter-button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.filter === filter) {
+          btn.classList.add('active');
+        }
+      });
+    }
   }
   
+  // ========== MÉTODO DE RENDER ==========
   renderVehiculos(vehiculos = this.vehiculos) {
     const container = document.getElementById('vehiclesContainer');
     if (!container) return;
@@ -246,10 +275,10 @@ export class ProductosManager {
             <i class="fas fa-car"></i>
           </div>
           <h3 style="font-size: 21px; font-weight: 600; margin-bottom: 12px; color: var(--black);">
-            No hay vehículos
+            No hay vehículos en esta categoría
           </h3>
           <button class="button" onclick="window.productosManager.filtrarVehiculos('all')" style="width: auto; padding: 10px 20px;">
-            Ver todos
+            Ver todos los vehículos
           </button>
         </div>
       `;
@@ -257,7 +286,7 @@ export class ProductosManager {
     }
     
     container.innerHTML = vehiculos.map(vehiculo => {
-      const primeraImagen = vehiculo.imagenes?.[0] || CONFIG.app.defaultImage;
+      const primeraImagen = vehiculo.imagenes?.[0] || vehiculo.imagen_principal || CONFIG.app.defaultImage;
       
       return `
         <div class="vehicle-card" data-id="${vehiculo.id}">
@@ -274,13 +303,13 @@ export class ProductosManager {
             <h3 class="vehicle-title">${vehiculo.nombre || 'Vehículo'}</h3>
             <div class="vehicle-price">${this.formatPrice(vehiculo.precio)}</div>
             <p style="color: #86868b; font-size: 14px; margin-bottom: 16px;">
-              ${vehiculo.descripcion ? (vehiculo.descripcion.substring(0, 80) + '...') : 'Sin descripción'}
+              ${vehiculo.descripcion ? (vehiculo.descripcion.substring(0, 80) + (vehiculo.descripcion.length > 80 ? '...' : '')) : 'Sin descripción'}
             </p>
             <div style="display: flex; gap: 8px;">
               <button class="button" onclick="window.open('${this.getWhatsAppUrl(vehiculo)}', '_blank')" style="flex: 1;">
                 <i class="fab fa-whatsapp"></i> Consultar
               </button>
-              <button class="button button-outline" onclick="window.UImanager.mostrarDetallesVehiculo('${vehiculo.id}')" style="flex: 1;">
+              <button class="button button-outline" onclick="window.UIManager.mostrarDetallesVehiculo('${vehiculo.id}')" style="flex: 1;">
                 <i class="fas fa-eye"></i> Ver Detalles
               </button>
             </div>
@@ -293,3 +322,6 @@ export class ProductosManager {
 
 // Instancia global
 export const productosManager = new ProductosManager();
+
+// Hacer disponible globalmente
+window.productosManager = productosManager;
