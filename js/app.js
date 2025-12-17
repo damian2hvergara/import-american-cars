@@ -252,3 +252,61 @@ export class App {
 
 // HACER DISPONIBLE PARA DEBUG
 window.App = App;
+// Efecto parallax suave para el hero
+function setupHeroParallax() {
+    const hero = document.querySelector('.hero');
+    
+    if (!hero) return;
+    
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.3;
+        
+        hero.style.backgroundPosition = `50% ${rate}px`;
+    });
+    
+    // Precargar imagen para evitar flicker
+    const img = new Image();
+    img.src = 'https://res.cloudinary.com/df2gprqhp/image/upload/v1765988412/CHEVROLET_yjwbxt.jpg';
+    img.onload = () => {
+        document.body.classList.add('hero-loaded');
+    };
+}
+
+// Efecto de brillo al pasar mouse sobre indicadores
+function setupIndicatorEffects() {
+    const indicators = document.querySelectorAll('.indicator');
+    
+    indicators.forEach(indicator => {
+        indicator.addEventListener('mouseenter', (e) => {
+            const rect = indicator.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            indicator.style.setProperty('--mouse-x', `${x}px`);
+            indicator.style.setProperty('--mouse-y', `${y}px`);
+        });
+        
+        // Click para filtrar
+        indicator.addEventListener('click', () => {
+            const filter = indicator.dataset.filter;
+            if (filter && window.productosManager) {
+                window.productosManager.filtrarVehiculos(filter);
+                
+                // Scroll suave a vehículos
+                const vehiclesSection = document.getElementById('vehicles');
+                if (vehiclesSection) {
+                    vehiclesSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+    });
+}
+
+// Inicializar en app.js
+// En tu función setupBasicEvents() o init(), añade:
+setupHeroParallax();
+setupIndicatorEffects();
