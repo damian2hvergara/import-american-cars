@@ -1,17 +1,20 @@
 import { CONFIG } from './config.js';
 
-console.log('🔧 Conectando a Supabase...');
+console.log('🔧 Iniciando conexión a Supabase...');
 
+// SERVICIO PARA CONECTAR CON SUPABASE
 export const supabaseService = {
   
+  // OBTENER TODOS LOS VEHÍCULOS
   async getVehiculos() {
-    console.log('🚗 Solicitando vehículos...');
+    console.log('🚗 Solicitando vehículos desde Supabase...');
     
     try {
+      // Construir URL de la API
       const url = `${CONFIG.supabase.url}/rest/v1/vehiculos?select=*&order=orden.asc`;
+      console.log('📡 URL:', url);
       
-      console.log('📡 Llamando a:', url);
-      
+      // Hacer la petición a Supabase
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -21,22 +24,41 @@ export const supabaseService = {
         }
       });
       
-      console.log('📊 Respuesta:', response.status);
+      console.log('📊 Estado respuesta:', response.status, response.statusText);
       
+      // Verificar si hubo error
       if (!response.ok) {
-        console.error('❌ Error HTTP:', response.status);
+        const errorText = await response.text();
+        console.error('❌ Error en la respuesta:', errorText);
+        
+        if (response.status === 401) {
+          console.error('⚠️ ERROR 401: API Key incorrecta o expirada');
+          console.error('   Verifica la API Key en config.js');
+        } else if (response.status === 404) {
+          console.error('⚠️ ERROR 404: Tabla "vehiculos" no encontrada');
+          console.error('   Ejecuta el SQL para crear la tabla en Supabase');
+        }
+        
         return [];
       }
       
+      // Convertir respuesta a JSON
       const vehiculos = await response.json();
-      console.log(`✅ ${vehiculos.length} vehículos recibidos`);
+      console.log(`✅ ${vehiculos.length} vehículos obtenidos`);
       
-      return vehiculos.map(v => ({
-        ...v,
-        imagenes: Array.isArray(v.imagenes) ? v.imagenes : [],
-        imagen_principal_card: v.imagen_principal || 
-                              (Array.isArray(v.imagenes) && v.imagenes.length > 0 ? v.imagenes[0] : CONFIG.app.defaultImage)
-      }));
+      // Procesar datos para asegurar formato correcto
+      const vehiculosProcesados = vehiculos.map(vehiculo => {
+        return {
+          ...vehiculo,
+          // Asegurar que imagenes sea un array
+          imagenes: Array.isArray(vehiculo.imagenes) ? vehiculo.imagenes : [],
+          // Definir imagen principal para mostrar en cards
+          imagen_principal_card: vehiculo.imagen_principal || 
+            (Array.isArray(vehiculo.imagenes) && vehiculo.imagenes.length > 0 ? vehiculo.imagenes[0] : CONFIG.app.defaultImage)
+        };
+      });
+      
+      return vehiculosProcesados;
       
     } catch (error) {
       console.error('❌ Error de conexión:', error);
@@ -44,10 +66,12 @@ export const supabaseService = {
     }
   },
   
+  // OBTENER UN VEHÍCULO POR SU ID
   async getVehiculoById(id) {
     try {
-      const url = `${CONFIG.supabase.url}/rest/v1/vehiculos?id=eq.${id}&select=*`;
+      console.log(`🔍 Buscando vehículo ID: ${id}`);
       
+      const url = `${CONFIG.supabase.url}/rest/v1/vehiculos?id=eq.${id}&select=*`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -57,35 +81,48 @@ export const supabaseService = {
         }
       });
       
-      if (!response.ok) return null;
+      if (!response.ok) {
+        console.error(`❌ Error obteniendo vehículo ${id}:`, response.status);
+        return null;
+      }
       
       const data = await response.json();
       const vehiculo = data[0];
       
-      if (vehiculo) {
-        return {
-          ...vehiculo,
-          imagenes: Array.isArray(vehiculo.imagenes) ? vehiculo.imagenes : [],
-          imagen_principal_card: vehiculo.imagen_principal || vehiculo.imagenes?.[0] || CONFIG.app.defaultImage
-        };
+      if (!vehiculo) {
+        return null;
       }
       
-      return null;
+      // Procesar datos del vehículo
+      return {
+        ...vehiculo,
+        imagenes: Array.isArray(vehiculo.imagenes) ? vehiculo.imagenes : [],
+        imagen_principal_card: vehiculo.imagen_principal || 
+          (Array.isArray(vehiculo.imagenes) && vehiculo.imagenes.length > 0 ? vehiculo.imagenes[0] : CONFIG.app.defaultImage)
+      };
       
     } catch (error) {
-      console.error('❌ Error:', error);
+      console.error(`❌ Error en getVehiculoById:`, error);
       return null;
     }
+  },
+  
+  // FUNCIÓN AUXILIAR PARA OBTENER PRECIO
+  findVehiclePrice(vehiculo) {
+    return vehiculo.precio || 0;
   }
 };
 
-// Probar conexión
+// PRUEBA AUTOMÁTICA DE CONEXIÓN AL CARGAR
+console.log('🔄 Probando conexión con Supabase...');
 supabaseService.getVehiculos()
   .then(data => {
     if (data.length > 0) {
       console.log('🎉 ¡CONEXIÓN EXITOSA!');
+      console.log(`📊 ${data.length} vehículos cargados`);
     } else {
-      console.log('⚠️ Conexión OK, pero tabla vacía');
+      console.log('ℹ️ Conexión exitosa, pero no hay vehículos en la tabla');
+      console.log('   Verifica que hayas insertado datos en Supabase');
     }
   })
   .catch(error => {
