@@ -1,9 +1,10 @@
+[file name]: config.js
+[file content begin]
 // CONFIGURACIÓN CENTRALIZADA - CON TU NUEVA API KEY
 export const CONFIG = {
   // Supabase - Credenciales PÚBLICAS
   supabase: {
     url: "https://cflpmluvhfldewiitymh.supabase.co",
-    // ⚠️ USA ESTA KEY QUE ENCONTRASTE
     anonKey: "sb_publishable_lvUG-G_2bzDxyVZwAF25HA_30dFAb3K"
   },
   
@@ -32,6 +33,9 @@ export const CONFIG = {
     formatoPrecio: "CLP",
     mostrarStock: true,
     mostrarInstagram: true,
+    maxImagenesVehículo: 8, // Nuevo: máximo de imágenes por vehículo
+    mostrarPuntosImagenes: true, // Nuevo: mostrar indicadores de imágenes
+    comparadorActivo: true, // Nuevo: activar comparador de kits
     // Imágenes por defecto reales (Unsplash)
     defaultImage: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     placeholderImages: [
@@ -46,3 +50,4 @@ export const CONFIG = {
 console.log('⚙️ Configuración cargada correctamente');
 console.log('📡 Supabase URL:', CONFIG.supabase.url);
 console.log('☁️ Cloudinary Cloud:', CONFIG.cloudinary.cloudName);
+[file content end]
