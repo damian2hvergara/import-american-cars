@@ -9,13 +9,13 @@ export class ProductosManager {
     this.currentFilter = "all";
   }
   
-  // Cargar vehículos y kits desde Supabase
+  // Cargar vehículos desde Supabase
   async cargarVehiculos() {
     try {
       console.log('🚗 === INICIANDO CARGA DE VEHÍCULOS ===');
       this.mostrarLoading();
       
-      // 1. Cargar Vehículos
+      // 1. Cargar Vehículos desde Supabase
       this.vehiculos = await supabaseService.getVehiculos();
       
       console.log(`📦 Vehículos cargados: ${this.vehiculos.length}`);
@@ -25,6 +25,10 @@ export class ProductosManager {
         this.ocultarLoading();
         return;
       }
+      
+      // 2. Cargar Kits (usar los kits por defecto)
+      this.kits = this.getKitsForDisplay();
+      console.log(`🔧 Kits cargados: ${this.kits.length}`);
       
       this.vehiculos = this.vehiculos.map(vehiculo => {
         return this.procesarVehiculo(vehiculo);
