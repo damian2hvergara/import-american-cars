@@ -2,6 +2,10 @@
    SECTIONS - Secciones específicas
    ============================================== */
 
+/* ==============================================
+   SECTIONS - Secciones específicas
+   ============================================== */
+
 /* ===== HERO SECTION MEJORADA ===== */
 .hero {
     position: relative;
@@ -63,14 +67,15 @@
     animation: fadeInUp 1s ease-out 0.3s both;
 }
 
+/* ========== TÍTULO BLANCO ========== */
 .hero-title {
     font-size: 4.5rem;
     font-weight: 800;
     margin-bottom: 24px;
-    color: var(--white);
+    color: #FFFFFF; /* BLANCO PURO */
     text-shadow: 
-        2px 2px 8px rgba(10, 10, 10, 0.6),
-        0 0 30px rgba(255, 255, 255, 0.1);
+        2px 2px 8px rgba(10, 10, 10, 0.9),
+        0 0 30px rgba(255, 255, 255, 0.2);
     letter-spacing: -0.5px;
     line-height: 1.1;
 }
@@ -80,10 +85,10 @@
     font-size: 4.5rem;
     background: linear-gradient(
         to right,
-        #ffffff 20%,
-        #f5f5f7 40%,
-        #e5e5e7 60%,
-        #ffffff 80%
+        #FFFFFF 20%,   /* BLANCO */
+        #F0F0F0 40%,   /* BLANCO GRISÁCEO */
+        #E0E0E0 60%,   /* BLANCO MÁS GRIS */
+        #FFFFFF 80%    /* BLANCO */
     );
     background-size: 200% auto;
     background-clip: text;
@@ -92,11 +97,12 @@
     animation: shimmer 3s ease-in-out infinite;
 }
 
+/* ========== SUBTÍTULO BLANCO ========== */
 .hero-subtitle {
     font-size: 1.5rem;
     line-height: 1.6;
     margin-bottom: 60px;
-    color: rgba(255, 255, 255, 0.95);
+    color: #FFFFFF; /* BLANCO PURO - 100% opaco */
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
@@ -162,114 +168,34 @@
 .indicator-icon {
     font-size: 2.2rem;
     margin-bottom: 15px;
+    color: #FFFFFF; /* ICONOS BLANCOS */
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
 }
 
 .indicator-content {
-    color: var(--white);
+    color: #FFFFFF; /* CONTENIDO BLANCO */
 }
 
+/* ========== NÚMEROS DE STOCK BLANCOS ========== */
 .indicator-number {
     font-size: 3.5rem;
     font-weight: 800;
     line-height: 1;
     margin-bottom: 5px;
+    color: #FFFFFF; /* NÚMEROS BLANCOS SÓLIDOS */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    background: linear-gradient(to bottom, #ffffff, #e5e5e7);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    /* Eliminamos el gradiente para tener blanco sólido */
+    background: none; /* Quita el gradiente */
+    background-clip: border-box; /* Restaura valor por defecto */
+    -webkit-background-clip: border-box;
+    -webkit-text-fill-color: #FFFFFF; /* Texto blanco sólido */
 }
 
 .indicator-label {
     font-size: 0.95rem;
+    color: #FFFFFF; /* ETIQUETAS BLANCAS */
     opacity: 0.9;
     font-weight: 500;
-    letter-spacing: 0.5px;
-}
-
-/* Flecha indicadora */
-.scroll-indicator {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: bounce 2s infinite;
-    z-index: 2;
-}
-
-.scroll-indicator i {
-    font-size: 2rem;
-    color: rgba(255, 255, 255, 0.8);
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* ANIMACIONES NUEVAS */
-@keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateX(-50%) translateY(0);
-    }
-    40% {
-        transform: translateX(-50%) translateY(-20px);
-    }
-    60% {
-        transform: translateX(-50%) translateY(-10px);
-    }
-}
-/* ===== STOCK INDICATORS ===== */
-.stock-indicators {
-    display: flex;
-    justify-content: center;
-    gap: 60px;
-    margin-top: 40px;
-    flex-wrap: wrap;
-}
-
-.indicator {
-    text-align: center;
-    cursor: pointer;
-    transition: opacity 0.3s;
-    padding: 16px;
-    min-width: 120px;
-}
-
-.indicator:hover {
-    opacity: 0.8;
-    transform: translateY(-2px);
-}
-
-.indicator-icon {
-    font-size: 24px;
-    margin-bottom: 12px;
-}
-
-.indicator-number {
-    font-size: 40px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: var(--black);
-}
-
-.indicator-label {
-    font-size: 12px;
-    color: #86868b;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
