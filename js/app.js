@@ -1,113 +1,114 @@
-// Archivo principal - Inicialización de la aplicación
 import { CONFIG } from './config.js';
 import { productosManager } from './productos.js';
 import { UI } from './ui.js';
 
-// Inicializar la aplicación
+// CLASE PRINCIPAL DE LA APLICACIÓN
 class App {
   constructor() {
     this.initialized = false;
+    console.log('📱 Aplicación Import American Cars creada');
   }
   
+  // INICIALIZAR LA APLICACIÓN
   async init() {
-    if (this.initialized) return;
+    if (this.initialized) {
+      console.log('🔄 Aplicación ya inicializada');
+      return;
+    }
     
-    console.log('🚀 Import American Cars - Inicializando aplicación...');
+    console.log('🚀 Inicializando aplicación Import American Cars...');
     
     try {
-      // 1. Inicializar interfaz
+      // 1. INICIALIZAR INTERFAZ DE USUARIO
+      console.log('1️⃣ Inicializando UI...');
       UI.init();
       
-      // 2. Verificar configuración
+      // 2. VERIFICAR CONFIGURACIÓN
+      console.log('2️⃣ Verificando configuración...');
       this.verifyConfig();
       
-      // 3. Cargar vehículos
+      // 3. CARGAR VEHÍCULOS DESDE SUPABASE
+      console.log('3️⃣ Cargando vehículos...');
       await productosManager.cargarVehiculos();
       
-      // 4. Cargar feed de Instagram
+      // 4. CARGAR FEED DE INSTAGRAM (SIMULADO)
+      console.log('4️⃣ Cargando feed de Instagram...');
       this.loadInstagramFeed();
       
-      // 5. Marcar como inicializado
+      // 5. MARCAR COMO INICIALIZADO
       this.initialized = true;
       
-      console.log('✅ Aplicación inicializada correctamente');
+      console.log('✅ ¡APLICACIÓN INICIALIZADA CORRECTAMENTE!');
+      console.log('👉 Los vehículos deberían estar visibles en la página');
       
     } catch (error) {
-      console.error('❌ Error inicializando aplicación:', error);
+      console.error('❌ ERROR CRÍTICO al inicializar la aplicación:', error);
       UI.showError('Error al inicializar la aplicación. Por favor, recarga la página.');
     }
   }
   
-  // Verificar configuración
+  // VERIFICAR CONFIGURACIÓN ESENCIAL
   verifyConfig() {
-    const required = [
-      'supabase.url',
-      'supabase.anonKey',
-      'contacto.whatsapp',
-      'contacto.instagramUrl'
-    ];
+    const configErrors = [];
     
-    const missing = [];
+    // Verificar Supabase
+    if (!CONFIG.supabase.url) {
+      configErrors.push('URL de Supabase no configurada');
+    }
+    if (!CONFIG.supabase.anonKey) {
+      configErrors.push('API Key de Supabase no configurada');
+    }
     
-    required.forEach(path => {
-      const keys = path.split('.');
-      let value = CONFIG;
-      
-      keys.forEach(key => {
-        value = value?.[key];
-      });
-      
-      if (!value) {
-        missing.push(path);
-      }
-    });
+    // Verificar Contacto
+    if (!CONFIG.contacto.whatsapp) {
+      configErrors.push('Número de WhatsApp no configurado');
+    }
     
-    if (missing.length > 0) {
-      console.warn('⚠️ Configuración incompleta. Campos faltantes:', missing);
+    if (configErrors.length > 0) {
+      console.warn('⚠️ ADVERTENCIA: Configuración incompleta');
+      configErrors.forEach(error => console.warn('   -', error));
       UI.showNotification('Configuración incompleta. Verifica las credenciales.', 'warning');
+    } else {
+      console.log('✅ Configuración verificada correctamente');
     }
   }
   
-  // Cargar feed de Instagram (simulado)
+  // CARGAR FEED DE INSTAGRAM (SIMULADO)
   loadInstagramFeed() {
     const feedContainer = document.getElementById('instagramFeed');
-    if (!feedContainer || !CONFIG.app.mostrarInstagram) return;
+    if (!feedContainer || !CONFIG.app.mostrarInstagram) {
+      console.log('ℹ️ Feed de Instagram no configurado o desactivado');
+      return;
+    }
     
+    console.log('📸 Cargando feed de Instagram...');
+    
+    // Posts de ejemplo (en producción se conectaría a la API de Instagram)
     const posts = [
       {
         image: 'https://images.unsplash.com/photo-1580274455191-1c62238fa333?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         caption: 'Chevrolet Silverado 2021 lista para entrega en Arica. Kit Full Upgrade instalado.',
         likes: 142,
         comments: 23,
-        url: `${CONFIG.contacto.instagramUrl}?utm_source=web`,
-        timestamp: '2024-03-10'
+        url: CONFIG.contacto.instagramUrl
       },
       {
         image: 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         caption: 'Proceso de instalación Kit Medium en Ford F-150. Transformación completa en nuestro taller.',
         likes: 189,
         comments: 31,
-        url: `${CONFIG.contacto.instagramUrl}?utm_source=web`,
-        timestamp: '2024-03-09'
+        url: CONFIG.contacto.instagramUrl
       },
       {
         image: 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         caption: 'Nuevo lote de vehículos llegando desde USA. Variedad de modelos disponibles.',
         likes: 203,
         comments: 42,
-        url: `${CONFIG.contacto.instagramUrl}?utm_source=web`,
-        timestamp: '2024-03-08'
-      },
-      {
-        image: 'https://images.unsplash.com/photo-1555212697-194d092e3b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        caption: 'Comparación antes/después del Kit Full en RAM 1500. La diferencia es impresionante.',
-        likes: 256,
-        comments: 38,
-        url: `${CONFIG.contacto.instagramUrl}?utm_source=web`,
-        timestamp: '2024-03-07'
+        url: CONFIG.contacto.instagramUrl
       }
     ];
     
+    // Generar HTML para el feed
     feedContainer.innerHTML = posts.map(post => `
       <div class="instagram-post" onclick="window.open('${post.url}', '_blank')">
         <img src="${post.image}" alt="Instagram post" class="instagram-image"
@@ -124,28 +125,34 @@ class App {
         </div>
       </div>
     `).join('');
+    
+    console.log(`✅ ${posts.length} posts de Instagram cargados`);
   }
   
-  // Función para recargar datos
+  // FUNCIÓN PARA RECARGAR DATOS
   async reloadData() {
-    console.log('🔄 Recargando datos...');
+    console.log('🔄 Recargando datos desde Supabase...');
     UI.showLoading();
     await productosManager.cargarVehiculos();
     UI.showNotification('Datos actualizados correctamente', 'success');
+    console.log('✅ Datos recargados');
   }
 }
 
-// Instancia global de la aplicación
+// CREAR INSTANCIA GLOBAL DE LA APLICACIÓN
 const app = new App();
 
-// Inicializar cuando el DOM esté listo
+// INICIALIZAR CUANDO EL DOM ESTÉ LISTO
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('📄 DOM cargado, iniciando aplicación...');
   app.init().catch(error => {
-    console.error('Error fatal al inicializar:', error);
+    console.error('💥 Error fatal al inicializar:', error);
   });
 });
 
-// Exportar para acceso global (opcional)
+// HACER DISPONIBLE GLOBALMENTE PARA DEBUG
 window.app = app;
 window.productosManager = productosManager;
 window.UI = UI;
+
+console.log('🔧 Módulo app.js cargado correctamente');
