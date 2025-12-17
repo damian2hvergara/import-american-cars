@@ -110,3 +110,40 @@ html {
     display: flex;
     max-height: 300px;
 }
+
+/* ESTILOS PARA EL VIDEO DE FONDO - NO MODIFICA TU TÍTULO */
+
+.video-bg-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Esto pone el video DETRÁS de todo */
+    overflow: hidden;
+}
+
+.background-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    
+    /* AJUSTA LA TRANSPARENCIA AQUÍ */
+    opacity: 0.4; /* 0.4 = 60% transparente, 0.2 = 80% transparente */
+    
+    /* Filtro para mejorar visibilidad del texto */
+    filter: brightness(0.8) contrast(1.1);
+}
+
+/* OPCIÓN 1: Si tu título está en un contenedor normal */
+/* Añade esta clase al padre de tu título si es necesario */
+.titulo-con-fondo {
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
