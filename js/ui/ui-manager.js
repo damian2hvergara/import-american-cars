@@ -9,16 +9,27 @@ export class UIManager {
   static init() {
     console.log('🎭 Inicializando UIManager...');
     
-    // Configurar eventos básicos
-    UICore.setupEventListeners();
-    UIModals.setupModalEvents();
-    
-    // Hacer disponible globalmente
-    window.UIManager = this;
-    window.UI = this;  // Alias para compatibilidad
-    
-    console.log('✅ UIManager listo');
-    return true;
+    try {
+      // Configurar eventos básicos
+      UICore.setupEventListeners();
+      UIModals.setupModalEvents();
+      UIKits.setup();
+      
+      // Hacer disponibles globalmente
+      window.UIManager = this;
+      window.UICore = UICore;
+      window.UIModals = UIModals;
+      window.UIKits = UIKits;
+      window.UISlider = UISlider;
+      window.UINotifications = UINotifications;
+      
+      console.log('✅ UIManager listo');
+      return true;
+      
+    } catch (error) {
+      console.error('❌ Error inicializando UIManager:', error);
+      return false;
+    }
   }
   
   // ========== MÉTODOS PÚBLICOS ==========
@@ -26,22 +37,33 @@ export class UIManager {
   // Para vehiculos-manager.js y productos.js
   static mostrarDetallesVehiculo(vehicleId) {
     const vehiculo = window.productosManager?.getVehiculoById(vehicleId);
-    if (!vehiculo) return;
+    if (!vehiculo) {
+      this.showError('Vehículo no encontrado');
+      return;
+    }
     
-    UIModals.showVehicleDetails(
-      vehicleId,
-      () => window.productosManager?.getVehiculoById(vehicleId),
-      (price) => window.productosManager?.formatPrice(price)
-    );
+    UIModals.showVehicleDetails(vehicleId);
   }
   
-  // Para app.js
-  static showNotification(mensaje, tipo = 'info') {
-    UINotifications.show(mensaje, tipo);
+  // Notificaciones
+  static showNotification(mensaje, tipo = 'info', duration = 5000) {
+    UINotifications.show(mensaje, tipo, duration);
   }
   
   static showError(mensaje) {
-    UINotifications.show(mensaje, 'error');
+    UINotifications.error(mensaje);
+  }
+  
+  static showSuccess(mensaje) {
+    UINotifications.success(mensaje);
+  }
+  
+  static showWarning(mensaje) {
+    UINotifications.warning(mensaje);
+  }
+  
+  static showInfo(mensaje) {
+    UINotifications.info(mensaje);
   }
   
   // Para productos.js (filtros)
@@ -55,17 +77,21 @@ export class UIManager {
   
   // Para botones en HTML
   static customizeVehicle(vehicleId) {
-    UIKits.showKitsModal(
-      vehicleId,
-      () => window.productosManager?.getVehiculoById(vehicleId),
-      () => window.productosManager?.getKitsForDisplay(),
-      (price) => window.productosManager?.formatPrice(price)
-    );
+    const vehiculo = window.productosManager?.getVehiculoById(vehicleId);
+    if (!vehiculo) {
+      this.showError('Vehículo no encontrado');
+      return;
+    }
+    
+    UIKits.showKitsModal(vehicleId);
   }
   
   static contactVehicle(vehicleId, kitId = null) {
     const vehiculo = window.productosManager?.getVehiculoById(vehicleId);
-    if (!vehiculo) return;
+    if (!vehiculo) {
+      this.showError('Vehículo no encontrado');
+      return;
+    }
     
     const kits = window.productosManager?.getKitsForDisplay() || [];
     const kit = kitId ? kits.find(k => k.id === kitId) : null;
@@ -79,5 +105,35 @@ export class UIManager {
   // Slider
   static initSlider(sliderId, images, vehicleName = '') {
     UISlider.init(sliderId, images, vehicleName);
+  }
+  
+  // UI Core methods
+  static showLoading(containerId) {
+    UICore.showLoading(containerId);
+  }
+  
+  static hideLoading(containerId) {
+    UICore.hideLoading(containerId);
+  }
+  
+  static showModal(modalId) {
+    UICore.showModal(modalId);
+  }
+  
+  static closeModal(modalId) {
+    UICore.closeModal(modalId);
+  }
+  
+  static closeAllModals() {
+    UICore.closeAllModals();
+  }
+  
+  static smoothScrollTo(elementId, offset = 60) {
+    UICore.smoothScrollTo(elementId, offset);
+  }
+  
+  // Clear notifications
+  static clearNotifications() {
+    UINotifications.clearAll();
   }
 }
